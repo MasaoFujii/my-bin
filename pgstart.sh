@@ -5,7 +5,7 @@ PROGNAME=$(basename ${0})
 
 usage ()
 {
-    echo "${PROGNAME} starts the pgsql"
+    echo "${PROGNAME} starts pgsql"
     echo ""
     echo "Usage:"
     echo "  ${PROGNAME} [PGDATA]"

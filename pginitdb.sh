@@ -5,7 +5,7 @@ PROGNAME=$(basename ${0})
 
 usage ()
 {
-    echo "${PROGNAME} creates an initial \$PGDATA"
+    echo "${PROGNAME} creates an initial database cluster"
     echo ""
     echo "Usage:"
     echo "  ${PROGNAME} [OPTIONS] [PGDATA]"

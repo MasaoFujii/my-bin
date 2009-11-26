@@ -5,19 +5,19 @@ PROGNAME=$(basename ${0})
 
 usage ()
 {
-    echo "${PROGNAME} shuts down the pgsql"
+    echo "${PROGNAME} shuts down pgsql"
     echo ""
     echo "Usage:"
     echo "  ${PROGNAME} [OPTIONS] [PGDATA]"
     echo ""
     echo "Default:"
-    echo "  fires a smart shutdown"
+    echo "  performs a smart shutdown"
     echo ""
     echo "Options:"
-    echo "  -f        fires a fast shutdown"
+    echo "  -f        performs a fast shutdown"
     echo "  -h        shows this help, then exits"
-    echo "  -i        fires an immediate shutdown"
-    echo "  -s        fires a smart shutdown"
+    echo "  -i        performs an immediate shutdown"
+    echo "  -s        performs a smart shutdown"
 }
 
 PGBIN=${CURDIR}/bin
