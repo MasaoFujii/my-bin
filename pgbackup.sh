@@ -61,12 +61,12 @@ BackupPgData ()
     rm -rf ${PGDATABKP}
 
     # Take base backup
-    STARTLSN=$(${PGBIN}/psql -Atc "${STARTBKPSQL}" template1)
+    STARTLSN=$(${PGBIN}/psql -Atc "${STARTBKPSQL}" ${TEMPLATEDB})
     if [ ${?} -ne 0 ]; then
 	exit 1
     fi
     rsync -a ${EXCLUDELIST} ${PGDATA}/ ${PGDATABKP}
-    STOPLSN=$(${PGBIN}/psql -Atc "${STOPBKPSQL}" template1)
+    STOPLSN=$(${PGBIN}/psql -Atc "${STOPBKPSQL}" ${TEMPLATEDB})
 
     # Create pg_xlog and archive_status if they are not in backup
     if [ "${BACKUP_PGXLOG}" = "FALSE" ]; then
