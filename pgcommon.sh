@@ -3,6 +3,7 @@
 # Common global variables
 CURDIR=$(pwd)
 PROGNAME=$(basename ${0})
+TMPFILE=/tmp/pgscript_$(date +%Y%m%d%H%M%S).tmp
 
 # Directories of pgsql
 PGBIN=${CURDIR}/bin
