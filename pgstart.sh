@@ -12,6 +12,7 @@ usage ()
     echo ""
     echo "Options:"
     echo "  -D        location of \$PGDATA"
+    echo "  -h        shows this help, then exits"
 }
 
 PGBIN=${CURDIR}/bin
