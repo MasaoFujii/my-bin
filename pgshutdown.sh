@@ -48,4 +48,6 @@ shift $(expr ${OPTIND} - 1)
 GetPgData ${@}
 ValidatePgData
 
+# Shut down pgsql after checking it's in progress
+PgsqlMustRunning
 ${PGBIN}/pg_ctl -D ${PGDATA} -m${SHUTDOWN_MODE} stop

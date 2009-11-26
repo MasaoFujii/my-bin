@@ -3,7 +3,7 @@
 # Load the common functions and variables
 . pgcommon.sh
 
-# Local functions
+# Show usage
 Usage ()
 {
     echo "${PROGNAME} starts pgsql"
@@ -23,5 +23,6 @@ ParseHelpOption ${@}
 GetPgData ${@}
 ValidatePgData
 
-# Start pgsql
+# Start pgsql after checking it's not in progress
+PgsqlMustNotRunning
 ${PGBIN}/pg_ctl -D ${PGDATA} start

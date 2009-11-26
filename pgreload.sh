@@ -23,5 +23,6 @@ ParseHelpOption ${@}
 GetPgData ${@}
 ValidatePgData
 
-# Reload pgsql conf files
+# Reload pgsql conf files after checking it's in progress
+PgsqlMustRunning
 ${PGBIN}/pg_ctl -D ${PGDATA} reload
