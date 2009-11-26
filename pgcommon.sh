@@ -61,6 +61,16 @@ ValidatePgData ()
     fi
 }
 
+# WAL archiving is supported?
+# NOTE: CurDirIsPgsqlIns must be done before calling this.
+ArchivingIsSupported ()
+{
+    if [ ${PGMAJOR} -lt 80 ]; then
+	echo "ERROR: WAL archiving is not supported in this pgsql version"
+	exit 1
+    fi
+}
+
 # Parse only -h option.
 # NOTE: "${@}" should be passed as an argument.
 # NOTE: The function "Usage" should be define before calling this.
