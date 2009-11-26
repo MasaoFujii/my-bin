@@ -36,13 +36,8 @@ while getopts "D:h" OPT; do
     esac
 done
 
-if [ ! -d ${PGDATA} ]; then
-    echo "ERROR: \$PGDATA is not found: ${PGDATA}"
-    exit 1
-fi
-
 rm -rf ${PGDATA}
-${PGBIN}/initdb -D $PGDATA --no-locale --encoding=UTF8
+${PGBIN}/initdb -D ${PGDATA} --no-locale --encoding=UTF8
 
 echo "host all all 0.0.0.0/0 trust" >> ${PGDATA}/pg_hba.conf
 echo "listen_addresses = '*'"       >> ${PGDATA}/postgresql.conf
