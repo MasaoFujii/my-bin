@@ -9,6 +9,9 @@ PGMAJOR=
 # Directories of pgsql
 PGBIN=${CURDIR}/bin
 PGDATA=${CURDIR}/data
+PGARCH=${PGDATA}.arch
+PGCONF=${PGDATA}/postgresql.conf
+PGHBA=${PGDATA}/pg_hba.conf
 
 # Current location is pgsql source dir?
 CurDirIsPgsqlSrc ()
@@ -38,6 +41,11 @@ GetPgData ()
     if [ ${#} -gt 0 ]; then
 	PGDATA=${1}
     fi
+
+    # The following paths are derived from $PGDATA
+    PGARCH=${PGDATA}.arch
+    PGCONF=${PGDATA}/postgresql.conf
+    PGHBA=${PGDATA}/pg_hba.conf
 }
 
 # Validate that $PGDATA is found.
@@ -63,4 +71,21 @@ ParseHelpOption ()
 	esac
     done
     shift $(expr ${OPTIND} - 1)
+}
+
+# Remove the line matching the specified regular expression regexp from the file.
+# NOTE: The regular expression regexp must be passed as the first argument.
+# NOTE: The path of target file must be passed as the second argument.
+RemoveLineFromFile ()
+{
+    if [ ${#} -lt 2 ]; then
+	echo "ERROR: regexp and filepath must be supplied"
+	exit 1
+    fi
+
+    REGEXP="${1}"
+    TARGETFILE=${2}
+
+    sed /"${REGEXP}"/D ${TARGETFILE} > ${TMPFILE}
+    mv ${TMPFILE} ${TARGETFILE}
 }
