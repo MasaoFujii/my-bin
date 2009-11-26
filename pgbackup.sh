@@ -8,6 +8,8 @@ BACKUP_PGARCH="FALSE"
 BACKUP_PGXLOG="FALSE"
 STARTLSN=
 STOPLSN=
+PGDATABKP_SUPPLY=
+PGARCHBKP_SUPPLY=
 
 # Show usage
 Usage ()
@@ -22,6 +24,8 @@ Usage ()
     echo ""
     echo "Options:"
     echo "  -a        also takes backup of archive directory"
+    echo "  -A PATH   specifies path of archive directory backup"
+    echo "  -D PATH   specifies path of $PGDATA backup"
     echo "  -h        shows this help, then exits"
     echo "  -x        also takes backup of pg_xlog"
 }
@@ -51,6 +55,9 @@ BackupPgData ()
     fi
 
     # Delete old backup of $PGDATA
+    if [ ! -z "${PGDATABKP_SUPPLY}" ]; then
+	PGDATABKP=${PGDATABKP_SUPPLY}
+    fi
     rm -rf ${PGDATABKP}
 
     # Take base backup
@@ -75,6 +82,9 @@ BackupPgArch ()
     fi
 
     # Delete old backup of archive directory
+    if [ ! -z "${PGARCHBKP_SUPPLY}" ]; then
+	PGARCHBKP=${PGARCHBKP_SUPPLY}
+    fi
     rm -rf ${PGARCHBKP}
 
     # Wait until backup history file and last WAL file have been archived
@@ -93,10 +103,16 @@ BackupPgArch ()
 CurDirIsPgsqlIns
 
 # Parse options
-while getopts "ahx" OPT; do
+while getopts "aA:D:hx" OPT; do
     case ${OPT} in
 	a)
 	    BACKUP_PGARCH="TRUE"
+	    ;;
+	A)
+	    PGARCHBKP_SUPPLY=${OPTARG}
+	    ;;
+	D)
+	    PGDATABKP_SUPPLY=${OPTARG}
 	    ;;
 	h)
 	    Usage

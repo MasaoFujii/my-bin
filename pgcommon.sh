@@ -131,6 +131,19 @@ WaitFileArchived ()
     done
 }
 
+# Wait until pgsql becomes normal processing mode
+WaitForNormalPgsql ()
+{
+    while [ 1 ]; do
+	${PGBIN}/psql -l template1
+	if [ ${?} -eq 0 ]; then
+	    return
+	fi
+
+	sleep 1
+    done
+}
+
 # Parse only -h option.
 # NOTE: "${@}" should be passed as an argument.
 # NOTE: The function "Usage" should be define before calling this.
@@ -162,4 +175,21 @@ RemoveLineFromFile ()
 
     sed /"${REGEXP}"/D ${TARGETFILE} > ${TMPFILE}
     mv ${TMPFILE} ${TARGETFILE}
+}
+
+# Set one GUC in postgresql.conf
+# NOTE: arguments are a GUC name, value, and conf path.
+SetOneGuc ()
+{
+    if [ ${#} -lt 3 ]; then
+	echo "ERROR: \"GUC name\", \"value\" and \"conf path\" must be supplied"
+	exit 1
+    fi
+    GUCNAME=${1}
+    GUCVALUE=${2}
+    CONFPATH=${3}
+
+    # Remove old GUC setting, and add new one
+    RemoveLineFromFile "^${GUCNAME}" ${CONFPATH}
+    echo "${GUCNAME} = ${GUCVALUE}" >> ${CONFPATH}
 }

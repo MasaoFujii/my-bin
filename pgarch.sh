@@ -3,6 +3,9 @@
 # Load the common functions and variables
 . pgcommon.sh
 
+# Local variables
+PGARCH_SUPPLY=
+
 # Show usage
 Usage ()
 {
@@ -12,6 +15,7 @@ Usage ()
     echo "  ${PROGNAME} [OPTIONS] [PGDATA]"
     echo ""
     echo "Options:"
+    echo "  -A PATH   specifies archive directory path"
     echo "  -h        shows this help, then exits"
 }
 
@@ -19,19 +23,30 @@ Usage ()
 EnableWALArchiving ()
 {
     if [ ${PGMAJOR} -ge 83 ]; then
-	RemoveLineFromFile "^archive_mode" ${PGCONF}
-	echo "archive_mode = on" >> ${PGCONF}
+	SetOneGuc archive_mode on ${PGCONF}
     fi
 
-    RemoveLineFromFile "^archive_command" ${PGCONF}
-    echo "archive_command = 'cp %p ../${PGARCHNAME}/%f'" >> ${PGCONF}
+    SetOneGuc archive_command "'cp %p ../${PGARCHNAME}/%f'" ${PGCONF}
 }
 
 # Should be in pgsql installation directory
 CurDirIsPgsqlIns
 
 # Parse options
-ParseHelpOption ${@}
+while getopts "A:h" OPT; do
+    case ${OPT} in
+	A)
+	    PGARCH_SUPPLY=${OPTARG}
+	    ;;
+	h)
+	    Usage
+	    exit 0
+	    ;;
+    esac
+done
+shift $(expr ${OPTIND} - 1)
+
+# Get and validate $PGDATA
 GetPgData ${@}
 ValidatePgData
 
@@ -39,6 +54,10 @@ ValidatePgData
 ArchivingIsSupported
 
 # Create new archive directory
+if [ ! -z "${PGARCH_SUPPLY}" ]; then
+    PGARCH=${PGARCH_SUPPLY}
+    PGARCHNAME=$(basename ${PGARCH})
+fi
 rm -rf ${PGARCH}
 mkdir ${PGARCH}
 
