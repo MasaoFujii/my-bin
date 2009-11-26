@@ -4,6 +4,7 @@
 CURDIR=$(pwd)
 PROGNAME=$(basename ${0})
 TMPFILE=/tmp/pgscript_$(date +%Y%m%d%H%M%S).tmp
+PGMAJOR=
 
 # Directories of pgsql
 PGBIN=${CURDIR}/bin
@@ -25,6 +26,9 @@ CurDirIsPgsqlIns ()
 	echo "ERROR: invalid current location; move to pgsql installation directory"
 	exit 1
     fi
+
+    # Get the pgsql major version
+    PGMAJOR=$(${PGBIN}/pg_config --version | tr --delete [A-z.' '] | cut -c1-2)
 }
 
 # Get the path of $PGDATA from the first commad-line argument.
