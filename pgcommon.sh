@@ -12,6 +12,8 @@ PGDATA=${CURDIR}/data
 PGARCH=${PGDATA}.arch
 PGXLOG=${PGDATA}/pg_xlog
 PGARCHSTATUS=${PGXLOG}/archive_status
+PGDATABKP=${PGDATA}.bkp
+PGARCHBKP=${PGARCH}.bkp
 PGCONF=${PGDATA}/postgresql.conf
 PGHBA=${PGDATA}/pg_hba.conf
 
@@ -48,6 +50,8 @@ GetPgData ()
     PGARCH=${PGDATA}.arch
     PGXLOG=${PGDATA}/pg_xlog
     PGARCHSTATUS=${PGXLOG}/archive_status
+    PGDATABKP=${PGDATA}.bkp
+    PGARCHBKP=${PGARCH}.bkp
     PGCONF=${PGDATA}/postgresql.conf
     PGHBA=${PGDATA}/pg_hba.conf
 }
@@ -69,6 +73,58 @@ ArchivingIsSupported ()
 	echo "ERROR: WAL archiving is not supported in this pgsql version"
 	exit 1
     fi
+}
+
+# Pgsql must be running. Exit otherwise.
+PgsqlMustRunning ()
+{
+    ${PGBIN}/pg_ctl -D ${PGDATA} status > /dev/null
+    if [ ${?} -ne 0 ]; then
+	echo "ERROR: pgsql must be running; start up pgsql right now"
+	exit 1
+    fi
+}
+
+# Pgsql must not be running. Exit otherwise.
+PgsqlMustNotRunning ()
+{
+    ${PGBIN}/pg_ctl -D ${PGDATA} status > /dev/null
+    if [ ${?} -eq 0 ]; then
+	echo "ERROR: pgsql must NOT be running; shut down pgsql right now"
+	exit 1
+    fi
+}
+
+# Wait until target file has been archived.
+# NOTE: target file *NAME* must be passed in the first argument.
+WaitFileArchived ()
+{
+    # Get target file name
+    if [ ${#} -lt 1 ]; then
+	echo "ERROR: target file name must be supplied"
+	exit 1
+    fi
+    TARGETFILE=${1}
+
+    # archive_status file of target
+    READYFILE=${PGARCHSTATUS}/${TARGETFILE}.ready
+    DONEFILE=${PGARCHSTATUS}/${TARGETFILE}.done
+
+    while [ 1 ]; do
+	# Regarded as archived if .done exists in archive_status
+	if [ -f ${DONEFILE} ]; then
+	    return
+	fi
+
+	# Regarded as archived if .ready doesn't exist in archive_status
+	# and target file itself doesn't exist in pg_xlog.
+	if [ ! -f ${READYFILE} -a ! -f ${PGXLOG}/${TARGETFILE} ]; then
+	    return
+	fi
+
+	# Sleep 1 sec
+	sleep 1
+    done
 }
 
 # Parse only -h option.
