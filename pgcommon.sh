@@ -10,6 +10,8 @@ PGMAJOR=
 PGBIN=${CURDIR}/bin
 PGDATA=${CURDIR}/data
 PGARCH=${PGDATA}.arch
+PGXLOG=${PGDATA}/pg_xlog
+PGARCHSTATUS=${PGXLOG}/archive_status
 PGCONF=${PGDATA}/postgresql.conf
 PGHBA=${PGDATA}/pg_hba.conf
 
@@ -44,6 +46,8 @@ GetPgData ()
 
     # The following paths are derived from $PGDATA
     PGARCH=${PGDATA}.arch
+    PGXLOG=${PGDATA}/pg_xlog
+    PGARCHSTATUS=${PGXLOG}/archive_status
     PGCONF=${PGDATA}/postgresql.conf
     PGHBA=${PGDATA}/pg_hba.conf
 }
