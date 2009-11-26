@@ -7,7 +7,6 @@
 ENABLE_CASSERT="FALSE"
 ENABLE_DEBUG="FALSE"
 ENABLE_OPTIMIZATION="TRUE"
-CPPFLAGS=
 LOGFILE=/tmp/pgmake.log
 PREFIX=
 CONFIGURE_OPTS=
@@ -68,10 +67,6 @@ ConstructConfigureOpts ()
     if [ "${ENABLE_DEBUG}" = "TRUE" ]; then
 	CONFIGURE_OPTS="--enable-debug ${CONFIGURE_OPTS}"
     fi
-
-    if [ ! -z "${CPPFLAGS}" ]; then
-	CONFIGURE_OPTS="CPPFLAGS='${CPPFLAGS}' ${CONFIGURE_OPTS}"
-    fi
 }
 
 # Prevent compiler's optimization
@@ -113,14 +108,6 @@ CompilePgsql ()
     cd ${CURDIR}
 }
 
-# Check whether warning arose in logfile
-CheckWarningInLogFile ()
-{
-    echo ""
-    echo "########## WARNING ##########"
-    grep 警告 ${LOGFILE}
-}
-
 # Should be in pgsql source directory
 CurDirIsPgsqlSrc
 
@@ -139,7 +126,7 @@ while getopts "acdf:hl:z" OPT; do
 	    ENABLE_DEBUG="TRUE"
 	    ;;
 	f)
-	    CPPFLAGS="${OPTARG}"
+	    export CPPFLAGS="${OPTARG} ${CPPFLAGS}"
 	    ;;
 	h)
 	    Usage
@@ -161,6 +148,3 @@ ValidatePrefix
 
 # Compile pgsql!
 CompilePgsql > ${LOGFILE} 2>&1
-
-# Check warning
-CheckWarningInLogFile
