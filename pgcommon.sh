@@ -194,18 +194,21 @@ UsageForHelpOption ()
 #
 # Arguments:
 #   [1]: command-line argument; "${@}" must be supplied.
+#
+# Note:
+#   The function "Usage" must be called before this.
 ParsingForHelpOption ()
 {
 	while getopts "h" OPT; do
 		case ${OPT} in
 			h)
-				UsageForHelpOption
+				Usage
 				exit 0
 				;;
 			*)
 				echo "ERROR: invalid option; \"${OPT}\""
 				echo ""
-				UsageForHelpOption
+				Usage
 				exit 1
 				;;
 		esac

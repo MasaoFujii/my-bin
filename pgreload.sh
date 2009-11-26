@@ -3,6 +3,12 @@
 # Load common definitions
 . pgcommon.sh
 
+# Show usage
+Usage ()
+{
+	UsageForHelpOption "reloads the pgsql configuration files"
+}
+
 # Check that we are in the pgsql installation directory
 CurDirIsPgsqlIns
 
