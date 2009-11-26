@@ -24,4 +24,4 @@ GetPgData ${@}
 ValidatePgData
 
 # Open pg_hba.conf
-emacs ${PGDATA}/pg_hba.conf &
+emacs ${PGHBA} &
