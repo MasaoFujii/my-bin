@@ -8,10 +8,9 @@ usage ()
     echo "${PROGNAME} creates an initial \$PGDATA"
     echo ""
     echo "Usage:"
-    echo "  ${PROGNAME} [OPTIONS]"
+    echo "  ${PROGNAME} [OPTIONS] [PGDATA]"
     echo ""
     echo "Options:"
-    echo "  -D        location of \$PGDATA"
     echo "  -h        shows this help, then exits"
 }
 
@@ -24,17 +23,20 @@ if [ ! -f ${PGBIN}/pg_config ]; then
     exit 1
 fi
 
-while getopts "D:h" OPT; do
+while getopts "h" OPT; do
     case ${OPT} in
-	D)
-	    PGDATA=${OPTARG}
-	    ;;
 	h)
 	    usage
 	    exit 0
 	    ;;
     esac
 done
+
+shift $(expr ${OPTIND} - 1)
+
+if [ ${#} -gt 0 ]; then
+    PGDATA=${1}
+fi
 
 rm -rf ${PGDATA}
 ${PGBIN}/initdb -D ${PGDATA} --no-locale --encoding=UTF8

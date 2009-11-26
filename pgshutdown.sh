@@ -8,13 +8,12 @@ usage ()
     echo "${PROGNAME} shuts down the pgsql"
     echo ""
     echo "Usage:"
-    echo "  ${PROGNAME} [OPTIONS]"
+    echo "  ${PROGNAME} [OPTIONS] [PGDATA]"
     echo ""
     echo "Default:"
     echo "  fires a smart shutdown"
     echo ""
     echo "Options:"
-    echo "  -D        location of \$PGDATA"
     echo "  -f        fires a fast shutdown"
     echo "  -h        shows this help, then exits"
     echo "  -i        fires an immediate shutdown"
@@ -31,11 +30,8 @@ if [ ! -f ${PGBIN}/pg_config ]; then
 fi
 
 SHUTDOWN_MODE="s"
-while getopts "D:fhis" OPT; do
+while getopts "fhis" OPT; do
     case ${OPT} in
-	D)
-	    PGDATA=${OPTARG}
-	    ;;
 	f)
 	    SHUTDOWN_MODE="f"
 	    ;;
@@ -51,6 +47,12 @@ while getopts "D:fhis" OPT; do
 	    ;;
     esac
 done
+
+shift $(expr ${OPTIND} - 1)
+
+if [ ${#} -gt 0 ]; then
+    PGDATA=${1}
+fi
 
 if [ ! -d ${PGDATA} ]; then
     echo "ERROR: \$PGDATA is not found: ${PGDATA}"
