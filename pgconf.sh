@@ -24,4 +24,4 @@ GetPgData ${@}
 ValidatePgData
 
 # Open postgresql.conf
-emacs ${PGDATA}/postgresql.conf &
+emacs ${PGCONF} &
