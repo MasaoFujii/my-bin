@@ -10,12 +10,14 @@ PGMAJOR=
 PGBIN=${CURDIR}/bin
 PGDATA=${CURDIR}/data
 PGARCH=${PGDATA}.arch
+PGARCHNAME=$(basename ${PGARCH})
 PGXLOG=${PGDATA}/pg_xlog
 PGARCHSTATUS=${PGXLOG}/archive_status
 PGDATABKP=${PGDATA}.bkp
 PGARCHBKP=${PGARCH}.bkp
 PGCONF=${PGDATA}/postgresql.conf
 PGHBA=${PGDATA}/pg_hba.conf
+RECOVERYCONF=${PGDATA}/recovery.conf
 
 # Current location is pgsql source dir?
 CurDirIsPgsqlSrc ()
@@ -48,12 +50,14 @@ GetPgData ()
 
     # The following paths are derived from $PGDATA
     PGARCH=${PGDATA}.arch
+    PGARCHNAME=$(basename ${PGARCH})
     PGXLOG=${PGDATA}/pg_xlog
     PGARCHSTATUS=${PGXLOG}/archive_status
     PGDATABKP=${PGDATA}.bkp
     PGARCHBKP=${PGARCH}.bkp
     PGCONF=${PGDATA}/postgresql.conf
     PGHBA=${PGDATA}/pg_hba.conf
+    RECOVERYCONF=${PGDATA}/recovery.conf
 }
 
 # Validate that $PGDATA is found.
