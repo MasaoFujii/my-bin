@@ -24,7 +24,7 @@ EnableWALArchiving ()
     fi
 
     RemoveLineFromFile "^archive_command" ${PGCONF}
-    echo "archive_command = 'cp %p ${PGARCH}/%f'" >> ${PGCONF}
+    echo "archive_command = 'cp %p ../$(basename ${PGARCH})/%f'" >> ${PGCONF}
 }
 
 # Should be in pgsql installation directory
