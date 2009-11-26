@@ -80,24 +80,44 @@ ArchivingIsSupported ()
     fi
 }
 
-# Pgsql must be running. Exit otherwise.
+# Emit an error if pgsql is NOT running.
+#
+# Arguments:
+#   [1]: error message (optional)
 PgsqlMustRunning ()
 {
-    ${PGBIN}/pg_ctl -D ${PGDATA} status > /dev/null
-    if [ ${?} -ne 0 ]; then
-	echo "ERROR: pgsql must be running; start up pgsql right now"
-	exit 1
-    fi
+	# Determine error message
+	ERRORMSG="pgsql is NOT running; start up pgsql right now!"
+	if [ ${#} -ge 1 ]; then
+		ERRORMSG=${1}
+	fi
+
+	# Check if pgsql is running
+	${PGBIN}/pg_ctl -D ${PGDATA} status > /dev/null
+	if [ ${?} -ne 0 ]; then
+		echo "ERROR: ${ERRORMSG}"
+		exit 1
+	fi
 }
 
-# Pgsql must not be running. Exit otherwise.
+# Emit an error if pgsql IS running.
+#
+# Arguments:
+#   [1]: error message (optional)
 PgsqlMustNotRunning ()
 {
-    ${PGBIN}/pg_ctl -D ${PGDATA} status > /dev/null
-    if [ ${?} -eq 0 ]; then
-	echo "ERROR: pgsql must NOT be running; shut down pgsql right now"
-	exit 1
-    fi
+	# Determine error message
+	ERRORMSG="pgsql is still running; shut down pgsql right now!"
+	if [ ${#} -ge 1 ]; then
+		ERRORMSG=${1}
+	fi
+
+	# Check if pgsql is running
+	${PGBIN}/pg_ctl -D ${PGDATA} status > /dev/null
+	if [ ${?} -eq 0 ]; then
+		echo "ERROR: ${ERRORMSG}"
+		exit 1
+	fi
 }
 
 # Wait until target file has been archived.
@@ -146,23 +166,55 @@ WaitForPgsqlStartup ()
 	done
 }
 
-# Parse only -h option.
-# NOTE: "${@}" should be passed as an argument.
-# NOTE: The function "Usage" should be define before calling this.
-ParseHelpOption ()
+# Show very simple usage which handles only help (-h) option.
+#
+# Arguments:
+#   [1]: outline of the script
+UsageForHelpOption ()
 {
-    while getopts "h" OPT; do
-	case ${OPT} in
-	    h)
-		Usage
-		exit 0
-		;;
-	esac
-    done
-    shift $(expr ${OPTIND} - 1)
+	# Check that one argument is supplied.
+	if [ ${#} -lt 1 ]; then
+		echo "ERROR: too few arguments in UsageForHelpOption"
+		exit 1
+	fi
+	OUTLINE=${1}
+
+	# Show simple usage
+	echo "${PROGNAME} ${OUTLINE}"
+	echo ""
+	echo "Usage:"
+	echo "  ${PROGNAME} [-h] [PGDATA]"
+	echo ""
+	echo "Options:"
+    echo "  -h        shows this help, then exits"
+}
+
+# Parse command-line arguments which is expected to
+# include only help (-h) option.
+#
+# Arguments:
+#   [1]: command-line argument; "${@}" must be supplied.
+ParsingForHelpOption ()
+{
+	while getopts "h" OPT; do
+		case ${OPT} in
+			h)
+				UsageForHelpOption
+				exit 0
+				;;
+			*)
+				echo "ERROR: invalid option; \"${OPT}\""
+				echo ""
+				UsageForHelpOption
+				exit 1
+				;;
+		esac
+	done
+	shift $(expr ${OPTIND} - 1)
 }
 
 # Remove the line matching the regexp from the file.
+#
 # Arguments:
 #   [1]: regular expression regexp
 #   [2]: path of the target file
@@ -182,6 +234,7 @@ RemoveLine ()
 }
 
 # Set one GUC parameter in postgresql.conf.
+#
 # Arguments:
 #   [1]: parameter name
 #   [2]: parameter value
