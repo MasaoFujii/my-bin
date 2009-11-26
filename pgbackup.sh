@@ -63,7 +63,7 @@ BackupPgData ()
 
     # Create pg_xlog and archive_status if they are not in backup
     if [ "${BACKUP_PGXLOG}" = "FALSE" ]; then
-	mkdir -p ${PGARCHSTATUS}
+	mkdir -p ${PGDATABKP}/pg_xlog/archive_status
     fi
 }
 
