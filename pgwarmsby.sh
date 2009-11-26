@@ -65,7 +65,7 @@ SetupWarmStandby ()
     pgarch.sh -A ${PGARCH} ${ACTDATA}
     ConfigAct
     pgstart.sh ${ACTDATA}
-    WaitForNormalPgsql
+    WaitForPgsqlStartup
     pgbackup.sh -D ${SBYDATA} ${ACTDATA}
     ConfigSby
     pgstart.sh ${SBYDATA}
