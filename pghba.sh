@@ -3,23 +3,17 @@
 # Load common definitions
 . pgcommon.sh
 
-# Local functions
+# Show usage
 Usage ()
 {
-    echo "${PROGNAME} opens pg_hba.conf with emacs"
-    echo ""
-    echo "Usage:"
-    echo "  ${PROGNAME} [OPTIONS] [PGDATA]"
-    echo ""
-    echo "Options:"
-    echo "  -h        shows this help, then exits"
+	UsageForHelpOption "opens pg_hba.conf with emacs"
 }
 
-# Should be in pgsql installation directory
+# Check that we are in the pgsql installation directory
 CurDirIsPgsqlIns
 
-# Parse options
-ParseHelpOption ${@}
+# Parse command-line arguments
+ParsingForHelpOption ${@}
 GetPgData ${@}
 ValidatePgData
 

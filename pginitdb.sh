@@ -6,28 +6,30 @@
 # Show usage
 Usage ()
 {
-    echo "${PROGNAME} creates an initial database cluster"
-    echo ""
-    echo "Usage:"
-    echo "  ${PROGNAME} [OPTIONS] [PGDATA]"
-    echo ""
-    echo "Options:"
-    echo "  -h        shows this help, then exits"
+	UsageForHelpOption "creates an initial database cluster"
 }
 
-# Should be in pgsql installation directory
+# Set up minimal settings
+SetupMinimalSettings ()
+{
+	SetOneGuc listen_addresses "'*'" ${PGCONF}
+	SetOneGuc checkpoint_segments 64 ${PGCONF}
+	echo "host	all	all	0.0.0.0/0	trust" >> ${PGHBA}
+}
+
+# Check that we are in the pgsql installation directory
 CurDirIsPgsqlIns
 
-# Parse options
-ParseHelpOption ${@}
+# Parse command-line arguments
+ParsingForHelpOption ${@}
 GetPgData ${@}
 
-# Delete old $PGDATA after checking pgsql is not in progress
+# Delete old $PGDATA if pgsql is NOT running
 PgsqlMustNotRunning
 rm -rf ${PGDATA}
 
 # Create initial database cluster
-${PGBIN}/initdb -D ${PGDATA} --no-locale --encoding=UTF8
-echo "host all all 0.0.0.0/0 trust" >> ${PGDATA}/pg_hba.conf
-echo "listen_addresses = '*'"       >> ${PGDATA}/postgresql.conf
-echo "checkpoint_segments = 64"     >> ${PGDATA}/postgresql.conf
+PGLOCALE=C
+PGENCODING=UTF8
+${PGBIN}/initdb -D ${PGDATA} --locale=${PGLOCALE} --encoding=${PGENCODING}
+SetupMinimalSettings

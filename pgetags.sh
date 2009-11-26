@@ -6,20 +6,20 @@
 # Show usage
 Usage ()
 {
-    echo "${PROGNAME} creates etags files"
+    echo "${PROGNAME} creates \"etags\" files"
     echo ""
     echo "Usage:"
-    echo "  ${PROGNAME} [OPTIONS]"
+    echo "  ${PROGNAME} [-h]"
     echo ""
     echo "Options:"
     echo "  -h        shows this help, then exits"
 }
 
-# Should be in pgsql source directory
+# Check that we are in the pgsql source directory
 CurDirIsPgsqlSrc
 
-# Parse options
-ParseHelpOption ${@}
+# Parse command-line arguments
+ParsingForHelpOption ${@}
 
 # Create etags files
 ${CURDIR}/src/tools/make_etags

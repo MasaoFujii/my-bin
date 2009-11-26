@@ -6,20 +6,14 @@
 # Local functions
 Usage ()
 {
-    echo "${PROGNAME} opens postgresql.conf with emacs"
-    echo ""
-    echo "Usage:"
-    echo "  ${PROGNAME} [OPTIONS] [PGDATA]"
-    echo ""
-    echo "Options:"
-    echo "  -h        shows this help, then exits"
+	UsageForHelpOption "opens postgresql.conf with emacs"
 }
 
-# Should be in pgsql installation directory
+# Check that we are in the pgsql installation directory
 CurDirIsPgsqlIns
 
-# Parse options
-ParseHelpOption ${@}
+# Parse command-line arguments
+ParsingForHelpOption ${@}
 GetPgData ${@}
 ValidatePgData
 

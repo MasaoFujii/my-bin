@@ -6,23 +6,17 @@
 # Show usage
 Usage ()
 {
-    echo "${PROGNAME} starts pgsql"
-    echo ""
-    echo "Usage:"
-    echo "  ${PROGNAME} [OPTIONS] [PGDATA]"
-    echo ""
-    echo "Options:"
-    echo "  -h        shows this help, then exits"
+	UsageForHelpOption "starts pgsql"
 }
 
-# Should be in pgsql installation directory
+# Check that we are in the pgsql installation directory
 CurDirIsPgsqlIns
 
-# Parse options
-ParseHelpOption ${@}
+# Parse command-line arguments
+ParsingForHelpOption ${@}
 GetPgData ${@}
 ValidatePgData
 
-# Start pgsql after checking it's not in progress
-PgsqlMustNotRunning
+# Start pgsql if it's NOT running
+PgsqlMustNotRunning "pgsql is already running; no need to start pgsql again"
 ${PGBIN}/pg_ctl -D ${PGDATA} start

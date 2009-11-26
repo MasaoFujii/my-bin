@@ -6,40 +6,35 @@
 # Show usage
 Usage ()
 {
-    echo "${PROGNAME} prepares archive recovery"
-    echo ""
-    echo "Usage:"
-    echo "  ${PROGNAME} [OPTIONS] [PGDATA]"
-    echo ""
-    echo "Options:"
-    echo "  -h        shows this help, then exits"
+	UsageForHelpOption "prepares for an archive recovery"
 }
 
-# Prepare archive recovery
-PrepareArchiveRecovery ()
+# Prepare for an archive recovery
+PrepareForArchiveRecovery ()
 {
-    # Set up new $PGDATA
-    rm -rf ${PGDATA}
-    cp -r ${PGDATABKP} ${PGDATA}
+	# Replace the old $PGDATA with a base backup
+	rm -rf ${PGDATA}
+	cp -r ${PGDATABKP} ${PGDATA}
 
-    # Set up new $PGARCH
-    if [ -d ${PGARCHBKP} ]; then
-	rm -rf ${PGARCH}
-	cp -r ${PGARCHBKP} ${PGARCH}
-    fi
+	# Replace the old archive directory with a backup if it exists
+	if [ -d ${PGARCHBKP} ]; then
+		rm -rf ${PGARCH}
+		cp -r ${PGARCHBKP} ${PGARCH}
+	fi
 
-    # Supply restore_command
-    echo "restore_command = 'cp ../${PGARCHNAME}/%f %p'" > ${RECOVERYCONF}
+	# Create recovery.conf and specify restore_command
+	RESTORECMD="cp ../${PGARCHNAME}/%f %p"
+    echo "restore_command = '${RESTORECMD}'" > ${RECOVERYCONF}
 }
 
-# Should be in pgsql installation directory
+# Check that we are in the pgsql installation directory
 CurDirIsPgsqlIns
 
-# Parse options
-ParseHelpOption ${@}
+# Parse command-line arguments
+ParsingForHelpOption ${@}
 GetPgData ${@}
 ValidatePgData
 
-# Prepare archive recovery after checking pgsql isn't in progress
+# Prepare for an archive recovery if pgsql is NOT running
 PgsqlMustNotRunning
-PrepareArchiveRecovery
+PrepareForArchiveRecovery

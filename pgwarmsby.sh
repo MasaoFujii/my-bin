@@ -41,17 +41,17 @@ MustHavePgStandby ()
     fi
 }
 
-# Tweak the configuration file (postgresql.conf) of the primary
+# Set up the configuration file (postgresql.conf) of the primary
 # for warm-standby.
-TweakActConfig ()
+SetupActConfig ()
 {
     SetOneGuc port ${ACTPORT} ${ACTCONF}
     SetOneGuc log_line_prefix "'ACT '" ${ACTCONF}
 }
 
-# Tweak the configuration files (postgresql.conf and recovery.conf)
+# Set up the configuration files (postgresql.conf and recovery.conf)
 # of the standby for warm-standby.
-TweakSbyConfig ()
+SetupSbyConfig ()
 {
 	SetOneGuc port ${SBYPORT} ${SBYCONF}
 	SetOneGuc log_line_prefix "'SBY '" ${SBYCONF}
@@ -66,11 +66,11 @@ SetupWarmStandby ()
 {
     pginitdb.sh ${ACTDATA}
     pgarch.sh -A ${PGARCH} ${ACTDATA}
-    TweakActConfig
+    SetupActConfig
     pgstart.sh ${ACTDATA}
     WaitForPgsqlStartup
     pgbackup.sh -D ${SBYDATA} ${ACTDATA}
-    TweakSbyConfig
+    SetupSbyConfig
     pgstart.sh ${SBYDATA}
 }
 
@@ -81,8 +81,8 @@ CurDirIsPgsqlIns
 ArchivingIsSupported
 MustHavePgStandby
 
-# Parse options
-ParseHelpOption ${@}
+# Parse command-line arguments
+ParsingForHelpOption ${@}
 
 # Delete old objects
 rm -rf ${ACTDATA} ${SBYDATA} ${PGARCH} ${TRIGGER}
