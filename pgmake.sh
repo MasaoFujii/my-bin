@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Load the common functions and variables
+# Load common definitions
 . pgcommon.sh
 
 # Compile variables
