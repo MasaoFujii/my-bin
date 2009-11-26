@@ -18,24 +18,8 @@ Usage ()
 # Should be in pgsql installation directory
 CurDirIsPgsqlIns
 
-while getopts "h" OPT; do
-    case ${OPT} in
-	h)
-	    Usage
-	    exit 0
-	    ;;
-    esac
-done
+# Parse options
+SimpleOptionParser ${@}
 
-shift $(expr ${OPTIND} - 1)
-
-if [ ${#} -gt 0 ]; then
-    PGDATA=${1}
-fi
-
-if [ ! -d ${PGDATA} ]; then
-    echo "ERROR: \$PGDATA is not found: ${PGDATA}"
-    exit 1
-fi
-
+# Reload pgsql conf files
 ${PGBIN}/pg_ctl -D ${PGDATA} reload

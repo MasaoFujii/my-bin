@@ -45,13 +45,8 @@ done
 
 shift $(expr ${OPTIND} - 1)
 
-if [ ${#} -gt 0 ]; then
-    PGDATA=${1}
-fi
-
-if [ ! -d ${PGDATA} ]; then
-    echo "ERROR: \$PGDATA is not found: ${PGDATA}"
-    exit 1
-fi
+# Get and validate $PGDATA
+GetPgData ${@}
+ValidatePgData
 
 ${PGBIN}/pg_ctl -D ${PGDATA} -m${SHUTDOWN_MODE} stop

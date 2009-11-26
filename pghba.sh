@@ -9,7 +9,7 @@ Usage ()
     echo "${PROGNAME} opens pg_hba.conf with emacs"
     echo ""
     echo "Usage:"
-    echo "  ${PROGNAME} [PGDATA]"
+    echo "  ${PROGNAME} [OPTIONS] [PGDATA]"
     echo ""
     echo "Options:"
     echo "  -h        shows this help, then exits"
@@ -18,24 +18,8 @@ Usage ()
 # Should be in pgsql installation directory
 CurDirIsPgsqlIns
 
-while getopts "h" OPT; do
-    case ${OPT} in
-	h)
-	    Usage
-	    exit 0
-	    ;;
-    esac
-done
+# Parse options
+SimpleOptionParser ${@}
 
-shift $(expr ${OPTIND} - 1)
-
-if [ ${#} -gt 0 ]; then
-    PGDATA=${1}
-fi
-
-if [ ! -d ${PGDATA} ]; then
-    echo "ERROR: \$PGDATA is not found: ${PGDATA}"
-    exit 1
-fi
-
+# Open pg_hba.conf
 emacs ${PGDATA}/pg_hba.conf &

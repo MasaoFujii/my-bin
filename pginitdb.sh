@@ -29,9 +29,8 @@ done
 
 shift $(expr ${OPTIND} - 1)
 
-if [ ${#} -gt 0 ]; then
-    PGDATA=${1}
-fi
+# Get the path of $PGDATA
+GetPgData ${@}
 
 rm -rf ${PGDATA}
 ${PGBIN}/initdb -D ${PGDATA} --no-locale --encoding=UTF8
