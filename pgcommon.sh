@@ -45,10 +45,10 @@ ValidatePgData ()
     fi
 }
 
-# Parse command-line option for very simple case.
+# Parse only -h option.
 # NOTE: "${@}" should be passed as an argument.
 # NOTE: The function "Usage" should be define before calling this.
-SimpleOptionParser ()
+ParseHelpOption ()
 {
     while getopts "h" OPT; do
 	case ${OPT} in
@@ -58,9 +58,5 @@ SimpleOptionParser ()
 		;;
 	esac
     done
-
     shift $(expr ${OPTIND} - 1)
-
-    GetPgData ${@}
-    ValidatePgData
 }

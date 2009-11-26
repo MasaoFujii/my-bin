@@ -18,18 +18,8 @@ Usage ()
 # Should be in pgsql installation directory
 CurDirIsPgsqlIns
 
-while getopts "h" OPT; do
-    case ${OPT} in
-	h)
-	    Usage
-	    exit 0
-	    ;;
-    esac
-done
-
-shift $(expr ${OPTIND} - 1)
-
-# Get the path of $PGDATA
+# Parse options
+ParseHelpOption ${@}
 GetPgData ${@}
 
 rm -rf ${PGDATA}

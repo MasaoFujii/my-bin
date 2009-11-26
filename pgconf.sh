@@ -19,7 +19,9 @@ Usage ()
 CurDirIsPgsqlIns
 
 # Parse options
-SimpleOptionParser ${@}
+ParseHelpOption ${@}
+GetPgData ${@}
+ValidatePgData
 
 # Open postgresql.conf
 emacs ${PGDATA}/postgresql.conf &

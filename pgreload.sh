@@ -19,7 +19,9 @@ Usage ()
 CurDirIsPgsqlIns
 
 # Parse options
-SimpleOptionParser ${@}
+ParseHelpOption ${@}
+GetPgData ${@}
+ValidatePgData
 
 # Reload pgsql conf files
 ${PGBIN}/pg_ctl -D ${PGDATA} reload

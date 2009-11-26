@@ -42,7 +42,6 @@ while getopts "fhis" OPT; do
 	    ;;
     esac
 done
-
 shift $(expr ${OPTIND} - 1)
 
 # Get and validate $PGDATA

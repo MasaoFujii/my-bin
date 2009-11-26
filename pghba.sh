@@ -19,7 +19,9 @@ Usage ()
 CurDirIsPgsqlIns
 
 # Parse options
-SimpleOptionParser ${@}
+ParseHelpOption ${@}
+GetPgData ${@}
+ValidatePgData
 
 # Open pg_hba.conf
 emacs ${PGDATA}/pg_hba.conf &
