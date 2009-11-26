@@ -15,6 +15,15 @@ Usage ()
     echo "  -h        shows this help, then exits"
 }
 
+# Check that WAL archiving is supported
+WALArchivingIsSupported ()
+{
+    if [ ${PGMAJOR} -lt 80 ]; then
+	echo "ERROR: WAL archiving is not supported in this pgsql version"
+	exit 1
+    fi
+}
+
 # Enable WAL archiving
 EnableWALArchiving ()
 {
@@ -34,6 +43,9 @@ CurDirIsPgsqlIns
 ParseHelpOption ${@}
 GetPgData ${@}
 ValidatePgData
+
+# WAL archiving must be supported in this pgsql version
+WALArchivingIsSupported
 
 # Create new archive directory
 rm -rf ${PGARCH}
