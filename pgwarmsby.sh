@@ -41,21 +41,24 @@ MustHavePgStandby ()
     fi
 }
 
-# Configure for act
-ConfigAct ()
+# Tweak the configuration file (postgresql.conf) of the primary
+# for warm-standby.
+TweakActConfig ()
 {
     SetOneGuc port ${ACTPORT} ${ACTCONF}
     SetOneGuc log_line_prefix "'ACT '" ${ACTCONF}
 }
 
-# Configure for sby
-ConfigSby ()
+# Tweak the configuration files (postgresql.conf and recovery.conf)
+# of the standby for warm-standby.
+TweakSbyConfig ()
 {
-    SetOneGuc port ${SBYPORT} ${SBYCONF}
-    SetOneGuc log_line_prefix "'SBY '" ${SBYCONF}
+	SetOneGuc port ${SBYPORT} ${SBYCONF}
+	SetOneGuc log_line_prefix "'SBY '" ${SBYCONF}
 
-    # Set up pg_standby
-    echo "${PGSTANDBY} -t ${TRIGGER} ${PGARCH} %f %p" > ${RECOVERYCONF}
+	# Set up pg_standby
+	RESTORECMD="${PGSTANDBY} -t ${TRIGGER} ${PGARCH} %f %p"
+	echo "restore_command = '${RESTORECMD}'" > ${RECOVERYCONF}
 }
 
 # Setup warm-standby
@@ -63,11 +66,11 @@ SetupWarmStandby ()
 {
     pginitdb.sh ${ACTDATA}
     pgarch.sh -A ${PGARCH} ${ACTDATA}
-    ConfigAct
+    TweakActConfig
     pgstart.sh ${ACTDATA}
     WaitForPgsqlStartup
     pgbackup.sh -D ${SBYDATA} ${ACTDATA}
-    ConfigSby
+    TweakSbyConfig
     pgstart.sh ${SBYDATA}
 }
 

@@ -162,36 +162,42 @@ ParseHelpOption ()
     shift $(expr ${OPTIND} - 1)
 }
 
-# Remove the line matching the specified regular expression regexp from the file.
-# NOTE: The regular expression regexp must be passed as the first argument.
-# NOTE: The path of target file must be passed as the second argument.
-RemoveLineFromFile ()
+# Remove the line matching the regexp from the file.
+# Arguments:
+#   [1]: regular expression regexp
+#   [2]: path of the target file
+RemoveLine ()
 {
-    if [ ${#} -lt 2 ]; then
-	echo "ERROR: regexp and filepath must be supplied"
-	exit 1
-    fi
+	# Check that two arguments are supplied.
+	if [ ${#} -lt 2 ]; then
+		echo "ERROR: too few arguments in RemoveLine"
+		exit 1
+	fi
+	REGEXP="${1}"
+	TARGETFILE=${2}
 
-    REGEXP="${1}"
-    TARGETFILE=${2}
-
-    sed /"${REGEXP}"/D ${TARGETFILE} > ${TMPFILE}
-    mv ${TMPFILE} ${TARGETFILE}
+	# Delete the line matching the given regexp
+	sed /"${REGEXP}"/D ${TARGETFILE} > ${TMPFILE}
+	mv ${TMPFILE} ${TARGETFILE}
 }
 
-# Set one GUC in postgresql.conf
-# NOTE: arguments are a GUC name, value, and conf path.
+# Set one GUC parameter in postgresql.conf.
+# Arguments:
+#   [1]: parameter name
+#   [2]: parameter value
+#   [3]: path of the configuration file
 SetOneGuc ()
 {
-    if [ ${#} -lt 3 ]; then
-	echo "ERROR: \"GUC name\", \"value\" and \"conf path\" must be supplied"
-	exit 1
-    fi
-    GUCNAME=${1}
-    GUCVALUE=${2}
-    CONFPATH=${3}
+	# Check that three arguments are supplied.
+	if [ ${#} -lt 3 ]; then
+		echo "ERROR: too few arguments in SetOneGuc"
+		exit 1
+	fi
+	GUCNAME=${1}
+	GUCVALUE=${2}
+	CONFPATH=${3}
 
-    # Remove old GUC setting, and add new one
-    RemoveLineFromFile "^${GUCNAME}" ${CONFPATH}
-    echo "${GUCNAME} = ${GUCVALUE}" >> ${CONFPATH}
+    # Replace the old setting with the new
+	RemoveLine "^${GUCNAME}" ${CONFPATH}
+	echo "${GUCNAME} = ${GUCVALUE}" >> ${CONFPATH}
 }
