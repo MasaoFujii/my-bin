@@ -1,9 +1,10 @@
 #!/bin/sh
 
-CURDIR=$(pwd)
-PROGNAME=$(basename ${0})
+# Load the common functions and variables
+. pgcommon.sh
 
-usage ()
+# Local functions
+Usage ()
 {
     echo "${PROGNAME} shuts down pgsql"
     echo ""
@@ -20,14 +21,8 @@ usage ()
     echo "  -s        performs a smart shutdown"
 }
 
-PGBIN=${CURDIR}/bin
-PGDATA=${CURDIR}/data
-
-if [ ! -f ${PGBIN}/pg_config ]; then
-    echo "ERROR: invalid present location"
-    echo "HINT : you need to move to pgsql installation directory"
-    exit 1
-fi
+# Should be in pgsql installation directory
+CurDirIsPgsqlIns
 
 SHUTDOWN_MODE="s"
 while getopts "fhis" OPT; do
@@ -36,7 +31,7 @@ while getopts "fhis" OPT; do
 	    SHUTDOWN_MODE="f"
 	    ;;
 	h)
-	    usage
+	    Usage
 	    exit 0
 	    ;;
 	i)

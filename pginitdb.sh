@@ -1,9 +1,10 @@
 #!/bin/sh
 
-CURDIR=$(pwd)
-PROGNAME=$(basename ${0})
+# Load the common functions and variables
+. pgcommon.sh
 
-usage ()
+# Local functions
+Usage ()
 {
     echo "${PROGNAME} creates an initial database cluster"
     echo ""
@@ -14,19 +15,13 @@ usage ()
     echo "  -h        shows this help, then exits"
 }
 
-PGBIN=${CURDIR}/bin
-PGDATA=${CURDIR}/data
-
-if [ ! -f ${PGBIN}/pg_config ]; then
-    echo "ERROR: invalid present location"
-    echo "HINT : you need to move to pgsql installation directory"
-    exit 1
-fi
+# Should be in pgsql installation directory
+CurDirIsPgsqlIns
 
 while getopts "h" OPT; do
     case ${OPT} in
 	h)
-	    usage
+	    Usage
 	    exit 0
 	    ;;
     esac

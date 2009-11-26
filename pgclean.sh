@@ -1,9 +1,10 @@
 #!/bin/sh
 
-CURDIR=$(pwd)
-PROGNAME=$(basename ${0})
+# Load the common functions and variables
+. pgcommon.sh
 
-usage ()
+# Local functions
+Usage ()
 {
     echo "${PROGNAME} deletes the useless files"
     echo ""
@@ -19,11 +20,8 @@ usage ()
     echo "  -m        runs \"make maintainer-clean\""
 }
 
-if [ ! -f ${CURDIR}/configure ]; then
-    echo "ERROR: invalid present location"
-    echo "HINT : you need to move to pgsql source directory"
-    exit 1
-fi
+# Should be in pgsql source directory
+CurDirIsPgsqlSrc
 
 ALL_CLEAN="FALSE"
 MAINTAINER_CLEAN="FALSE"
@@ -34,7 +32,7 @@ while getopts "ahm" OPT; do
 	    MAINTAINER_CLEAN="TRUE"
 	    ;;
 	h)
-	    usage
+	    Usage
 	    exit 0
 	    ;;
 	m)
