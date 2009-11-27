@@ -97,6 +97,8 @@ CompilePgsql ()
 
     # Compile and install pgsql
     make install
+    echo ""
+    echo ""
 
     # Compile and install contrib modules
     CONTRIBDIR=${CURDIR}/contrib
