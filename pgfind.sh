@@ -4,51 +4,53 @@
 . pgcommon.sh
 
 # Local variables
-TARGETFILES="[chy]"
+TARGET_EXTENSION="[chy]"
 KEYWORD=
 
 # Show usage
 Usage ()
 {
-    echo "${PROGNAME} extracts the line including KEYWORD from pgsql src"
+    echo "${PROGNAME} extracts the line including KEYWORD from pgsql files"
     echo ""
     echo "Usage:"
     echo "  ${PROGNAME} [OPTIONS] KEYWORD"
     echo ""
     echo "Default:"
-    echo "  extracts a line from *.[chy] files"
+    echo "  extracts from source code files"
     echo ""
     echo "Options:"
-    echo "  -c        extracts a line from *.[chy] files"
-    echo "  -d        extracts a line from *.sgml files"
+    echo "  -c        extracts from source code files"
+    echo "  -d        extracts from document files"
     echo "  -h        shows this help, then exits"
 }
 
-# Get KEYWORD from the first command-line argument.
-# NOTE: "${@}" should be passed as an argument.
+# Get KEYWORD from command-line arguments.
+#
+# Arguments:
+#   [1]: command-line argument; "${@}" must be supplied.
 GetKeyword ()
 {
+    # Check that one argument is supplied
     if [ ${#} -lt 1 ]; then
 	echo "ERROR: KEYWORD must be supplied"
 	echo ""
 	Usage
 	exit 1
     fi
-
-    KEYWORD=${1}
+    KEYWORD="${1}"
 }
 
-# Should be in pgsql source directory
+# Check that we are in the pgsql source directory
 CurDirIsPgsqlSrc
 
-# Parse options
+# Determine the search target files
 while getopts "cdh" OPT; do
     case ${OPT} in
 	c)
-	    TARGETFILES="[chy]"
+	    TARGET_EXTENSION="[chy]"
 	    ;;
 	d)
-	    TARGETFILES="sgml"
+	    TARGET_EXTENSION="sgml"
 	    ;;
 	h)
 	    Usage
@@ -59,9 +61,9 @@ done
 shift $(expr ${OPTIND} - 1)
 
 # Get KEYWORD
-GetKeyword ${@}
+GetKeyword "${@}"
 
 # Extract the line including KEYWORD
-for TARGETFILE in $(find ${CURDIR} -name "*.${TARGETFILES}"); do
+for TARGETFILE in $(find ${CURDIR} -name "*.${TARGET_EXTENSION}"); do
     grep -H "${KEYWORD}" ${TARGETFILE}
 done
