@@ -3,7 +3,11 @@
 # Load common definitions
 . pgcommon.sh
 
-# Local functions
+# Cleaning modes
+CLEAN_ALL="FALSE"
+CLEAN_MAINTAINER="FALSE"
+
+# Show usage
 Usage ()
 {
     echo "${PROGNAME} deletes the useless files"
@@ -20,34 +24,41 @@ Usage ()
     echo "  -m        runs \"make maintainer-clean\""
 }
 
-# Should be in pgsql source directory
+# Check that we are in the pgsql source directory
 CurDirIsPgsqlSrc
 
-ALL_CLEAN="FALSE"
-MAINTAINER_CLEAN="FALSE"
+# Determines the cleaning mode
 while getopts "ahm" OPT; do
     case ${OPT} in
 	a)
-	    ALL_CLEAN="TRUE"
-	    MAINTAINER_CLEAN="TRUE"
+	    CLEAN_ALL="TRUE"
+	    CLEAN_MAINTAINER="TRUE"
 	    ;;
 	h)
 	    Usage
 	    exit 0
 	    ;;
 	m)
-	    MAINTAINER_CLEAN="TRUE"
+	    CLEAN_MAINTAINER="TRUE"
+	    ;;
+	*)
+	    echo "ERROR: invalid option; \"${OPT}\""
+	    echo ""
+	    Usage
+	    exit 1
 	    ;;
     esac
 done
+shift $(expr ${OPTIND} - 1)
 
-if [ "${MAINTAINER_CLEAN}" = "TRUE" ]; then
+# Perform cleanup
+if [ "${CLEAN_MAINTAINER}" = "TRUE" ]; then
     make maintainer-clean
 else
     make clean
 fi
 
-if [ "${ALL_CLEAN}" = "TRUE" ]; then
+if [ "${CLEAN_ALL}" = "TRUE" ]; then
     for garbage in $(find . -name "TAGS"); do
 	rm -f ${garbage}
     done
