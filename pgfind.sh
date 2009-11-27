@@ -32,12 +32,12 @@ OPERATION="${2}"
 REGEXP=
 SEARCHPATH=
 case ${OPERATION} in
-	"")
-		REGEXP="*.[chy]"
-		SEARCHPATH=src;;
 	"doc")
 		REGEXP="*.sgml"
 		SEARCHPATH=doc;;
+	*)
+		REGEXP="*.[chy]"
+		SEARCHPATH=src;;
 esac
 
 find ${SEARCHPATH} -name "${REGEXP}" -exec grep -H "${PATTERN}" {} \;
