@@ -1,69 +1,44 @@
 #!/bin/sh
 
-# Load common definitions
 . pgcommon.sh
 
-# Local variables
-TARGET_EXTENSION="[chy]"
-KEYWORD=
-
-# Show usage
 Usage ()
 {
-    echo "${PROGNAME} extracts the line including KEYWORD from pgsql files"
-    echo ""
-    echo "Usage:"
-    echo "  ${PROGNAME} [OPTIONS] KEYWORD"
-    echo ""
-    echo "Default:"
-    echo "  extracts from source code files"
-    echo ""
-    echo "Options:"
-    echo "  -c        extracts from source code files"
-    echo "  -d        extracts from document files"
-    echo "  -h        shows this help, then exits"
-}
-
-# Get KEYWORD from command-line arguments.
-#
-# Arguments:
-#   [1]: command-line argument; "${@}" must be supplied.
-GetKeyword ()
-{
-    # Check that one argument is supplied
-    if [ ${#} -lt 1 ]; then
-	echo "ERROR: KEYWORD must be supplied"
+	echo "${PROGNAME} prints line matching PATTERN"
 	echo ""
-	Usage
-	exit 1
-    fi
-    KEYWORD="${1}"
+	echo "Usage:"
+	echo "  ${PROGNAME} [-h] PATTERN [code]"
+	echo "  ${PROGNAME} [-h] PATTERN doc"
 }
 
-# Check that we are in the pgsql source directory
 CurDirIsPgsqlSrc
-
-# Determine the search target files
-while getopts "cdh" OPT; do
-    case ${OPT} in
-	c)
-	    TARGET_EXTENSION="[chy]"
-	    ;;
-	d)
-	    TARGET_EXTENSION="sgml"
-	    ;;
-	h)
-	    Usage
-	    exit 0
-	    ;;
-    esac
+while getopts "h" OPT; do
+	case ${OPT} in
+		h)
+			Usage
+			exit 0;;
+		*)
+			exit 1;;
+	esac
 done
 shift $(expr ${OPTIND} - 1)
 
-# Get KEYWORD
-GetKeyword "${@}"
+if [ ${#} -lt 1 ]; then
+	echo "ERROR: PATTERN must be supplied"
+	exit 1
+fi
+PATTERN="${1}"
+OPERATION="${2}"
 
-# Extract the line including KEYWORD
-for TARGETFILE in $(find ${CURDIR} -name "*.${TARGET_EXTENSION}"); do
-    grep -H "${KEYWORD}" ${TARGETFILE}
-done
+REGEXP=
+SEARCHPATH=
+case ${OPERATION} in
+	""|"code")
+		REGEXP="*.[chy]"
+		SEARCHPATH=src;;
+	"doc")
+		REGEXP="*.sgml"
+		SEARCHPATH=doc;;
+esac
+
+find ${SEARCHPATH} -name "${REGEXP}" -exec grep -H "${PATTERN}" {} \;
