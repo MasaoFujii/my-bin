@@ -82,6 +82,9 @@ PreventOptimization ()
 # Compile pgsql!
 CompilePgsql ()
 {
+    # Set $LANG to C to enhance readability of log
+    export LANG=C
+
     # Clean up
     pgclean.sh -m
 
