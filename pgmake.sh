@@ -14,45 +14,43 @@ CONFIGURE_OPTS=
 # Show usage
 Usage ()
 {
-    echo "${PROGNAME} compiles pgsql"
+    echo "${PROGNAME} compiles and installs pgsql"
     echo ""
     echo "Usage:"
     echo "  ${PROGNAME} [OPTIONS] PREFIX"
     echo ""
     echo "Default:"
-    echo "  configure --prefix=PREFIX && make install"
+    echo "  runs \"configure --prefix=PREFIX\" and \"make install\""
     echo ""
     echo "Options:"
-    echo "  -a           enables all options for debug (= -c -d -o)"
+    echo "  -a           enables all options for debug (i.e., -c -d -z)"
     echo "  -c           uses \"--enable-cassert\" option"
     echo "  -d           uses \"--enable-debug\" option"
     echo "  -f FLAGS     uses FLAGS as CPPFLAGS"
     echo "  -h           shows this help, then exits"
-    echo "  -l FILENAME  writes compilation log to FILENAME"
+    echo "  -l FILEPATH  writes compilation log to FILEPATH"
     echo "  -z           prevents compiler's optimization"
 }
 
-# Get the path of PREFIX from the first command-line argument
-# NOTE: "${@}" should be passed as an argument.
-GetPrefix ()
+# Get PREFIX from command-line arguments, and validate it.
+#
+# Arguments:
+#   [1]: command-line argument; "${@}" must be supplied.
+GetAndValidatePrefix ()
 {
+    # Check that one argument is supplied
     if [ ${#} -lt 1 ]; then
 	echo "ERROR: PREFIX must be supplied"
 	echo ""
 	Usage
 	exit 1
     fi
-
     PREFIX=${1}
-}
 
-# Validate PREFIX
-ValidatePrefix ()
-{
-    # Parent directory of PREFIX must exist
+    # Check that parent directory of PREFIX exists
     PARENTDIR=$(dirname ${PREFIX})
     if [ ! -d ${PARENTDIR} ]; then
-	echo "ERROR: Invalid PREFIX; parent directory of PREFIX must exist"
+	echo "ERROR: invalid PREFIX; its parent directory is not found"
 	exit 1
     fi
 }
@@ -108,10 +106,10 @@ CompilePgsql ()
     cd ${CURDIR}
 }
 
-# Should be in pgsql source directory
+# Check that we are in the pgsql source directory
 CurDirIsPgsqlSrc
 
-# Parse options
+# Determine the compilation options
 while getopts "acdf:hl:z" OPT; do
     case ${OPT} in
 	a)
@@ -138,13 +136,18 @@ while getopts "acdf:hl:z" OPT; do
 	z)
 	    ENABLE_OPTIMIZATION="FALSE"
 	    ;;
+	*)
+	    echo "ERROR: invalid option; \"${OPT}\""
+	    echo ""
+	    Usage
+	    exit 1
+	    ;;
     esac
 done
 shift $(expr ${OPTIND} - 1)
 
 # Get and validate PREFIX
-GetPrefix ${@}
-ValidatePrefix
+GetAndValidatePrefix ${@}
 
 # Compile pgsql!
 CompilePgsql > ${LOGFILE} 2>&1
