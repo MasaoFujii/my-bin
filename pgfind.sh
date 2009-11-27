@@ -7,8 +7,7 @@ Usage ()
 	echo "${PROGNAME} prints line matching PATTERN"
 	echo ""
 	echo "Usage:"
-	echo "  ${PROGNAME} [-h] PATTERN [code]"
-	echo "  ${PROGNAME} [-h] PATTERN doc"
+	echo "  ${PROGNAME} [-h] PATTERN [doc]"
 }
 
 CurDirIsPgsqlSrc
@@ -33,7 +32,7 @@ OPERATION="${2}"
 REGEXP=
 SEARCHPATH=
 case ${OPERATION} in
-	""|"code")
+	"")
 		REGEXP="*.[chy]"
 		SEARCHPATH=src;;
 	"doc")
