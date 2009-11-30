@@ -103,6 +103,7 @@ if [ -z "$OP" ]; then
 	exit 1
 fi
 
+LOG_SI="$LOGDIR/statsinfo.log"
 LOG_IO="$LOGDIR/iostat.log"
 LOG_PS="$LOGDIR/ps.log"
 LOG_SA="$LOGDIR/sar.log"
@@ -149,6 +150,11 @@ PID_VM=$PID_VM
 " > $PIDFILE
 }
 
+output_log ()
+{
+	echo $(date +"%Y/%m/%d %H:%M:%S")"    ""$1" | tee -a $LOG_SI
+}
+
 if [ "$OP" = "start" ]; then
 	PID_SI=$$
 	if [ -d $LOGDIR ]; then
@@ -156,30 +162,30 @@ if [ "$OP" = "start" ]; then
 		exit 1
 	fi
 	mkdir $LOGDIR
-	echo "creating directory \"$LOGDIR\""
+	output_log "creating directory \"$LOGDIR\""
 
 	if [ "$USE_IO" = "true" -o "$USE_AL" = "true" ]; then
 		iostat -t -x $SECS_IO > $LOG_IO &
 		PID_IO=$!
-		echo "starting iostat (PID: $PID_IO)"
+		output_log "starting iostat (PID: $PID_IO)"
 	fi
 
 	if [ "$USE_PS" = "true" -o "$USE_AL" = "true" ]; then
 		ps_loop &
 		PID_PS=$!
-		echo "starting ps (PID: $PID_PS)"
+		output_log "starting ps (PID: $PID_PS)"
 	fi
 
 	if [ "$USE_SA" = "true" -o "$USE_AL" = "true" ]; then
 		sar -A -o $LOG_SA $SECS_SA 0 > /dev/null &
 		PID_SA=$!
-		echo "starting sar (PID: $PID_SA)"
+		output_log "starting sar (PID: $PID_SA)"
 	fi
 
 	if [ "$USE_VM" = "true" -o "$USE_AL" = "true" ]; then
 		vmstat -n $SECS_VM > $LOG_VM &
 		PID_VM=$!
-		echo "starting vmstat (PID: $PID_VM)"
+		output_log "starting vmstat (PID: $PID_VM)"
 	fi
 
 	write_status
@@ -191,7 +197,7 @@ kill_stats ()
 		if [ ! -z "$2" ]; then
 			kill "$2"
 			eval "$3="
-			echo "stopping $4 (PID: $2)"
+			output_log "stopping $4 (PID: $2)"
 		fi
 	fi
 }
