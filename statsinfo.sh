@@ -149,26 +149,35 @@ PID_VM=$PID_VM
 
 if [ "$OP" = "start" ]; then
 	PID_SI=$$
+	if [ -d $LOGDIR ]; then
+		echo "$PROGNAME: directory \"$LOGDIR\" exists but is not empty"
+		exit 1
+	fi
 	mkdir $LOGDIR
+	echo "creating directory \"$LOGDIR\""
 
 	if [ "$USE_IO" = "true" -o "$USE_AL" = "true" ]; then
 		iostat -t -x $SECS_IO > $LOG_IO &
 		PID_IO=$!
+		echo "starting iostat (PID: $PID_IO)"
 	fi
 
 	if [ "$USE_PS" = "true" -o "$USE_AL" = "true" ]; then
 		ps_loop &
 		PID_PS=$!
+		echo "starting ps (PID: $PID_PS)"
 	fi
 
 	if [ "$USE_SA" = "true" -o "$USE_AL" = "true" ]; then
 		sar -A -o $LOG_SA $SECS_SA 0 > /dev/null &
 		PID_SA=$!
+		echo "starting sar (PID: $PID_SA)"
 	fi
 
 	if [ "$USE_VM" = "true" -o "$USE_AL" = "true" ]; then
 		vmstat -n $SECS_VM > $LOG_VM &
 		PID_VM=$!
+		echo "starting vmstat (PID: $PID_VM)"
 	fi
 
 	write_status
@@ -180,15 +189,16 @@ kill_stats ()
 		if [ ! -z "$2" ]; then
 			kill "$2"
 			eval "$3="
+			echo "stopping $4 (PID: $2)"
 		fi
 	fi
 }
 if [ "$OP" = "stop" ]; then
 	read_status
-	kill_stats "$USE_IO" "$PID_IO" PID_IO
-	kill_stats "$USE_PS" "$PID_PS" PID_PS
-	kill_stats "$USE_SA" "$PID_SA" PID_SA
-	kill_stats "$USE_VM" "$PID_VM" PID_VM
+	kill_stats "$USE_IO" "$PID_IO" PID_IO iostat
+	kill_stats "$USE_PS" "$PID_PS" PID_PS ps
+	kill_stats "$USE_SA" "$PID_SA" PID_SA sar
+	kill_stats "$USE_VM" "$PID_VM" PID_VM vmstat
 	write_status
 fi
 
@@ -197,10 +207,10 @@ show_status ()
 {
 	if [ "$1" = "true" -o "$USE_AL" = "true" ]; then
 		if [ ! -z "$2" ]; then
-			echo "$PROGNAME: $3 is running (PID: $2)"
+			echo "$3 is running (PID: $2)"
 			STATUS_RET=0
 		else
-			echo "$PROGNAME: no $3 is running"
+			echo "no $3 is running"
 		fi
 	fi
 }
