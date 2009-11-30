@@ -3,7 +3,9 @@
 PROGNAME=$(basename ${0})
 
 OP=
-LOGDIR=$(date +%Y%m%d%H%M%S)
+if [ -z "$LOGDIR" ]; then
+	LOGDIR=$(date +%Y%m%d%H%M%S)
+fi
 
 USE_AL=true
 USE_IO=false
