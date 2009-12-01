@@ -155,9 +155,20 @@ output_log ()
 {
 	echo $(date +"%Y/%m/%d %H:%M:%S")"    ""$1" | tee -a $LOG_SI
 }
-
+have_stats ()
+{
+	which $1 > /dev/null 2>&1
+	if [ $? -ne 0 ]; then
+		echo "$PROGNAME: $1 not found"
+		exit 1
+	fi
+}
 if [ "$OP" = "start" ]; then
 	PID_SI=$$
+	have_stats iostat
+	have_stats ps
+	have_stats sar
+	have_stats vmstat
 	if [ -d $LOGDIR ]; then
 		echo "$PROGNAME: directory \"$LOGDIR\" exists but is not empty"
 		exit 1
