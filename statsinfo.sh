@@ -189,7 +189,7 @@ if [ "$OP" = "start" ]; then
 	fi
 
 	if [ "$USE_SA" = "true" -o "$USE_AL" = "true" ]; then
-		sar -A -o $LOG_SA $SECS_SA 0 > /dev/null &
+		sar -A -o $LOG_SA $SECS_SA > /dev/null &
 		PID_SA=$!
 		output_log "starting sar (PID: $PID_SA)"
 	fi
