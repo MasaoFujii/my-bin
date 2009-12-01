@@ -1,6 +1,6 @@
 #!/bin/sh
 
-PROGNAME=$(basename ${0})
+PROGNAME=$(basename $0)
 
 OP=
 if [ -z "$LOGDIR" ]; then
