@@ -92,8 +92,9 @@ while [ $# -gt 0 ]; do
 			echo "$PROGNAME: invalid operation mode: $1" 1>&2
 			exit 1;;
 	esac
-	if [ "$HAVE_ARG" == "true" ]; then
+	if [ "$HAVE_ARG" = "true" ]; then
 		shift
+		HAVE_ARG=false
 	fi
 	shift
 done
