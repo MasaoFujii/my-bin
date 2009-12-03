@@ -59,16 +59,15 @@ report_pgsql_processes ()
 	done
 }
 
-if [ "$ONETIME" == "true" ]; then
+if [ "$ONETIME" = "true" ]; then
 	report_pgsql_processes
 	exit 0
 fi
 
-if [ "$BATCH" == "true" ]; then
-	while [ 1 ]
-	 do
-	 report_pgsql_processes
-	 sleep $DELAY
+if [ "$BATCH" = "true" ]; then
+	while [ 1 ]; do
+		report_pgsql_processes
+		sleep $DELAY
 	done
 else
 	watch -n$DELAY "$PROGNAME -1"
