@@ -4,64 +4,74 @@
 
 LOGFILE=/tmp/pgmake.log
 PREFIX=
-OPERATION=
+DEBUG=false
 
-Usage ()
+usage ()
 {
-    echo "${PROGNAME} compiles and installs pgsql"
+    echo "$PROGNAME compiles and installs pgsql"
     echo ""
     echo "Usage:"
-    echo "  ${PROGNAME} [-f FLAG] PREFIX [debug]"
+    echo "  $PROGNAME [OPTIONS] PREFIX"
+		echo ""
+		echo "Description:"
+		echo "  PREFIX indicates an installation directory, which must be supplied."
+		echo "  By default, 'configure --enable-debug' and 'make install' are run."
+		echo "  The log messages of the compilation are output in $LOGFILE."
     echo ""
     echo "Options:"
-    echo "  -f FLAG      uses FLAG as CPPFLAGS"
+		echo "  -d, --debug      compiles pgsql for debug; uses --enable-cassert"
+		echo "                   option and prevents the compiler's optimization"
+    echo "  -f, --flag FLAG  uses FLAG as CPPFLAGS"
 }
 
-CompilePgsql ()
+compile_pgsql ()
 {
 	export LANG=C
 	pgclean.sh -m
 
-	case ${OPERATION} in
-		"debug")
-			CONFIGOPTS="--enable-debug --enable-cassert"
-			./configure --prefix=${PREFIX} ${CONFIGOPTS}
-			MAKEFILE=${CURDIR}/src/Makefile.global
-			sed s/\-O2//g ${MAKEFILE} > ${TMPFILE}
-			mv ${TMPFILE} ${MAKEFILE};;
-		*)
-			CONFIGOPTS="--enable-debug"
-			./configure --prefix=${PREFIX} ${CONFIGOPTS};;
-	esac
+	if [ "$DEBUG" = "true" ]; then
+		./configure --prefix=$PREFIX --enable-debug --enable-cassert
+		MAKEFILE=$CURDIR/src/Makefile.global
+		sed s/\-O2//g $MAKEFILE > $TMPFILE
+		mv $TMPFILE $MAKEFILE
+	else
+		./configure --prefix=$PREFIX --enable-debug
+	fi
 
 	make install
 	echo -e "\n"
 
-    cd ${CURDIR}/contrib/pgbench
-    make install
-    cd ${CURDIR}/contrib/pg_standby
-    make install
+	cd $CURDIR/contrib/pgbench
+	make install
+	cd $CURDIR/contrib/pg_standby
+	make install
 }
 
 CurDirIsPgsqlSrc
-while getopts "f:h" OPT; do
-	case ${OPT} in
-		f)
-			export CPPFLAGS="${OPTARG} ${CPPFLAGS}";;
-		h)
-			Usage
-			exit 0;;
-		*)
-			exit 1;;
-	esac
-done
-shift $(expr ${OPTIND} - 1)
 
-if [ ${#} -lt 1 ]; then
-	echo "ERROR: PREFIX must be supplied"
+while [ $# -gt 0 ]; do
+	case "$1" in
+		-d|--debug)
+			DEBUG=true;;
+		-f|--flag)
+			export CPPFLAGS="$2 $CPPFLAGS"
+			shift;;
+		-h|--help|"-\?")
+			usage
+			exit 0;;
+		-*)
+			echo "$PROGNAME: invalid option: $1" 1>&2
+			exit 1;;
+		*)
+			PREFIX="$2"
+			shift;;
+	esac
+	shift
+done
+
+if [ -z "$PREFIX" ]; then
+	echo "$PROGNAME: PREFIX must be supplied"
 	exit 1
 fi
-PREFIX="${1}"
-OPERATION="${2}"
 
-CompilePgsql > ${LOGFILE} 2>&1
+compile_pgsql > $LOGFILE 2>&1
