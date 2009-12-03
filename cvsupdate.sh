@@ -37,4 +37,4 @@ pgclean.sh -a
 cvs update
 pgetags.sh
 rm -rf $PREFIX
-pgmake.sh $PREFIX debug
+pgmake.sh -d $PREFIX
