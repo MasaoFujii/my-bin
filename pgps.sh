@@ -1,73 +1,75 @@
 #!/bin/sh
 
-## Variables
-PROGNAME=${0}
+. pgcommon.sh
 
-## Options by command-line arguments
-PGPS_BATCH=FALSE
-PGPS_DELAY=1
-PGPS_1TIME=FALSE
+BATCH=false
+DELAY=1
+ONETIME=false
 
-## Usage
 usage ()
 {
-    echo "${PROGNAME} provides a dynamic real-time view of running postgres processes."
-    echo "By default, screen is updated every 1 second."
+    echo "$PROGNAME provides a dynamic real-time view of running postgres processes."
     echo ""
     echo "Usage:"
-    echo "  ${PROGNAME} [OPTIONS]"
+    echo "  $PROGNAME [OPTIONS]"
+		echo ""
+		echo "Description:"
+    echo "  By default, screen is updated every 1 second."
     echo ""
     echo "Options:"
-    echo "  -b            Starts ${PROGNAME} in 'Batch mode', which could be useful for"
-    echo "                sending output from ${PROGNAME} to other programs or to a file."
-    echo "  -d SECONDS    Specifies the delay between screen updates."
-    echo "  -1            Starts ${PROGNAME} in '1-time mode', which reports a snapshot only once"
+    echo "  -b, --batch       batch mode; reports running processes in a row"
+    echo "  -d, --delay SECS  specifies the delay between screen updates or"
+		echo "                    reports in batch mode"
+    echo "  -1                1-time mode; reports running processes only once"
+		echo ""
+		echo "Notes:"
+		echo "  -1 is given priority over -b if both are specified."
 }
 
-## Parse command-line arguments
-while getopts "bd:1" OPT
-  do
-  case ${OPT} in
-      b)
-	  PGPS_BATCH=TRUE
-	  ;;
-      d)
-	  PGPS_DELAY=${OPTARG}
-	  ;;
-      1)
-	  PGPS_1TIME=TRUE
-	  ;;
-  esac
+while [ $# -gt 0 ]; do
+	case "$1" in
+		-b|--batch)
+			BATCH=true;;
+		-d|--delay)
+			DELAY="$2"
+			shift;;
+		-h|--help|"-\?")
+			usage
+			exit 0;;
+		-1)
+			ONETIME=true;;
+		*)
+			echo "$PROGNAME: invalid option: $1" 1>&2
+			exit 1;;
+	esac
+	shift
 done
 
-## Report a snapshot of the current postgres processes
-pgps_report_snapshot ()
+report_pgsql_processes ()
 {
-    date
+	date
 
-    PGPS_PIDLIST=$(pgrep -d, -x postgres)
-    if [ "${PGPS_PIDLIST}" != "" ]; then
-	ps -fp ${PGPS_PIDLIST}
-	echo ""
-    fi
+	for processname in postgres postmaster; do
+		PIDLIST=$(pgrep -d, -x $processname)
+		if [ ! -z "$PIDLIST" ]; then
+			ps -fp $PIDLIST
+			echo ""
+			return
+		fi
+	done
 }
 
-## Main
-### 1-time mode
-if [ "${PGPS_1TIME}" == "TRUE" ]; then
-    pgps_report_snapshot
-    exit 0
+if [ "$ONETIME" == "true" ]; then
+	report_pgsql_processes
+	exit 0
 fi
 
-### Batch mode
-if [ "${PGPS_BATCH}" == "TRUE" ]; then
-    while [ 1 ]
-      do
-      pgps_report_snapshot
-      sleep ${PGPS_DELAY}
-    done
-
-### Real-time view mode
+if [ "$BATCH" == "true" ]; then
+	while [ 1 ]
+	 do
+	 report_pgsql_processes
+	 sleep $DELAY
+	done
 else
-    watch -n${PGPS_DELAY} "${PROGNAME} -1"
+	watch -n$DELAY "$PROGNAME -1"
 fi
