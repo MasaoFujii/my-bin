@@ -63,8 +63,7 @@ while [ $# -gt 0 ]; do
 			echo "$PROGNAME: invalid option: $1" 1>&2
 			exit 1;;
 		*)
-			PREFIX="$1"
-			shift;;
+			PREFIX="$1";;
 	esac
 	shift
 done
