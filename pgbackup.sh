@@ -25,7 +25,7 @@ Usage ()
     echo "Options:"
     echo "  -a        also takes backup of archive directory"
     echo "  -A PATH   specifies path of archive directory backup"
-    echo "  -D PATH   specifies path of $PGDATA backup"
+    echo "  -D PATH   specifies path of database cluster backup"
     echo "  -h        shows this help, then exits"
     echo "  -x        also takes backup of pg_xlog"
 }
