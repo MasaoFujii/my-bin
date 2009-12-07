@@ -4,7 +4,10 @@ PROGNAME=$(basename $0)
 INPUT=
 OUTPUT=
 TITLE=
+PLOT=
 PLOTSTR=
+XLABEL=
+YLABEL=
 
 usage ()
 {
@@ -26,9 +29,11 @@ usage ()
 	echo "      $PROGNAME vmstat.log 0:1@\"run queue\",0:2@\"wait queue\""
 	echo ""
 	echo "Options:"
-	echo "  -o, --output    output png file. by default, 'INPUT.png' is"
-	echo "                  used as the name of an output png file"
-	echo "  -t, --title     shows graph title"
+	echo "  -o, --output        output png file. by default, 'INPUT.png' is"
+	echo "                      used as the name of an output png file"
+	echo "  -t, --title         shows graph title"
+	echo "  --xlabel LABEL      shows label for x-axis"
+	echo "  --ylabel LABEL      shows label for y-axis"
 }
 
 while [ $# -gt 0 ]; do
@@ -41,6 +46,12 @@ while [ $# -gt 0 ]; do
 			shift;;
 		-t|--title)
 			TITLE="$2"
+			shift;;
+		--xlabel)
+			XLABEL="$2"
+			shift;;
+		--ylabel)
+			YLABEL="$2"
 			shift;;
 		*)
 			if [ -z "$INPUT" ]; then
@@ -94,6 +105,8 @@ set title "$TITLE"
 set border 3
 set xtics nomirror
 set ytics nomirror
+set xlabel "$XLABEL"
+set ylabel "$YLABEL"
 set lmargin 10
 set bmargin 3
 set rmargin 2
