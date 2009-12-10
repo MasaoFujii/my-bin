@@ -2,13 +2,6 @@
 
 . pgcommon.sh
 
-BACKUP_PGARCH="FALSE"
-BACKUP_PGXLOG="FALSE"
-STARTLSN=
-STOPLSN=
-PGDATABKP_SUPPLY=
-PGARCHBKP_SUPPLY=
-
 usage ()
 {
     echo "$PROGNAME creates a base backup"
