@@ -1,9 +1,7 @@
 #!/bin/sh
 
-# Load common definitions
 . pgcommon.sh
 
-# Local variables
 BACKUP_PGARCH="FALSE"
 BACKUP_PGXLOG="FALSE"
 STARTLSN=
@@ -11,130 +9,46 @@ STOPLSN=
 PGDATABKP_SUPPLY=
 PGARCHBKP_SUPPLY=
 
-# Show usage
-Usage ()
+usage ()
 {
-    echo "${PROGNAME} creates base backup"
+    echo "$PROGNAME creates a base backup"
     echo ""
     echo "Usage:"
-    echo "  ${PROGNAME} [OPTIONS] [PGDATA]"
+    echo "  $PROGNAME [PGDATA]"
     echo ""
-    echo "Default:"
-    echo "  takes backup of $PGDATA"
-    echo ""
-    echo "Options:"
-    echo "  -a        also takes backup of archive directory"
-    echo "  -A PATH   specifies path of archive directory backup"
-    echo "  -D PATH   specifies path of database cluster backup"
-    echo "  -h        shows this help, then exits"
-    echo "  -x        also takes backup of pg_xlog"
+		echo "Description:"
+		echo "  This utility creates a base backup of PGDATA."
 }
 
-# Take base backup of $PGDATA
-BackupPgData ()
-{
-    # Determine the arguments of pg_start_backup
-    STARTBKPARGS="${PROGNAME}"
-    if [ ${PGMAJOR} -ge 84 ]; then
-	STARTBKPARGS="${STARTBKPARGS}, true"
-    fi
-
-    # Determine the SQL statement of pg_start_backup
-    STARTBKPSQL="SELECT pg_xlogfile_name(pg_start_backup('${STARTBKPARGS}'))"
-    if [ ${PGMAJOR} -eq 83 ]; then
-	STARTBKPSQL="CHECKPOINT; ${STARTBKPSQL}"
-    fi
-
-    # Determine the SQL statement of pg_stop_backup
-    STOPBKPSQL="SELECT pg_xlogfile_name(pg_stop_backup())"
-
-    # Determine rsync's exclusion list
-    EXCLUDELIST="--exclude=postmaster.pid"
-    if [ "${BACKUP_PGXLOG}" = "FALSE" ]; then
-	EXCLUDELIST="${EXCLUDELIST} --exclude=pg_xlog"
-    fi
-
-    # Delete old backup of $PGDATA
-    if [ ! -z "${PGDATABKP_SUPPLY}" ]; then
-	PGDATABKP=${PGDATABKP_SUPPLY}
-    fi
-    rm -rf ${PGDATABKP}
-
-    # Take base backup
-    STARTLSN=$(${PGBIN}/psql -Atc "${STARTBKPSQL}" ${TEMPLATEDB})
-    if [ ${?} -ne 0 ]; then
-	exit 1
-    fi
-    rsync -a ${EXCLUDELIST} ${PGDATA}/ ${PGDATABKP}
-    STOPLSN=$(${PGBIN}/psql -Atc "${STOPBKPSQL}" ${TEMPLATEDB})
-
-    # Create pg_xlog and archive_status if they are not in backup
-    if [ "${BACKUP_PGXLOG}" = "FALSE" ]; then
-	mkdir -p ${PGDATABKP}/pg_xlog/archive_status
-    fi
-}
-
-# Take backup of archive directory
-BackupPgArch ()
-{
-    if [ "${BACKUP_PGARCH}" = "FALSE" ]; then
-	return
-    fi
-
-    # Delete old backup of archive directory
-    if [ ! -z "${PGARCHBKP_SUPPLY}" ]; then
-	PGARCHBKP=${PGARCHBKP_SUPPLY}
-    fi
-    rm -rf ${PGARCHBKP}
-
-    # Wait until backup history file and last WAL file have been archived
-    if [ ${PGMAJOR} -le 83 ]; then
-	BACKUP_HISTORY="${STARTLSN}.*.backup"
-	LAST_WALFILE="${STOPLSN}"
-	WaitFileArchived ${BACKUP_HISTORY}
-	WaitFileArchived ${LAST_WALFILE}
-    fi
-
-    # Take backup of archive directory
-    rsync -a ${PGARCH}/ ${PGARCHBKP}
-}
-
-# Should be in pgsql installation directory
-CurDirIsPgsqlIns
-
-# Parse options
-while getopts "aA:D:hx" OPT; do
-    case ${OPT} in
-	a)
-	    BACKUP_PGARCH="TRUE"
-	    ;;
-	A)
-	    PGARCHBKP_SUPPLY=${OPTARG}
-	    ;;
-	D)
-	    PGDATABKP_SUPPLY=${OPTARG}
-	    ;;
-	h)
-	    Usage
-	    exit 0
-	    ;;
-	x)
-	    BACKUP_PGXLOG="TRUE"
-	    ;;
-    esac
+while [ $# -gt 0 ]; do
+	case "$1" in
+		-h|--help|"-\?")
+			usage
+			exit 0;;
+		-*)
+			echo "$PROGNAME: invalid option: $1" 1>&2
+			exit 1;;
+		*)
+			update_pgdata "$1";;
+	esac
+	shift
 done
-shift $(expr ${OPTIND} - 1)
 
-# Get and validate $PGDATA
-GetPgData ${@}
-ValidatePgData
+check_here_is_installation
+check_archiving_is_supported
+check_directory_exists $PGDATA "database cluster"
 
-# WAL archiving must be supported in this pgsql version
-ArchivingIsSupported
-
-# Pgsql must be running
 PgsqlMustRunning
 
-# Take backup
-BackupPgData
-BackupPgArch
+rm -rf $PGDATABKP
+
+if [ ${PGMAJOR} -ge 84 ]; then
+	$PGBIN/psql -c "SELECT pg_start_backup('pgbackup', true)" template1
+else
+	$PGBIN/psql -c "CHECKPOINT; SELECT pg_start_backup('pgbackup', true)" template1
+fi
+
+rsync -a --exclude=postmaster.pid --exclude=pg_xlog $PGDATA/ $PGDATABKP
+$PGBIN/psql -c "SELECT pg_stop_backup()" template1
+
+mkdir -p $PGDATABKP/pg_xlog/archive_status

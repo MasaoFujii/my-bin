@@ -69,7 +69,8 @@ SetupWarmStandby ()
     SetupActConfig
     pgstart.sh ${ACTDATA}
     WaitForPgsqlStartup
-    pgbackup.sh -D ${SBYDATA} ${ACTDATA}
+    pgbackup.sh ${ACTDATA}
+		cp -r $ACTDATA.bkp $SBYDATA
     SetupSbyConfig
     pgstart.sh ${SBYDATA}
 }

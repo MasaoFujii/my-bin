@@ -23,7 +23,7 @@ while [ $# -gt 0 ]; do
 			echo "$PROGNAME: invalid option: $1" 1>&2
 			exit 1;;
 		*)
-			PGDATA="$1";;
+			update_pgdata "$1";;
 	esac
 	shift
 done
@@ -36,11 +36,6 @@ if [ ! -d $PGDATA ]; then
 fi
 
 PgsqlMustNotRunning
-
-PGARCH=$PGDATA.arch
-PGARCHNAME=$(basename $PGARCH)
-PGDATABKP=$PGDATA.bkp
-PGARCHBKP=$PGARCH.bkp
 
 if [ ! -d $PGDATABKP ]; then
 	echo "$PROGNAME: base backup is not found: \"$PGDATABKP\"" 1>&2

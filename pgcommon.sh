@@ -1,26 +1,37 @@
 #!/bin/sh
 
-# Common global variables
 CURDIR=$(pwd)
 PROGNAME=$(basename ${0})
 TMPFILE=/tmp/pgscript_$(date +%Y%m%d%H%M%S).tmp
 PGMAJOR=
-TEMPLATEDB=template1
 
-# Directories of pgsql
-PGBIN=${CURDIR}/bin
-PGDATA=${CURDIR}/data
-PGARCH=${PGDATA}.arch
-PGARCHNAME=$(basename ${PGARCH})
-PGXLOG=${PGDATA}/pg_xlog
-PGARCHSTATUS=${PGXLOG}/archive_status
-PGDATABKP=${PGDATA}.bkp
-PGARCHBKP=${PGARCH}.bkp
-PGCONF=${PGDATA}/postgresql.conf
-PGHBA=${PGDATA}/pg_hba.conf
-RECOVERYCONF=${PGDATA}/recovery.conf
+PGBIN=$CURDIR/bin
+PGDATA=
+PGARCH=
+PGARCHNAME=
+PGXLOG=
+PGARCHSTATUS=
+PGDATABKP=
+PGARCHBKP=
+PGCONF=
+PGHBA=
+RECOVERYCONF=
 
-# Current location is pgsql source dir?
+update_pgdata ()
+{
+	PGDATA="$1"
+	PGARCH=$PGDATA.arh
+	PGARCHNAME=$(basename $PGARCH)
+	PGXLOG=$PGDATA/pg_xlog
+	PGARCHSTATUS=$PGXLOG/archive_status
+	PGDATABKP=$PGDATA.bkp
+	PGARCHBKP=$PGARCH.bkp
+	PGCONF=$PGDATA/postgresql.conf
+	PGHBA=$PGDATA/pg_hba.conf
+	RECOVERYCONF=$PGDATA/recovery.conf
+}
+update_pgdata "$CURDIR/data"
+
 CurDirIsPgsqlSrc ()
 {
     if [ ! -f ${CURDIR}/configure ]; then
@@ -29,7 +40,6 @@ CurDirIsPgsqlSrc ()
     fi
 }
 
-# Current location is pgsql installation dir?
 CurDirIsPgsqlIns ()
 {
     if [ ! -f ${PGBIN}/pg_config ]; then
@@ -39,6 +49,40 @@ CurDirIsPgsqlIns ()
 
     # Get the pgsql major version
     PGMAJOR=$(${PGBIN}/pg_config --version | tr --delete [A-z.' '] | cut -c1-2)
+}
+
+check_here_is_source ()
+{
+	if [ ! -f $CURDIR/configure ]; then
+		echo "$PROGNAME: here is NOT source directory: \"$CURDIR\"" 2>&1
+		exit 1
+	fi
+}
+
+check_here_is_installation ()
+{
+	if [ ! -f $PGBIN/pg_config ]; then
+		echo "$PROGNAME: here is NOT installation directory: \"$CURDIR\"" 2>&1
+		exit 1
+	fi
+
+	PGMAJOR=$($PGBIN/pg_config --version | tr --delete [A-z.' '] | cut -c1-2)
+}
+
+check_directory_exists ()
+{
+	if [ ! -d "$1" ]; then
+		echo "$PROGNAME: %2 is NOT found: \"$1\""
+		exit 1
+	fi
+}
+
+check_archiving_is_supported ()
+{
+	if [ $PGMAJOR -lt 80 ]; then
+		echo "$PROGNAME: WAL archiving is NOT supported in $($PGBIN/pg_config --version)" 2>&1
+		exit 1
+	fi
 }
 
 # Get the path of $PGDATA from the first commad-line argument.
@@ -120,44 +164,12 @@ PgsqlMustNotRunning ()
 	fi
 }
 
-# Wait until target file has been archived.
-# NOTE: target file *NAME* must be passed in the first argument.
-WaitFileArchived ()
-{
-    # Get target file name
-    if [ ${#} -lt 1 ]; then
-	echo "ERROR: target file name must be supplied"
-	exit 1
-    fi
-    TARGETFILE=${1}
-
-    # archive_status file of target
-    READYFILE=${PGARCHSTATUS}/${TARGETFILE}.ready
-    DONEFILE=${PGARCHSTATUS}/${TARGETFILE}.done
-
-    while [ 1 ]; do
-	# Regarded as archived if .done exists in archive_status
-	if [ -f ${DONEFILE} ]; then
-	    return
-	fi
-
-	# Regarded as archived if .ready doesn't exist in archive_status
-	# and target file itself doesn't exist in pg_xlog.
-	if [ ! -f ${READYFILE} -a ! -f ${PGXLOG}/${TARGETFILE} ]; then
-	    return
-	fi
-
-	# Sleep 1 sec
-	sleep 1
-    done
-}
-
 # Wait until startup of pgsql has been completed,
 # i.e., pgsql has been brought up.
 WaitForPgsqlStartup ()
 {
 	while [ 1 ]; do
-		${PGBIN}/psql -l ${TEMPLATEDB} > /dev/null 2>&1
+		${PGBIN}/psql -l template1 > /dev/null 2>&1
 		if [ ${?} -eq 0 ]; then
 			return
 		fi
