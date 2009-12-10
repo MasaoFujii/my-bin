@@ -1,25 +1,27 @@
 #!/bin/sh
 
-# Load common definitions
 . pgcommon.sh
 
-# Show usage
-Usage ()
+usage ()
 {
-    echo "${PROGNAME} creates \"etags\" files"
-    echo ""
-    echo "Usage:"
-    echo "  ${PROGNAME} [-h]"
-    echo ""
-    echo "Options:"
-    echo "  -h        shows this help, then exits"
+	echo "$PROGNAME creates \"etags\" files"
+	echo ""
+	echo "Usage:"
+	echo "  $PROGNAME"
 }
 
-# Check that we are in the pgsql source directory
-CurDirIsPgsqlSrc
+check_here_is_source
 
-# Parse command-line arguments
-ParsingForHelpOption ${@}
+while [ $# -gt 0 ]; do
+	case "$1" in
+		-h|--help|"-\?")
+			usage
+			exit 0;;
+		*)
+			echo "$PROGNAME: invalid option: $1" 1>&2
+			exit 1;;
+	esac
+	shift
+done
 
-# Create etags files
-${CURDIR}/src/tools/make_etags
+$CURDIR/src/tools/make_etags
