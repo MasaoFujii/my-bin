@@ -94,7 +94,7 @@ GetPgData ()
     fi
 
     # The following paths are derived from $PGDATA
-    PGARCH=${PGDATA}.arch
+    PGARCH=${PGDATA}.arh
     PGARCHNAME=$(basename ${PGARCH})
     PGXLOG=${PGDATA}/pg_xlog
     PGARCHSTATUS=${PGXLOG}/archive_status
