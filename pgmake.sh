@@ -8,20 +8,20 @@ DEBUG=false
 
 usage ()
 {
-    echo "$PROGNAME compiles and installs pgsql"
-    echo ""
-    echo "Usage:"
-    echo "  $PROGNAME [OPTIONS] PREFIX"
-		echo ""
-		echo "Description:"
-		echo "  PREFIX indicates an installation directory, which must be supplied."
-		echo "  By default, 'configure --enable-debug' and 'make install' are run."
-		echo "  The log messages of the compilation are output in $LOGFILE."
-    echo ""
-    echo "Options:"
-		echo "  -d, --debug      compiles pgsql for debug; uses --enable-cassert"
-		echo "                   option and prevents the compiler's optimization"
-    echo "  -f, --flag FLAG  uses FLAG as CPPFLAGS"
+	echo "$PROGNAME compiles and installs pgsql"
+	echo ""
+	echo "Usage:"
+	echo "  $PROGNAME [OPTIONS] PREFIX"
+	echo ""
+	echo "Description:"
+	echo "  PREFIX indicates an installation directory, which must be supplied."
+	echo "  By default, 'configure --enable-debug' and 'make install' are run."
+	echo "  The log messages of the compilation are output in $LOGFILE."
+	echo ""
+	echo "Options:"
+	echo "  -d, --debug      compiles pgsql for debug; uses --enable-cassert"
+	echo "                   option and prevents the compiler's optimization"
+	echo "  -f, --flag FLAG  uses FLAG as CPPFLAGS"
 }
 
 compile_pgsql ()
@@ -74,3 +74,7 @@ if [ -z "$PREFIX" ]; then
 fi
 
 compile_pgsql > $LOGFILE 2>&1
+
+cat $LOGFILE
+echo -e "\n"
+grep warning $LOGFILE
