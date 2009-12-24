@@ -57,9 +57,11 @@ for pgdata in $(ls $CURDIR); do
 	if [ $? -eq 0 ]; then
 		echo "rm -rf $pgdata"
 		rm -rf "$pgdata"
-		echo "rm -rf $pgdata.arch"
-		rm -rf "$pgdata.arch"
+		echo "rm -rf $pgdata.arh"
+		rm -rf "$pgdata.arh"
 		echo "rm -rf $pgdata.bkp"
 		rm -rf "$pgdata.bkp"
+		echo "rm -rf $pgdata.arh.bkp"
+		rm -rf "$pgdata.arh.bkp"
 	fi
 done
