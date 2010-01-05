@@ -57,7 +57,7 @@ SetupSbyConfig ()
 	SetOneGuc log_line_prefix "'SBY '" ${SBYCONF}
 
 	# Set up pg_standby
-	RESTORECMD="${PGSTANDBY} -t ${TRIGGER} ${PGARCH} %f %p"
+	RESTORECMD="${PGSTANDBY} -t ${TRIGGER} -r 1 ${PGARCH} %f %p"
 	echo "restore_command = '${RESTORECMD}'" > ${RECOVERYCONF}
 }
 
