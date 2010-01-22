@@ -38,7 +38,7 @@ rm -rf $PGDATABKP
 if [ ${PGMAJOR} -ge 84 ]; then
 	$PGBIN/psql -c "SELECT pg_start_backup('pgbackup', true)" template1
 else
-	$PGBIN/psql -c "CHECKPOINT; SELECT pg_start_backup('pgbackup', true)" template1
+	$PGBIN/psql -c "CHECKPOINT; SELECT pg_start_backup('pgbackup')" template1
 fi
 
 rsync -a --exclude=postmaster.pid --exclude=pg_xlog $PGDATA/ $PGDATABKP
