@@ -31,7 +31,7 @@ usage ()
 	echo "Options:"
 	echo "  -o, --output        output png file. by default, 'INPUT.png' is"
 	echo "                      used as the name of an output png file"
-	echo "  -t, --title         shows graph title"
+	echo "  -t, --title TITLE   shows graph title"
 	echo "  --xlabel LABEL      shows label for x-axis"
 	echo "  --ylabel LABEL      shows label for y-axis"
 }
