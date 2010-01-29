@@ -6,7 +6,7 @@ SBY=sby
 SBYCONF=$SBY/postgresql.conf
 RCONF=$SBY/recovery.conf
 
-rm -f trigger $ACTBKP $SBY
+rm -rf trigger $ACTBKP $SBY
 pgbackup.sh $ACT
 mv $ACTBKP $SBY
 echo "port = 5433" >> $SBYCONF
