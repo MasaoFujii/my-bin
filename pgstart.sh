@@ -1,22 +1,39 @@
 #!/bin/sh
 
-# Load common definitions
 . pgcommon.sh
 
-# Show usage
-Usage ()
+WAITOPT=
+
+usage ()
 {
-	UsageForHelpOption "starts pgsql"
+	echo "$PROGNAME starts the postgres server"
+	echo ""
+	echo "Usage:"
+	echo "  $PROGNAME [OPTIONS] [PGDATA]"
+	echo ""
+	echo "Options:"
+	echo "  -w       waits for the start to complete"
 }
 
-# Check that we are in the pgsql installation directory
-CurDirIsPgsqlIns
+while [ $# -gt 0 ]; do
+	case "$1" in
+		-h|--help|"-\?")
+			usage
+			exit 0;;
+		-w)
+			WAITOPT="-w";;
+		-*)
+			echo "$PROGNAME: invalid option: $1" 1>&2
+			exit 1;;
+		*)
+			update_pgdata "$1";;
+	esac
+	shift
+done
 
-# Parse command-line arguments
-ParsingForHelpOption ${@}
-GetPgData ${@}
-ValidatePgData
+check_here_is_installation
+check_directory_exists $PGDATA "database cluster"
 
-# Start pgsql if it's NOT running
-PgsqlMustNotRunning "pgsql is already running; no need to start pgsql again"
-${PGBIN}/pg_ctl -D ${PGDATA} start
+PgsqlMustNotRunning
+
+${PGBIN}/pg_ctl $WAITOPT -D ${PGDATA} start
