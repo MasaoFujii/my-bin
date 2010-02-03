@@ -5,6 +5,7 @@
 LOGFILE=/tmp/pgmake.log
 PREFIX=
 DEBUG=false
+CONFOPTS=
 
 usage ()
 {
@@ -19,6 +20,7 @@ usage ()
 	echo "  The log messages of the compilation are output in $LOGFILE."
 	echo ""
 	echo "Options:"
+	echo "  -c  OPTIONS      uses OPTIONS as a configure options"
 	echo "  -d, --debug      compiles pgsql for debug; uses --enable-cassert"
 	echo "                   option and prevents the compiler's optimization"
 	echo "  -f, --flag FLAG  uses FLAG as CPPFLAGS"
@@ -30,12 +32,12 @@ compile_pgsql ()
 	pgclean.sh -m
 
 	if [ "$DEBUG" = "true" ]; then
-		./configure --prefix=$PREFIX --enable-debug --enable-cassert
+		./configure --prefix=$PREFIX --enable-debug --enable-cassert $CONFOPTS
 		MAKEFILE=$CURDIR/src/Makefile.global
 		sed s/\-O2//g $MAKEFILE > $TMPFILE
 		mv $TMPFILE $MAKEFILE
 	else
-		./configure --prefix=$PREFIX --enable-debug
+		./configure --prefix=$PREFIX --enable-debug $CONFOPTS
 	fi
 
 	make install
@@ -51,6 +53,9 @@ CurDirIsPgsqlSrc
 
 while [ $# -gt 0 ]; do
 	case "$1" in
+		-c)
+			CONFOPTS="$2"
+			shift;;
 		-d|--debug)
 			DEBUG=true;;
 		-f|--flag)
