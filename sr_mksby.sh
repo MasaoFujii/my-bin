@@ -12,5 +12,6 @@ mv $ACTBKP $SBY
 echo "port = 5433" >> $SBYCONF
 echo "log_line_prefix = 'sby [%p] '" >> $SBYCONF
 echo "standby_mode = 'on'" >> $RCONF
+echo "primary_conninfo = 'host=localhost port=5432'" >> $RCONF
 echo "trigger_file = '../trigger'" >> $RCONF
 pgstart.sh $SBY
