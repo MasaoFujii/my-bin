@@ -228,22 +228,11 @@ ParsingForHelpOption ()
 	shift $(expr ${OPTIND} - 1)
 }
 
-# Remove the line matching the regexp from the file.
-#
-# Arguments:
-#   [1]: regular expression regexp
-#   [2]: path of the target file
-RemoveLine ()
+remove_line ()
 {
-	# Check that two arguments are supplied.
-	if [ ${#} -lt 2 ]; then
-		echo "ERROR: too few arguments in RemoveLine"
-		exit 1
-	fi
 	REGEXP="${1}"
 	TARGETFILE=${2}
 
-	# Delete the line matching the given regexp
 	sed /"${REGEXP}"/D ${TARGETFILE} > ${TMPFILE}
 	mv ${TMPFILE} ${TARGETFILE}
 }
@@ -266,6 +255,6 @@ SetOneGuc ()
 	CONFPATH=${3}
 
     # Replace the old setting with the new
-	RemoveLine "^${GUCNAME}" ${CONFPATH}
+	remove_line "^${GUCNAME}" ${CONFPATH}
 	echo "${GUCNAME} = ${GUCVALUE}" >> ${CONFPATH}
 }
