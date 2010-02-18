@@ -230,11 +230,11 @@ ParsingForHelpOption ()
 
 remove_line ()
 {
-	REGEXP="${1}"
-	TARGETFILE=${2}
+	PATTERN="$1"
+	TARGETFILE="$2"
 
-	sed /"${REGEXP}"/D ${TARGETFILE} > ${TMPFILE}
-	mv ${TMPFILE} ${TARGETFILE}
+	sed /"$PATTERN"/D $TARGETFILE > $TMPFILE
+	mv $TMPFILE $TARGETFILE
 }
 
 # Set one GUC parameter in postgresql.conf.
