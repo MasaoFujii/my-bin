@@ -34,7 +34,7 @@ usage ()
 
 while [ $# -gt 0 ]; do
 	case "$1" in
-		-c|--copy|)
+		-c|--copy)
 			COPYMODE=true;;
 		-h|--help|"-\?")
 			usage
