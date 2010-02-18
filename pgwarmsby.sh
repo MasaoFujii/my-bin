@@ -45,16 +45,16 @@ MustHavePgStandby ()
 # for warm-standby.
 SetupActConfig ()
 {
-    SetOneGuc port ${ACTPORT} ${ACTCONF}
-    SetOneGuc log_line_prefix "'ACT '" ${ACTCONF}
+    set_guc port ${ACTPORT} ${ACTCONF}
+    set_guc log_line_prefix "'ACT '" ${ACTCONF}
 }
 
 # Set up the configuration files (postgresql.conf and recovery.conf)
 # of the standby for warm-standby.
 SetupSbyConfig ()
 {
-	SetOneGuc port ${SBYPORT} ${SBYCONF}
-	SetOneGuc log_line_prefix "'SBY '" ${SBYCONF}
+	set_guc port ${SBYPORT} ${SBYCONF}
+	set_guc log_line_prefix "'SBY '" ${SBYCONF}
 
 	# Set up pg_standby
 	RESTORECMD="${PGSTANDBY} -t ${TRIGGER} -r 1 ${PGARCH} %f %p"

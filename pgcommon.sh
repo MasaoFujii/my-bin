@@ -237,24 +237,12 @@ remove_line ()
 	mv $TMPFILE $TARGETFILE
 }
 
-# Set one GUC parameter in postgresql.conf.
-#
-# Arguments:
-#   [1]: parameter name
-#   [2]: parameter value
-#   [3]: path of the configuration file
-SetOneGuc ()
+set_guc ()
 {
-	# Check that three arguments are supplied.
-	if [ ${#} -lt 3 ]; then
-		echo "ERROR: too few arguments in SetOneGuc"
-		exit 1
-	fi
-	GUCNAME=${1}
-	GUCVALUE=${2}
-	CONFPATH=${3}
+	GUCNAME="$1"
+	GUCVALUE="$2"
+	CONFPATH="$3"
 
-    # Replace the old setting with the new
-	remove_line "^${GUCNAME}" ${CONFPATH}
-	echo "${GUCNAME} = ${GUCVALUE}" >> ${CONFPATH}
+	remove_line "^$GUCNAME" $CONFPATH
+	echo "$GUCNAME = $GUCVALUE" >> $CONFPATH
 }

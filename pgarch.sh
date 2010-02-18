@@ -23,10 +23,10 @@ Usage ()
 EnableWALArchiving ()
 {
     if [ ${PGMAJOR} -ge 83 ]; then
-	SetOneGuc archive_mode on ${PGCONF}
+			set_guc archive_mode on ${PGCONF}
     fi
 
-    SetOneGuc archive_command "'cp %p ../${PGARCHNAME}/%f'" ${PGCONF}
+    set_guc archive_command "'cp %p ../${PGARCHNAME}/%f'" ${PGCONF}
 }
 
 # Should be in pgsql installation directory

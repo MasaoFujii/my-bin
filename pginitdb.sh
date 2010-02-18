@@ -10,11 +10,11 @@ Usage ()
 SetupMinimalSettings ()
 {
 	if [ $PGMAJOR -le 74 ]; then
-		SetOneGuc tcpip_socket true ${PGCONF}
+		set_guc tcpip_socket true ${PGCONF}
 	else
-		SetOneGuc listen_addresses "'*'" ${PGCONF}
+		set_guc listen_addresses "'*'" ${PGCONF}
 	fi
-	SetOneGuc checkpoint_segments 64 ${PGCONF}
+	set_guc checkpoint_segments 64 ${PGCONF}
 	echo "host	all	all	0.0.0.0/0	trust" >> ${PGHBA}
 }
 
