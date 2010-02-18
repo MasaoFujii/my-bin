@@ -1,92 +1,94 @@
 #!/bin/sh
 
-# Load common definitions
 . pgcommon.sh
 
-# Local variables
-PGSTANDBY=${PGBIN}/pg_standby
-ACTDATA=${CURDIR}/act
-ACTCONF=${ACTDATA}/postgresql.conf
+PGSTANDBY=$PGBIN/pg_standby
+
+ACTDATA=$CURDIR/act
+ACTCONF=$ACTDATA/postgresql.conf
 ACTPORT=5432
-SBYDATA=${CURDIR}/sby
-SBYCONF=${SBYDATA}/postgresql.conf
+ACTPREFIX=ACT
+
+SBYDATA=$CURDIR/sby
+SBYCONF=$SBYDATA/postgresql.conf
 SBYPORT=5433
-PGARCH=${CURDIR}/arch
-TRIGGER=${CURDIR}/trigger
-RECOVERYCONF=${SBYDATA}/recovery.conf
+SBYPREFIX=SBY
 
-# Show usage
-Usage ()
+PGARCH=$ACTDATA.arh
+PGBKP=$ACTDATA.bkp
+TRIGGER=$CURDIR/trigger
+RECOVERYCONF=$SBYDATA/recovery.conf
+
+COPYMODE=false
+
+usage ()
 {
-    echo "${PROGNAME} configures warm-standby"
-    echo ""
-    echo "Usage:"
-    echo "  ${PROGNAME} [OPTIONS]"
-    echo ""
-    echo "Options:"
-    echo "  -h        shows this help, then exits"
+	echo "$PROGNAME configures warm-standby"
+	echo ""
+	echo "Usage:"
+	echo "  $PROGNAME [OPTIONS]"
+	echo ""
+	echo "Options:"
+	echo "  -c, --copy      use 'cp' as restore_command (possible in 9.0 or later)"
 }
 
-# pg_standby is installed?
-MustHavePgStandby ()
-{
-    if [ ${PGMAJOR} -lt 82 ]; then
-	echo "ERROR: warm-standby is not supported"
-	exit 1
-    fi
+while [ $# -gt 0 ]; do
+	case "$1" in
+		-c|--copy|)
+			COPYMODE=true;;
+		-h|--help|"-\?")
+			usage
+			exit 0;;
+		*)
+			elog "invalid option: $1"
+	esac
+	shift
+done
 
-    if [ ! -f ${PGSTANDBY} ]; then
-	echo "ERROR: pg_standby must be installed"
-	exit 1
-    fi
+setup_warm_standby ()
+{
+    pginitdb.sh $ACTDATA
+    pgarch.sh $ACTDATA
+
+		set_guc port $ACTPORT $ACTCONF
+    set_guc log_line_prefix "'$ACTPREFIX '" $ACTCONF
+
+    pgstart.sh -w $ACTDATA
+    pgbackup.sh $ACTDATA
+		cp -r $PGBKP $SBYDATA
+
+		set_guc port $SBYPORT $SBYCONF
+		set_guc log_line_prefix "'$SBYPREFIX '" $SBYCONF
+
+		if [ "$COPYMODE" = "true" ]; then
+			echo "standby_mode = 'on'" >> $RECOVERYCONF
+			echo "restore_command = 'cp $PGARCH/%f %p'" >> $RECOVERYCONF
+			echo "trigger_file = '$TRIGGER'"
+		else
+			RESTORECMD="$PGSTANDBY -t $TRIGGER -r 1 $PGARCH %f %p"
+			echo "restore_command = '$RESTORECMD'" > $RECOVERYCONF
+		fi
+
+    pgstart.sh $SBYDATA
 }
 
-# Set up the configuration file (postgresql.conf) of the primary
-# for warm-standby.
-SetupActConfig ()
-{
-    set_guc port ${ACTPORT} ${ACTCONF}
-    set_guc log_line_prefix "'ACT '" ${ACTCONF}
-}
+check_here_is_installation
+archiving_is_supported
 
-# Set up the configuration files (postgresql.conf and recovery.conf)
-# of the standby for warm-standby.
-SetupSbyConfig ()
-{
-	set_guc port ${SBYPORT} ${SBYCONF}
-	set_guc log_line_prefix "'SBY '" ${SBYCONF}
+if [ $PGMAJOR -lt 82 ]; then
+	elog "warm-standby is not supported"
+fi
 
-	# Set up pg_standby
-	RESTORECMD="${PGSTANDBY} -t ${TRIGGER} -r 1 ${PGARCH} %f %p"
-	echo "restore_command = '${RESTORECMD}'" > ${RECOVERYCONF}
-}
+if [ "$COPYMODE" = "true" ]; then
+	if [ $PGMAJOR -lt 90 ]; then
+		elog "copy mode (-c) requires v9.0 or later"
+	fi
+else
+	if [ ! -f $PGSTANDBY ]; then
+		elog "pg_standby must be installed"
+	fi
+fi
 
-# Setup warm-standby
-SetupWarmStandby ()
-{
-    pginitdb.sh ${ACTDATA}
-    pgarch.sh -A ${PGARCH} ${ACTDATA}
-    SetupActConfig
-    pgstart.sh ${ACTDATA}
-    WaitForPgsqlStartup
-    pgbackup.sh ${ACTDATA}
-		cp -r $ACTDATA.bkp $SBYDATA
-    SetupSbyConfig
-    pgstart.sh ${SBYDATA}
-}
+rm -rf $ACTDATA $SBYDATA $PGARCH $TRIGGER
 
-# Should be in pgsql installation directory
-CurDirIsPgsqlIns
-
-# Can we configure warm-standby?
-ArchivingIsSupported
-MustHavePgStandby
-
-# Parse command-line arguments
-ParsingForHelpOption ${@}
-
-# Delete old objects
-rm -rf ${ACTDATA} ${SBYDATA} ${PGARCH} ${TRIGGER}
-
-# Set up warm-standby
-SetupWarmStandby
+setup_warm_standby

@@ -116,7 +116,7 @@ ValidatePgData ()
 
 # WAL archiving is supported?
 # NOTE: CurDirIsPgsqlIns must be done before calling this.
-ArchivingIsSupported ()
+archiving_is_supported ()
 {
     if [ ${PGMAJOR} -lt 80 ]; then
 	echo "ERROR: WAL archiving is not supported in this pgsql version"
@@ -245,4 +245,10 @@ set_guc ()
 
 	remove_line "^$GUCNAME" $CONFPATH
 	echo "$GUCNAME = $GUCVALUE" >> $CONFPATH
+}
+
+elog ()
+{
+	echo "$PROGNAME: $1" 1>&2
+	exit 1
 }

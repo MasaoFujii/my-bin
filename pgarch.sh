@@ -51,7 +51,7 @@ GetPgData ${@}
 ValidatePgData
 
 # WAL archiving must be supported in this pgsql version
-ArchivingIsSupported
+archiving_is_supported
 
 # Create new archive directory
 if [ ! -z "${PGARCH_SUPPLY}" ]; then
