@@ -67,7 +67,7 @@ setup_warm_standby ()
 		if [ "$COPYMODE" = "true" ]; then
 			echo "standby_mode = 'on'" >> $RECOVERYCONF
 			echo "restore_command = 'cp $PGARCH/%f %p'" >> $RECOVERYCONF
-			echo "trigger_file = '$TRIGGER'"
+			echo "trigger_file = '$TRIGGER'" >> $RECOVERYCONF
 		else
 			RESTORECMD="$PGSTANDBY -t $TRIGGER -r 1 $PGARCH %f %p"
 			echo "restore_command = '$RESTORECMD'" > $RECOVERYCONF
