@@ -28,6 +28,10 @@ usage ()
 	echo "Usage:"
 	echo "  $PROGNAME [OPTIONS]"
 	echo ""
+	echo "Description:"
+	echo "  $PROGNAME creates warm-standby environement by using pg_standby as"
+	echo "  restore_command by default."
+	echo ""
 	echo "Options:"
 	echo "  -c, --copy      use 'cp' as restore_command (possible in 9.0 or later)"
 }
