@@ -81,6 +81,10 @@ cp -r $PGBKP $SBYDATA
 set_guc port $SBYPORT $SBYCONF
 set_guc log_line_prefix "'$SBYPREFIX '" $SBYCONF
 
+if [ $PGMAJOR -ge 90 ]; then
+	set_guc hot_standby on $SBYCONF
+fi
+
 if [ "$COPYMODE" = "true" ]; then
 	echo "standby_mode = 'on'" >> $RECOVERYCONF
 	echo "restore_command = 'cp $PGARCH/%f %p'" >> $RECOVERYCONF
