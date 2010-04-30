@@ -44,7 +44,7 @@ while [ $# -gt 0 ]; do
 			usage
 			exit 0;;
 		*)
-			elog "invalid option: $1"
+			elog "invalid option: $1";;
 	esac
 	shift
 done

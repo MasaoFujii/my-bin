@@ -1,52 +1,44 @@
 #!/bin/sh
 
-# Load common definitions
 . pgcommon.sh
 
-# Local functions
-Usage ()
+usage ()
 {
-    echo "${PROGNAME} shuts down pgsql"
-    echo ""
-    echo "Usage:"
-    echo "  ${PROGNAME} [OPTIONS] [PGDATA]"
-    echo ""
-    echo "Default:"
-    echo "  performs a smart shutdown"
-    echo ""
-    echo "Options:"
-    echo "  -f        performs a fast shutdown"
-    echo "  -h        shows this help, then exits"
-    echo "  -i        performs an immediate shutdown"
-    echo "  -s        performs a smart shutdown"
+	echo "$PROGNAME shuts down the postgres server"
+	echo ""
+	echo "Usage:"
+	echo "  $PROGNAME [OPTIONS] [PGDATA]"
+	echo ""
+	echo "Default:"
+	echo "  This utility performs a smart shutdown"
+	echo ""
+	echo "Options:"
+	echo "  -f, --fast        performs a fast shutdown"
+	echo "  -i, --immediate   performs an immediate shutdown"
+	echo "  -s, --smart       performs a smart shutdown"
 }
 
 here_is_installation
 
 SHUTDOWN_MODE="s"
-while getopts "fhis" OPT; do
-    case ${OPT} in
-	f)
-	    SHUTDOWN_MODE="f"
-	    ;;
-	h)
-	    Usage
-	    exit 0
-	    ;;
-	i)
-	    SHUTDOWN_MODE="i"
-	    ;;
-	s)
-	    SHUTDOWN_MODE="s"
-	    ;;
-    esac
+while [ $# -gt 0 ]; do
+	case "$1" in
+		-f|--fast)
+			SHUTDOWN_MODE="f";;
+		-h|--help|"-\?")
+			usage
+			exit 0;;
+		-i|--immediate)
+			SHUTDOWN_MODE="i";;
+		-s|--smart)
+			SHUTDOWN_MODE="s";;
+		-*)
+			elog "invalid option: $1";;
+		*)
+			update_pgdata "$1";;
+	esac
+	shift
 done
-shift $(expr ${OPTIND} - 1)
 
-# Get and validate $PGDATA
-GetPgData ${@}
-ValidatePgData
-
-# Shut down pgsql after checking it's in progress
 PgsqlMustRunning
-${PGBIN}/pg_ctl -D ${PGDATA} -m${SHUTDOWN_MODE} stop
+$PGBIN/pg_ctl -D $PGDATA -m$SHUTDOWN_MODE stop
