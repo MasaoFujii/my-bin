@@ -49,33 +49,6 @@ while [ $# -gt 0 ]; do
 	shift
 done
 
-setup_warm_standby ()
-{
-    pginitdb.sh $ACTDATA
-    pgarch.sh $ACTDATA
-
-		set_guc port $ACTPORT $ACTCONF
-    set_guc log_line_prefix "'$ACTPREFIX '" $ACTCONF
-
-    pgstart.sh -w $ACTDATA
-    pgbackup.sh $ACTDATA
-		cp -r $PGBKP $SBYDATA
-
-		set_guc port $SBYPORT $SBYCONF
-		set_guc log_line_prefix "'$SBYPREFIX '" $SBYCONF
-
-		if [ "$COPYMODE" = "true" ]; then
-			echo "standby_mode = 'on'" >> $RECOVERYCONF
-			echo "restore_command = 'cp $PGARCH/%f %p'" >> $RECOVERYCONF
-			echo "trigger_file = '$TRIGGER'" >> $RECOVERYCONF
-		else
-			RESTORECMD="$PGSTANDBY -t $TRIGGER -r 1 $PGARCH %f %p"
-			echo "restore_command = '$RESTORECMD'" > $RECOVERYCONF
-		fi
-
-    pgstart.sh $SBYDATA
-}
-
 here_is_installation
 archiving_is_supported
 
@@ -95,4 +68,26 @@ fi
 
 rm -rf $ACTDATA $SBYDATA $PGARCH $TRIGGER
 
-setup_warm_standby
+pginitdb.sh $ACTDATA
+pgarch.sh $ACTDATA
+
+set_guc port $ACTPORT $ACTCONF
+set_guc log_line_prefix "'$ACTPREFIX '" $ACTCONF
+
+pgstart.sh -w $ACTDATA
+pgbackup.sh $ACTDATA
+cp -r $PGBKP $SBYDATA
+
+set_guc port $SBYPORT $SBYCONF
+set_guc log_line_prefix "'$SBYPREFIX '" $SBYCONF
+
+if [ "$COPYMODE" = "true" ]; then
+	echo "standby_mode = 'on'" >> $RECOVERYCONF
+	echo "restore_command = 'cp $PGARCH/%f %p'" >> $RECOVERYCONF
+	echo "trigger_file = '$TRIGGER'" >> $RECOVERYCONF
+else
+	RESTORECMD="$PGSTANDBY -t $TRIGGER -r 1 $PGARCH %f %p"
+	echo "restore_command = '$RESTORECMD'" > $RECOVERYCONF
+fi
+
+pgstart.sh $SBYDATA
