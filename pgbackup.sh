@@ -28,7 +28,7 @@ while [ $# -gt 0 ]; do
 done
 
 here_is_installation
-check_archiving_is_supported
+archiving_is_supported
 check_directory_exists $PGDATA "database cluster"
 
 PgsqlMustRunning

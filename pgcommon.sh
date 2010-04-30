@@ -58,7 +58,7 @@ check_directory_exists ()
 	fi
 }
 
-check_archiving_is_supported ()
+archiving_is_supported ()
 {
 	if [ $PGMAJOR -lt 80 ]; then
 		echo "$PROGNAME: WAL archiving is NOT supported in $($PGBIN/pg_config --version)" 2>&1
@@ -93,14 +93,6 @@ ValidatePgData ()
 	echo "ERROR: \$PGDATA is not found: ${PGDATA}"
 	exit 1
     fi
-}
-
-archiving_is_supported ()
-{
-	if [ $PGMAJOR -lt 80 ]; then
-		echo "ERROR: WAL archiving is not supported in this pgsql version"
-		exit 1
-	fi
 }
 
 # Emit an error if pgsql is NOT running.
