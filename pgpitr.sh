@@ -47,7 +47,7 @@ if [ ! -d $PGARCH ]; then
 	exit 1
 fi
 
-RESTORECMD="cp ../${PGARCHNAME}/%f %p"
+RESTORECMD="cp ../$(basename $PGARCH)/%f %p"
 echo "restore_command = '${RESTORECMD}'" > $PGDATABKP/recovery.conf
 
 rm -rf $PGDATABKP/pg_xlog

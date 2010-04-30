@@ -8,7 +8,6 @@ PGMAJOR=
 PGBIN=$CURDIR/bin
 PGDATA=
 PGARCH=
-PGARCHNAME=
 PGXLOG=
 PGARCHSTATUS=
 PGDATABKP=
@@ -21,7 +20,6 @@ update_pgdata ()
 {
 	PGDATA="$1"
 	PGARCH=$PGDATA.arh
-	PGARCHNAME=$(basename $PGARCH)
 	PGXLOG=$PGDATA/pg_xlog
 	PGARCHSTATUS=$PGXLOG/archive_status
 	PGDATABKP=$PGDATA.bkp
@@ -76,7 +74,6 @@ GetPgData ()
 
     # The following paths are derived from $PGDATA
     PGARCH=${PGDATA}.arh
-    PGARCHNAME=$(basename ${PGARCH})
     PGXLOG=${PGDATA}/pg_xlog
     PGARCHSTATUS=${PGXLOG}/archive_status
     PGDATABKP=${PGDATA}.bkp
