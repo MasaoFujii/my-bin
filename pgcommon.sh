@@ -217,6 +217,6 @@ set_guc ()
 
 elog ()
 {
-	echo "$PROGNAME: $1" 1>&2
+	echo "$PROGNAME: ERROR: $1" 1>&2
 	exit 1
 }
