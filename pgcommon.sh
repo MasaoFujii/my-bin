@@ -132,20 +132,6 @@ PgsqlMustNotRunning ()
 	fi
 }
 
-# Wait until startup of pgsql has been completed,
-# i.e., pgsql has been brought up.
-WaitForPgsqlStartup ()
-{
-	while [ 1 ]; do
-		${PGBIN}/psql -l template1 > /dev/null 2>&1
-		if [ ${?} -eq 0 ]; then
-			return
-		fi
-
-		sleep 1
-	done
-}
-
 # Show very simple usage which handles only help (-h) option.
 #
 # Arguments:
