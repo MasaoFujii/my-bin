@@ -29,8 +29,7 @@ EnableWALArchiving ()
     set_guc archive_command "'cp %p ../${PGARCHNAME}/%f'" ${PGCONF}
 }
 
-# Should be in pgsql installation directory
-CurDirIsPgsqlIns
+here_is_installation
 
 # Parse options
 while getopts "A:h" OPT; do

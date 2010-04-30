@@ -28,7 +28,7 @@ while [ $# -gt 0 ]; do
 	shift
 done
 
-CurDirIsPgsqlIns
+here_is_installation
 
 if [ ! -d $PGDATA ]; then
 	echo "$PROGNAME: database cluster is not found: \"$PGDATA\"" 1>&2

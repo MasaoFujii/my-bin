@@ -10,7 +10,7 @@ Usage ()
 	echo "  ${PROGNAME} [-h] PATTERN [doc]"
 }
 
-CurDirIsPgsqlSrc
+here_is_source
 while getopts "h" OPT; do
 	case ${OPT} in
 		h)

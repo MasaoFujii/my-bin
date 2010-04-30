@@ -49,7 +49,7 @@ compile_pgsql ()
 	make install
 }
 
-CurDirIsPgsqlSrc
+here_is_source
 
 while [ $# -gt 0 ]; do
 	case "$1" in

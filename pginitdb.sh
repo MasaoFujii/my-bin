@@ -18,7 +18,7 @@ SetupMinimalSettings ()
 	echo "host	all	all	0.0.0.0/0	trust" >> ${PGHBA}
 }
 
-CurDirIsPgsqlIns
+here_is_installation
 
 ParsingForHelpOption ${@}
 GetPgData ${@}

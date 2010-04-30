@@ -35,7 +35,7 @@ while [ $# -gt 0 ]; do
 	shift
 done
 
-check_here_is_installation
+here_is_installation
 check_directory_exists $PGDATA "database cluster"
 
 if [ -z "$SECS" ]; then

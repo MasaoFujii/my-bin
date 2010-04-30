@@ -24,8 +24,7 @@ Usage ()
     echo "  -m        runs \"make maintainer-clean\""
 }
 
-# Check that we are in the pgsql source directory
-CurDirIsPgsqlSrc
+here_is_source
 
 # Determines the cleaning mode
 while getopts "ahm" OPT; do

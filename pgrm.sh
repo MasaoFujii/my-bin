@@ -14,7 +14,7 @@ usage ()
 	echo "  are removed from current directory."
 }
 
-CurDirIsPgsqlIns
+here_is_installation
 
 while [ $# -gt 0 ]; do
 	case "$1" in

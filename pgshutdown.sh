@@ -21,8 +21,7 @@ Usage ()
     echo "  -s        performs a smart shutdown"
 }
 
-# Should be in pgsql installation directory
-CurDirIsPgsqlIns
+here_is_installation
 
 SHUTDOWN_MODE="s"
 while getopts "fhis" OPT; do

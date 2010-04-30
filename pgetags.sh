@@ -10,7 +10,7 @@ usage ()
 	echo "  $PROGNAME"
 }
 
-check_here_is_source
+here_is_source
 
 while [ $# -gt 0 ]; do
 	case "$1" in

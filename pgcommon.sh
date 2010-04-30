@@ -32,26 +32,7 @@ update_pgdata ()
 }
 update_pgdata "$CURDIR/data"
 
-CurDirIsPgsqlSrc ()
-{
-    if [ ! -f ${CURDIR}/configure ]; then
-	echo "ERROR: invalid current location; move to pgsql source directory"
-	exit 1
-    fi
-}
-
-CurDirIsPgsqlIns ()
-{
-    if [ ! -f ${PGBIN}/pg_config ]; then
-	echo "ERROR: invalid current location; move to pgsql installation directory"
-	exit 1
-    fi
-
-    # Get the pgsql major version
-    PGMAJOR=$(${PGBIN}/pg_config --version | tr --delete [A-z.' '] | cut -c1-2)
-}
-
-check_here_is_source ()
+here_is_source ()
 {
 	if [ ! -f $CURDIR/configure ]; then
 		echo "$PROGNAME: here is NOT source directory: \"$CURDIR\"" 2>&1
@@ -59,7 +40,7 @@ check_here_is_source ()
 	fi
 }
 
-check_here_is_installation ()
+here_is_installation ()
 {
 	if [ ! -f $PGBIN/pg_config ]; then
 		echo "$PROGNAME: here is NOT installation directory: \"$CURDIR\"" 2>&1
@@ -114,14 +95,12 @@ ValidatePgData ()
     fi
 }
 
-# WAL archiving is supported?
-# NOTE: CurDirIsPgsqlIns must be done before calling this.
 archiving_is_supported ()
 {
-    if [ ${PGMAJOR} -lt 80 ]; then
-	echo "ERROR: WAL archiving is not supported in this pgsql version"
-	exit 1
-    fi
+	if [ $PGMAJOR -lt 80 ]; then
+		echo "ERROR: WAL archiving is not supported in this pgsql version"
+		exit 1
+	fi
 }
 
 # Emit an error if pgsql is NOT running.

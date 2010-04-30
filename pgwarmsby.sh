@@ -76,7 +76,7 @@ setup_warm_standby ()
     pgstart.sh $SBYDATA
 }
 
-check_here_is_installation
+here_is_installation
 archiving_is_supported
 
 if [ $PGMAJOR -lt 82 ]; then

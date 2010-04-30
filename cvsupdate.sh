@@ -14,7 +14,7 @@ usage ()
 	echo "The default PREFIX is \"$PREFIX\"."
 }
 
-CurDirIsPgsqlSrc
+here_is_source
 
 if [ ! -d $CURDIR/CVS ]; then
 	echo "$PROGNAME: here \"$CURDIR\" is not CVS directory"

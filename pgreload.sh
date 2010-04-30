@@ -9,8 +9,7 @@ Usage ()
 	UsageForHelpOption "reloads the pgsql configuration files"
 }
 
-# Check that we are in the pgsql installation directory
-CurDirIsPgsqlIns
+here_is_installation
 
 # Parse command-line arguments
 ParsingForHelpOption ${@}
