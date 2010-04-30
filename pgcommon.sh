@@ -66,7 +66,7 @@ check_here_is_installation ()
 		exit 1
 	fi
 
-	PGMAJOR=$($PGBIN/pg_config --version | tr --delete [A-z.' '] | cut -c1-2)
+	PGMAJOR=$($PGBIN/pg_config --version | tr --delete [A-z' '] | cut -d. -f1-2 | tr --delete .)
 }
 
 check_directory_exists ()
