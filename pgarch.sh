@@ -36,7 +36,7 @@ rm -rf $PGARCH
 mkdir $PGARCH
 
 if [ $PGMAJOR -ge 90 ]; then
-	set_guc wal_level archive $PGCONF
+	set_guc wal_level hot_standby $PGCONF
 fi
 
 if [ $PGMAJOR -ge 83 ]; then
