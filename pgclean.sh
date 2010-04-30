@@ -5,7 +5,7 @@
 CLEAN_ALL="FALSE"
 CLEAN_MAINTAINER="FALSE"
 
-usage
+usage ()
 {
 	echo "$PROGNAME removes the useless files from source directory"
 	echo ""
