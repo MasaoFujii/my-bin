@@ -49,8 +49,6 @@ compile_pgsql ()
 	make install
 }
 
-here_is_source
-
 while [ $# -gt 0 ]; do
 	case "$1" in
 		-c)
@@ -65,17 +63,17 @@ while [ $# -gt 0 ]; do
 			usage
 			exit 0;;
 		-*)
-			echo "$PROGNAME: invalid option: $1" 1>&2
-			exit 1;;
+			elog "invalid option: $1";;
 		*)
 			PREFIX="$1";;
 	esac
 	shift
 done
 
+here_is_source
+
 if [ -z "$PREFIX" ]; then
-	echo "$PROGNAME: PREFIX must be supplied"
-	exit 1
+	elog "PREFIX must be supplied"
 fi
 
 compile_pgsql > $LOGFILE 2>&1

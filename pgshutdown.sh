@@ -18,8 +18,6 @@ usage ()
 	echo "  -s, --smart       performs a smart shutdown"
 }
 
-here_is_installation
-
 SHUTDOWN_MODE="s"
 while [ $# -gt 0 ]; do
 	case "$1" in
@@ -40,5 +38,7 @@ while [ $# -gt 0 ]; do
 	shift
 done
 
-PgsqlMustRunning
+here_is_installation
+pgsql_is_alive
+
 $PGBIN/pg_ctl -D $PGDATA -m$SHUTDOWN_MODE stop

@@ -4,17 +4,15 @@
 
 usage ()
 {
-	echo "$PROGNAME removes pgsql directories"
+	echo "$PROGNAME removes the deletable directories"
 	echo ""
 	echo "Usage:"
 	echo "  $PROGNAME"
 	echo ""
 	echo "Description:"
-	echo "  All unused database cluster, archive and backup directories"
+	echo "  All obsolete database cluster, archive and backup directories"
 	echo "  are removed from current directory."
 }
-
-here_is_installation
 
 while [ $# -gt 0 ]; do
 	case "$1" in
@@ -22,11 +20,12 @@ while [ $# -gt 0 ]; do
 			usage
 			exit 0;;
 		*)
-			echo "$PROGNAME: invalid option: $1" 1>&2
-			exit 1;;
+			elog "invalid option: $1";;
 	esac
 	shift
 done
+
+here_is_installation
 
 pgdata_children="base global pg_clog pg_xlog"
 

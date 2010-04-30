@@ -23,8 +23,7 @@ while [ $# -gt 0 ]; do
 		-w)
 			WAITOPT="-w";;
 		-*)
-			echo "$PROGNAME: invalid option: $1" 1>&2
-			exit 1;;
+			elog "invalid option: $1";;
 		*)
 			update_pgdata "$1";;
 	esac
@@ -32,8 +31,7 @@ while [ $# -gt 0 ]; do
 done
 
 here_is_installation
-check_directory_exists $PGDATA "database cluster"
+pgdata_exists
+pgsql_is_dead
 
-PgsqlMustNotRunning
-
-${PGBIN}/pg_ctl $WAITOPT -D ${PGDATA} start
+$PGBIN/pg_ctl $WAITOPT -D $PGDATA start

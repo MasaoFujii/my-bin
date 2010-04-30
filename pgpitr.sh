@@ -20,8 +20,7 @@ while [ $# -gt 0 ]; do
 			usage
 			exit 0;;
 		-*)
-			echo "$PROGNAME: invalid option: $1" 1>&2
-			exit 1;;
+			elog "invalid option: $1";;
 		*)
 			update_pgdata "$1";;
 	esac
@@ -29,22 +28,16 @@ while [ $# -gt 0 ]; do
 done
 
 here_is_installation
-
-if [ ! -d $PGDATA ]; then
-	echo "$PROGNAME: database cluster is not found: \"$PGDATA\"" 1>&2
-	exit 1
-fi
-
-PgsqlMustNotRunning
+archiving_is_supported
+pgdata_exists
+pgsql_is_dead
 
 if [ ! -d $PGDATABKP ]; then
-	echo "$PROGNAME: base backup is not found: \"$PGDATABKP\"" 1>&2
-	exit 1
+	elog "base backup is not found: \"$PGDATABKP\""
 fi
 
 if [ ! -d $PGARCH ]; then
-	echo "$PROGNAME: archive directory is not found: \"$PGARCH\"" 1>&2
-	exit 1
+	echo "archive directory is not found: \"$PGARCH\""
 fi
 
 RESTORECMD="cp ../$(basename $PGARCH)/%f %p"

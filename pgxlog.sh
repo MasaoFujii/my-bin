@@ -27,8 +27,7 @@ while [ $# -gt 0 ]; do
 	    SECS=$2
 			shift;;
 		-*)
-			echo "$PROGNAME: invalid option: $1" 1>&2
-			exit 1;;
+			elog "invalid option: $1";;
 		*)
 			update_pgdata "$1";;
 	esac
@@ -36,7 +35,7 @@ while [ $# -gt 0 ]; do
 done
 
 here_is_installation
-check_directory_exists $PGDATA "database cluster"
+pgdata_exists
 
 if [ -z "$SECS" ]; then
 	ls $PGXLOG

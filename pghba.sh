@@ -1,20 +1,28 @@
 #!/bin/sh
 
-# Load common definitions
 . pgcommon.sh
 
-# Show usage
-Usage ()
+usage ()
 {
-	UsageForHelpOption "opens pg_hba.conf with emacs"
+	echo "$PROGNAME opens the pg_hba.conf file with emacs"
+	echo ""
+	echo "Usage:"
+	echo "  $PROGNAME [PGDATA]"
 }
+
+while [ $# -gt 0 ]; do
+	case "$1" in
+		-h|--help|"-\?")
+			usage
+			exit 0;;
+		-*)
+			elog "invalid option: $1";;
+		*)
+			update_pgdata "$1";;
+	esac
+	shift
+done
 
 here_is_installation
 
-# Parse command-line arguments
-ParsingForHelpOption ${@}
-GetPgData ${@}
-ValidatePgData
-
-# Open pg_hba.conf
-emacs ${PGHBA} &
+emacs $PGHBA &

@@ -20,8 +20,7 @@ while [ $# -gt 0 ]; do
 			usage
 			exit 0;;
 		-*)
-			echo "$PROGNAME: invalid option: $1" 1>&2
-			exit 1;;
+			elog "invalid option: $1";;
 		*)
 			update_pgdata "$1";;
 	esac
@@ -30,7 +29,8 @@ done
 
 here_is_installation
 archiving_is_supported
-check_directory_exists $PGDATA "database cluster"
+pgdata_exists
+pgsql_is_dead
 
 rm -rf $PGARCH
 mkdir $PGARCH

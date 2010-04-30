@@ -1,20 +1,29 @@
 #!/bin/sh
 
-# Load common definitions
 . pgcommon.sh
 
-# Local functions
-Usage ()
+usage ()
 {
-	UsageForHelpOption "opens postgresql.conf with emacs"
+	echo "$PROGNAME opens the postgres configuration file with emacs"
+	echo ""
+	echo "Usage:"
+	echo "  $PROGNAME [PGDATA]"
 }
 
+while [ $# -gt 0 ]; do
+	case "$1" in
+		-h|--help|"-\?")
+			usage
+			exit 0;;
+		-*)
+			elog "invalid option: $1";;
+		*)
+			update_pgdata "$1";;
+	esac
+	shift
+done
+
 here_is_installation
+pgdata_exists
 
-# Parse command-line arguments
-ParsingForHelpOption ${@}
-GetPgData ${@}
-ValidatePgData
-
-# Open postgresql.conf
-emacs ${PGCONF} &
+emacs $PGCONF &

@@ -39,8 +39,7 @@ while [ $# -gt 0 ]; do
 		-1)
 			ONETIME=true;;
 		*)
-			echo "$PROGNAME: invalid option: $1" 1>&2
-			exit 1;;
+			elog "invalid option: $1";;
 	esac
 	shift
 done

@@ -1,21 +1,30 @@
 #!/bin/sh
 
-# Load common definitions
 . pgcommon.sh
 
-# Show usage
-Usage ()
+usage ()
 {
-	UsageForHelpOption "reloads the pgsql configuration files"
+	echo "$PROGNAME reloads the postgres configuration file"
+	echo ""
+	echo "Usage:"
+	echo "  $PROGNAME [PGDATA]"
 }
 
+while [ $# -gt 0 ]; do
+	case "$1" in
+		-h|--help|"-\?")
+			usage
+			exit 0;;
+		-*)
+			elog "invalid option: $1";;
+		*)
+			update_pgdata "$1";;
+	esac
+	shift
+done
+
 here_is_installation
+pgdata_exists
+pgsql_is_alive
 
-# Parse command-line arguments
-ParsingForHelpOption ${@}
-GetPgData ${@}
-ValidatePgData
-
-# Reload pgsql configuration files if pgsql is running
-PgsqlMustRunning "pgsql is NOT running; there is no point in reloading configuration files"
-${PGBIN}/pg_ctl -D ${PGDATA} reload
+$PGBIN/pg_ctl -D $PGDATA reload

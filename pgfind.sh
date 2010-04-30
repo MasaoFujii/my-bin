@@ -2,42 +2,51 @@
 
 . pgcommon.sh
 
-Usage ()
+usage ()
 {
-	echo "${PROGNAME} prints line matching PATTERN"
+	echo "$PROGNAME prints the lines matching PATTERN"
 	echo ""
 	echo "Usage:"
-	echo "  ${PROGNAME} [-h] PATTERN [doc]"
+	echo "  $PROGNAME [OPTIONS] PATTERN"
+	echo ""
+	echo "Default:"
+	echo "  This utility searches in source code directory"
+	echo ""
+	echo "Options:"
+	echo "  -d, --document    searches in document directory"
 }
 
-here_is_source
-while getopts "h" OPT; do
-	case ${OPT} in
-		h)
-			Usage
+DOC_MODE="FALSE"
+PATTERN=
+while [ $# -gt 0 ]; do
+	case "$1" in
+		-d|--document)
+			DOC_MODE="TRUE";;
+		-h|--help|"-\?")
+			usage
 			exit 0;;
+		-*)
+			elog "invalid option: $1";;
 		*)
-			exit 1;;
+			PATTERN="$1";;
 	esac
+	shift
 done
-shift $(expr ${OPTIND} - 1)
 
-if [ ${#} -lt 1 ]; then
-	echo "ERROR: PATTERN must be supplied"
-	exit 1
+here_is_source
+
+if [ -z "$PATTERN" ]; then
+	elog "PATTERN must be supplied"
 fi
-PATTERN="${1}"
-OPERATION="${2}"
 
 REGEXP=
 SEARCHPATH=
-case ${OPERATION} in
-	"doc")
-		REGEXP="*.sgml"
-		SEARCHPATH=doc;;
-	*)
-		REGEXP="*.[chy]"
-		SEARCHPATH=src;;
-esac
+if [ "$DOC_MODE" = "TRUE" ]; then
+	REGEXP="*.sgml"
+	SEARCHPATH=doc
+else
+	REGEXP="*.[chy]"
+	SEARCHPATH=src
+fi
 
-find ${SEARCHPATH} -name "${REGEXP}" -exec grep -H "${PATTERN}" {} \;
+find $SEARCHPATH -name "$REGEXP" -exec grep -H "$PATTERN" {} \;

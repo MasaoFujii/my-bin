@@ -14,24 +14,22 @@ usage ()
 	echo "The default PREFIX is \"$PREFIX\"."
 }
 
-here_is_source
-
-if [ ! -d $CURDIR/CVS ]; then
-	echo "$PROGNAME: here \"$CURDIR\" is not CVS directory"
-	exit 1
-fi
-
 while [ $# -gt 0 ]; do
 	case "$1" in
 		-h|--help|"-\?")
 			usage
 			exit 0;;
 		*)
-			echo "$PROGNAME: invalid option: $1" 1>&2
-			exit 1;;
+			elog "invalid option: $1";;
 	esac
 	shift
 done
+
+here_is_source
+
+if [ ! -d $CURDIR/CVS ]; then
+	elog "here \"$CURDIR\" is not CVS directory"
+fi
 
 pgclean.sh -a
 cvs update
