@@ -71,7 +71,7 @@ setup_primary ()
 
 setup_standby ()
 {
-	rm -f $TRIGGER $SBYDATA
+	rm -rf $TRIGGER $SBYDATA
 
 	pgbackup.sh $ACTDATA
 	cp -r $PGBKP $SBYDATA
