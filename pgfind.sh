@@ -13,13 +13,17 @@ usage ()
 	echo "  This utility searches in source code directory"
 	echo ""
 	echo "Options:"
+	echo "  -a, --all         searches in both source code and document directory"
 	echo "  -d, --document    searches in document directory"
 }
 
+ALL_MODE="FALSE"
 DOC_MODE="FALSE"
 PATTERN=
 while [ $# -gt 0 ]; do
 	case "$1" in
+		-a|--all)
+			ALL_MODE="TRUE";;
 		-d|--document)
 			DOC_MODE="TRUE";;
 		-h|--help|"-\?")
@@ -37,6 +41,12 @@ here_is_source
 
 if [ -z "$PATTERN" ]; then
 	elog "PATTERN must be supplied"
+fi
+
+if [ "$ALL_MODE" = "TRUE" ]; then
+	$PROGNAME "$PATTERN"
+	$PROGNAME -d "$PATTERN"
+	exit
 fi
 
 REGEXP=
