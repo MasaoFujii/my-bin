@@ -31,7 +31,11 @@ while [ $# -gt 0 ]; do
 done
 
 here_is_installation
-pgdata_exists
+
+if [ ! -d $PGDATA ]; then
+	pginitdb.sh
+fi
+
 pgsql_is_dead
 
 $PGBIN/pg_ctl $WAITOPT -D $PGDATA start
