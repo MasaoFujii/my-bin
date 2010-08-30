@@ -23,7 +23,7 @@ usage ()
 	echo "  -c  OPTIONS      uses OPTIONS as a configure options"
 	echo "  -d, --debug      compiles pgsql for debug; uses --enable-cassert"
 	echo "                   option and prevents the compiler's optimization"
-	echo "  -f, --flag FLAG  uses FLAG as CPPFLAGS"
+	echo "  -f, --flag FLAG  uses FLAG as CPPFLAGS, e.g. -f \"-DWAL_DEBUG\""
 }
 
 compile_pgsql ()
