@@ -7,6 +7,7 @@ ACTCONF=$ACTDATA/postgresql.conf
 ACTPORT=5432
 ACTHBA=$ACTDATA/pg_hba.conf
 ACTPREFIX=act
+ACTARCH=$CURDIR/act.arh
 
 SBYDATA=$CURDIR/sby
 SBYCONF=$SBYDATA/postgresql.conf
@@ -26,16 +27,21 @@ usage ()
 	echo ""
 	echo "Default:"
 	echo "  This utility sets up primary and standby servers"
+	echo "  without the archive."
 	echo ""
 	echo "Options:"
+	echo "  -a, --archive    uses the archive"
 	echo "  -p, --primary    sets up only primary server"
 	echo "  -s, --standby    sets up only standby server"
 }
 
 ONLYACT="FALSE"
 ONLYSBY="FALSE"
+USEARCH="FALSE"
 while [ $# -gt 0 ]; do
 	case "$1" in
+		-a|--archive)
+			USEARCH="TRUE";;
 		-h|--help|"-\?")
 			usage
 			exit 0;;
@@ -58,6 +64,10 @@ fi
 setup_primary ()
 {
 	pginitdb.sh $ACTDATA
+
+	if [ "$USEARCH" = "TRUE" ]; then
+		pgarch.sh $ACTDATA
+	fi
 
 	set_guc port $ACTPORT $ACTCONF
 	set_guc log_line_prefix "'$ACTPREFIX '" $ACTCONF
@@ -83,6 +93,10 @@ setup_standby ()
 	echo "standby_mode = 'on'" >> $RECOVERYCONF
 	echo "primary_conninfo = 'host=localhost port=$ACTPORT'" >> $RECOVERYCONF
 	echo "trigger_file = '$TRIGGER'" >> $RECOVERYCONF
+
+	if [ "$USEARCH" = "TRUE" ]; then
+		echo "restore_command = 'cp $ACTARCH/%f %p'" >> $RECOVERYCONF
+	fi
 
 	pgstart.sh $SBYDATA
 }
