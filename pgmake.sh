@@ -79,7 +79,7 @@ done
 
 here_is_source
 
-if [ -z "$PREFIX" ]; then
+if [ -z "$PREFIX" -a "$ONLYMAKE" = "false" ]; then
 	elog "PREFIX must be supplied"
 fi
 
