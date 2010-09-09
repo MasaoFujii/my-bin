@@ -6,6 +6,7 @@ LOGFILE=/tmp/pgmake.log
 PREFIX=
 DEBUG=false
 CONFOPTS=
+ONLYMAKE=false
 
 usage ()
 {
@@ -24,20 +25,24 @@ usage ()
 	echo "  -d, --debug      compiles pgsql for debug; uses --enable-cassert"
 	echo "                   option and prevents the compiler's optimization"
 	echo "  -f, --flag FLAG  uses FLAG as CPPFLAGS, e.g. -f \"-DWAL_DEBUG\""
+	echo "  -m, --make       compiles pgsql without clean and configure"
 }
 
 compile_pgsql ()
 {
 	export LANG=C
-	pgclean.sh -m
 
-	if [ "$DEBUG" = "true" ]; then
-		./configure --prefix=$PREFIX --enable-debug --enable-cassert $CONFOPTS
-		MAKEFILE=$CURDIR/src/Makefile.global
-		sed s/\-O2//g $MAKEFILE > $TMPFILE
-		mv $TMPFILE $MAKEFILE
-	else
-		./configure --prefix=$PREFIX --enable-debug $CONFOPTS
+	if [ "$ONLYMAKE" = "false" ]; then
+		pgclean.sh -m
+
+		if [ "$DEBUG" = "true" ]; then
+			./configure --prefix=$PREFIX --enable-debug --enable-cassert $CONFOPTS
+			MAKEFILE=$CURDIR/src/Makefile.global
+			sed s/\-O2//g $MAKEFILE > $TMPFILE
+			mv $TMPFILE $MAKEFILE
+		else
+			./configure --prefix=$PREFIX --enable-debug $CONFOPTS
+		fi
 	fi
 
 	make install
@@ -62,6 +67,8 @@ while [ $# -gt 0 ]; do
 		-h|--help|"-\?")
 			usage
 			exit 0;;
+		-m|--make)
+			ONLYMAKE=true;;
 		-*)
 			elog "invalid option: $1";;
 		*)
