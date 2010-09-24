@@ -6,7 +6,7 @@ PREFIX=/dav/head-pgsql
 
 usage ()
 {
-	echo "$PROGNAME downloads and compiles the CVS HEAD"
+	echo "$PROGNAME downloads and compiles the HEAD"
 	echo ""
 	echo "Usage:"
 	echo "  $PROGNAME [PREFIX]"
@@ -27,12 +27,12 @@ done
 
 here_is_source
 
-if [ ! -d $CURDIR/CVS ]; then
-	elog "here \"$CURDIR\" is not CVS directory"
+if [ ! -d $CURDIR/.git ]; then
+	elog "here \"$CURDIR\" is not git directory"
 fi
 
 pgclean.sh -a
-cvs update
+git pull
 pgetags.sh
 rm -rf $PREFIX
 pgmake.sh -d $PREFIX
