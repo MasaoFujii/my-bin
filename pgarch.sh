@@ -29,7 +29,11 @@ done
 
 here_is_installation
 archiving_is_supported
-pgdata_exists
+
+if [ ! -d $PGDATA ]; then
+	pginitdb.sh
+fi
+
 pgsql_is_dead
 
 rm -rf $PGARCH
