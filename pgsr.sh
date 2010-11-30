@@ -32,12 +32,14 @@ usage ()
 	echo "Options:"
 	echo "  -a, --archive    uses the archive"
 	echo "  -p, --primary    sets up only primary server"
+	echo "  -q, --quit       shuts down servers with fast mode"
 	echo "  -s, --standby    sets up only standby server"
 }
 
 ONLYACT="FALSE"
 ONLYSBY="FALSE"
 USEARCH="FALSE"
+QUITMODE="FALSE"
 while [ $# -gt 0 ]; do
 	case "$1" in
 		-a|--archive)
@@ -47,6 +49,8 @@ while [ $# -gt 0 ]; do
 			exit 0;;
 		-p|--primary)
 			ONLYACT="TRUE";;
+		-q|--quit)
+			QUITMODE="TRUE";;
 		-s|--standby)
 			ONLYSBY="TRUE";;
 		*)
@@ -100,6 +104,12 @@ setup_standby ()
 
 	pgstart.sh $SBYDATA
 }
+
+if [ "$QUITMODE" = "TRUE" ]; then
+	pgshutdown.sh -f $ACTDATA
+	pgshutdown.sh -f $SBYDATA
+	exit 0
+fi
 
 if [ "$ONLYACT" = "TRUE" ]; then
 	setup_primary
