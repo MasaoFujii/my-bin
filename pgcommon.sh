@@ -68,17 +68,25 @@ archiving_is_supported ()
 
 pgsql_is_alive ()
 {
-	$PGBIN/pg_ctl -D $PGDATA status > /dev/null
+	_PGDATA="$PGDATA"
+	if [ ! -z "$1" ]; then
+		_PGDATA="$1"
+	fi
+	$PGBIN/pg_ctl -D $_PGDATA status > /dev/null
 	if [ $? -ne 0 ]; then
-		elog "postgres server must be dead; you have to start it at first"
+		elog "PostgreSQL server is NOT running; You have to start it right now."
 	fi
 }
 
 pgsql_is_dead ()
 {
-	$PGBIN/pg_ctl -D $PGDATA status > /dev/null
+	_PGDATA="$PGDATA"
+	if [ ! -z "$1" ]; then
+		_PGDATA="$1"
+	fi
+	$PGBIN/pg_ctl -D $_PGDATA status > /dev/null
 	if [ $? -eq 0 ]; then
-		elog "postgres server must be alive; you have to shut down it at first"
+		elog "PostgreSQL server is still running; You have to shut down it right now."
 	fi
 }
 

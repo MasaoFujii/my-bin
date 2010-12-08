@@ -67,6 +67,8 @@ fi
 
 setup_primary ()
 {
+	pgsql_is_dead $ACTDATA
+
 	pginitdb.sh $ACTDATA
 
 	if [ "$USEARCH" = "TRUE" ]; then
@@ -85,6 +87,8 @@ setup_primary ()
 
 setup_standby ()
 {
+	pgsql_is_dead $SBYDATA
+
 	rm -rf $TRIGGER $SBYDATA
 
 	pgbackup.sh $ACTDATA
