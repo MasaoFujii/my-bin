@@ -31,6 +31,7 @@ usage ()
 	echo ""
 	echo "Options:"
 	echo "  -a, --archive    uses the archive"
+	echo "  -c, --conflict   creates standby query conflict"
 	echo "  -p, --primary    sets up only primary server"
 	echo "  -q, --quit       shuts down servers with fast mode"
 	echo "  -s, --standby    sets up only standby server"
@@ -40,10 +41,13 @@ ONLYACT="FALSE"
 ONLYSBY="FALSE"
 USEARCH="FALSE"
 QUITMODE="FALSE"
+MKCONFLICT="FALSE"
 while [ $# -gt 0 ]; do
 	case "$1" in
 		-a|--archive)
 			USEARCH="TRUE";;
+		-c|--conflict)
+			MKCONFLICT="TRUE";;
 		-h|--help|"-\?")
 			usage
 			exit 0;;
@@ -112,6 +116,26 @@ setup_standby ()
 if [ "$QUITMODE" = "TRUE" ]; then
 	pgshutdown.sh -f $ACTDATA
 	pgshutdown.sh -f $SBYDATA
+	exit 0
+fi
+
+if [ "$MKCONFLICT" = "TRUE" ]; then
+	pgsql_is_alive $ACTDATA
+	pgsql_is_alive $SBYDATA
+
+	TMPTBL=tmptable_$(date +%Y%m%d%H%M%S)
+
+	$PGBIN/psql -p $ACTPORT -c "CREATE TABLE $TMPTBL (id int)"
+	$PGBIN/psql -p $ACTPORT -c "INSERT INTO  $TMPTBL VALUES (1)"
+	sleep 1
+
+	$PGBIN/psql -p $SBYPORT -c "SELECT pg_sleep(60) FROM $TMPTBL" &
+	PSQLPID=$!
+	sleep 1
+
+	$PGBIN/psql -p $ACTPORT -c "DELETE FROM $TMPTBL"
+	$PGBIN/psql -p $ACTPORT -c "VACUUM $TMPTBL"
+
 	exit 0
 fi
 
