@@ -5,6 +5,7 @@
 BATCH=false
 DELAY=1
 ONETIME=false
+FORMAT="u"
 
 usage ()
 {
@@ -20,6 +21,7 @@ usage ()
     echo "  -b, --batch       batch mode; reports running processes in a row"
     echo "  -d, --delay SECS  specifies the delay between screen updates or"
 		echo "                    reports in batch mode"
+		echo "  -u                uses user-oriented format (default)"
     echo "  -1                1-time mode; reports running processes only once"
 		echo ""
 		echo "Notes:"
@@ -36,6 +38,8 @@ while [ $# -gt 0 ]; do
 		-h|--help|"-\?")
 			usage
 			exit 0;;
+		-u)
+			FORMAT="u";;
 		-1)
 			ONETIME=true;;
 		*)
@@ -51,7 +55,7 @@ report_pgsql_processes ()
 	for processname in postgres postmaster; do
 		PIDLIST=$(pgrep -d, -x $processname)
 		if [ ! -z "$PIDLIST" ]; then
-			ps -fp $PIDLIST
+			ps $FORMAT -p $PIDLIST
 			echo ""
 			return
 		fi
@@ -69,5 +73,5 @@ if [ "$BATCH" = "true" ]; then
 		sleep $DELAY
 	done
 else
-	watch -n$DELAY "$PROGNAME -1"
+	watch -n$DELAY "$PROGNAME -1 -$FORMAT"
 fi
