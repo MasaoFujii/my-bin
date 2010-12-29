@@ -7,6 +7,7 @@ PREFIX=
 DEBUG=false
 CONFOPTS=
 ONLYMAKE=false
+ENABLEDEBUG="--enable-debug"
 
 usage ()
 {
@@ -26,6 +27,7 @@ usage ()
 	echo "                   option and prevents the compiler's optimization"
 	echo "  -f, --flag FLAG  uses FLAG as CPPFLAGS, e.g. -f \"-DWAL_DEBUG\""
 	echo "  -m, --make       compiles pgsql without clean and configure"
+	echo "  -p, --plain      doesn't use --enable-debug option"
 }
 
 compile_pgsql ()
@@ -36,12 +38,12 @@ compile_pgsql ()
 		pgclean.sh -m
 
 		if [ "$DEBUG" = "true" ]; then
-			./configure --prefix=$PREFIX --enable-debug --enable-cassert $CONFOPTS
+			./configure --prefix=$PREFIX $ENABLEDEBUG --enable-cassert $CONFOPTS
 			MAKEFILE=$CURDIR/src/Makefile.global
 			sed s/\-O2//g $MAKEFILE > $TMPFILE
 			mv $TMPFILE $MAKEFILE
 		else
-			./configure --prefix=$PREFIX --enable-debug $CONFOPTS
+			./configure --prefix=$PREFIX $ENABLEDEBUG $CONFOPTS
 		fi
 	fi
 
@@ -69,6 +71,8 @@ while [ $# -gt 0 ]; do
 			exit 0;;
 		-m|--make)
 			ONLYMAKE=true;;
+		-p|--plain)
+			ENABLEDEBUG="";;
 		-*)
 			elog "invalid option: $1";;
 		*)
