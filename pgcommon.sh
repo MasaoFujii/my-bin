@@ -49,7 +49,7 @@ here_is_installation ()
 		elog "here is NOT installation directory: \"$CURDIR\""
 	fi
 
-	PGMAJOR=$($PGBIN/pg_config --version | tr --delete [A-z' '] | cut -d. -f1-2 | tr --delete .)
+	PGMAJOR=$($PGBIN/pg_config --version | tr -d [A-z' '] | cut -d. -f1-2 | tr -d .)
 }
 
 pgdata_exists ()
