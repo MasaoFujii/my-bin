@@ -84,7 +84,7 @@ setup_primary ()
 	set_guc max_wal_senders 5 $ACTCONF
 	set_guc wal_level hot_standby $ACTCONF
 
-	echo "host replication all 0.0.0.0/0 trust" >> $ACTHBA
+	echo "host replication all localhost trust" >> $ACTHBA
 
 	pgstart.sh -w $ACTDATA
 }
