@@ -35,11 +35,13 @@ usage ()
 	echo "  -p, --primary    sets up only primary server"
 	echo "  -q, --quit       shuts down servers with fast mode"
 	echo "  -s, --standby    sets up only standby server"
+	echo "  -S, --sync       sets up synchronous replication"
 }
 
 ONLYACT="FALSE"
 ONLYSBY="FALSE"
 USEARCH="FALSE"
+SYNCREP="FALSE"
 QUITMODE="FALSE"
 MKCONFLICT="FALSE"
 while [ $# -gt 0 ]; do
@@ -57,6 +59,8 @@ while [ $# -gt 0 ]; do
 			QUITMODE="TRUE";;
 		-s|--standby)
 			ONLYSBY="TRUE";;
+		-S|--sync)
+			SYNCREP="TRUE";;
 		*)
 			elog "invalid option: $1";;
 	esac
@@ -84,6 +88,10 @@ setup_primary ()
 	set_guc max_wal_senders 5 $ACTCONF
 	set_guc wal_level hot_standby $ACTCONF
 	set_guc wal_keep_segments 32 $ACTCONF
+
+	if [ "$SYNCREP" = "TRUE" ]; then
+		set_guc synchronous_standby_names "'*'" $ACTCONF
+	fi
 
 	echo "host replication all 0.0.0.0/0 trust" >> $ACTHBA
 	echo "host replication all ::1/128   trust" >> $ACTHBA
