@@ -83,6 +83,7 @@ setup_primary ()
 	set_guc log_line_prefix "'$ACTPREFIX '" $ACTCONF
 	set_guc max_wal_senders 5 $ACTCONF
 	set_guc wal_level hot_standby $ACTCONF
+	set_guc wal_keep_segments 32 $ACTCONF
 
 	echo "host replication all 0.0.0.0/0 trust" >> $ACTHBA
 	echo "host replication all ::1/128   trust" >> $ACTHBA
