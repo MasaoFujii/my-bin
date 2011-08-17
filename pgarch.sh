@@ -4,7 +4,7 @@
 
 usage ()
 {
-	echo "$PROGNAME enables WAL archiving"
+	echo "$PROGNAME enables WAL archiving."
 	echo ""
 	echo "Usage:"
 	echo "  $PROGNAME [PGDATA]"
@@ -16,7 +16,7 @@ usage ()
 
 while [ $# -gt 0 ]; do
 	case "$1" in
-		-h|--help|"-\?")
+		"-?"|--help)
 			usage
 			exit 0;;
 		-*)

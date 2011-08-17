@@ -2,19 +2,26 @@
 
 . pgcommon.sh
 
+ARCHIVE_MODE="FALSE"
+
 usage ()
 {
-	echo "$PROGNAME creates an initial database cluster"
+	echo "$PROGNAME initializes a PostgreSQL database cluster."
 	echo ""
 	echo "Usage:"
-	echo "  $PROGNAME [PGDATA]"
+	echo "  $PROGNAME [OPTIONS] [PGDATA]"
+	echo ""
+	echo "Options:"
+	echo "  -a    enables WAL archiving"
 }
 
 while [ $# -gt 0 ]; do
 	case "$1" in
-		-h|--help|"-\?")
+		"-?"|--help)
 			usage
 			exit 0;;
+		-a)
+			ARCHIVE_MODE="TRUE";;
 		-*)
 			elog "invalid option: $1";;
 		*)
@@ -36,3 +43,7 @@ else
 fi
 set_guc checkpoint_segments 64 $PGCONF
 echo "host	all	all	0.0.0.0/0	trust" >> $PGHBA
+
+if [ "$ARCHIVE_MODE" = "TRUE" ]; then
+	pgarch.sh $PGDATA
+fi

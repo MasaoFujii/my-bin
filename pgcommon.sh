@@ -32,7 +32,7 @@ update_pgdata "$CURDIR/data"
 
 elog ()
 {
-	echo "$PROGNAME:  ERROR: $1" 1>&2
+	echo "$PROGNAME:  $1" 1>&2
 	exit 1
 }
 
