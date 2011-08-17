@@ -13,9 +13,9 @@ usage ()
 	echo "  This utility searches in source code directory"
 	echo ""
 	echo "Options:"
-	echo "  -a, --all         searches in both source code and document directory"
-	echo "  -c, --contrib     searches in contrib directory"
-	echo "  -d, --document    searches in document directory"
+	echo "  -a    searches in both source code and document directory"
+	echo "  -c    searches in contrib directory"
+	echo "  -d    searches in document directory"
 }
 
 ALL_MODE="FALSE"
@@ -24,13 +24,13 @@ DOC_MODE="FALSE"
 PATTERN=
 while [ $# -gt 0 ]; do
 	case "$1" in
-		-a|--all)
+		-a)
 			ALL_MODE="TRUE";;
-		-c|--contrib)
+		-c)
 			CONTRIB_MODE="TRUE";;
-		-d|--document)
+		-d)
 			DOC_MODE="TRUE";;
-		-h|--help|"-\?")
+		"-?"|--help)
 			usage
 			exit 0;;
 		-*)
@@ -67,4 +67,4 @@ else
 	SEARCHPATH=src
 fi
 
-find $SEARCHPATH -name "$REGEXP" -exec grep -H "$PATTERN" {} \;
+find $SEARCHPATH -name "$REGEXP" -exec grep -Hn "$PATTERN" {} \;
