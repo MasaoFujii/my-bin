@@ -77,7 +77,7 @@ pgsql_is_alive ()
 	if [ $? -ne 0 ]; then
 		elog "PostgreSQL server is NOT running; You have to start it right now."
 	fi
-	if [ ! -z $PGMAJOR -a $PGMAJOR -ge 91 ]; then
+	if [ ! -z "$PGMAJOR" -a $PGMAJOR -ge 91 ]; then
 		PGPORT=$(sed -n '4,4p' $PGDATA/postmaster.pid)
 	fi
 }
