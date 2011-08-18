@@ -172,6 +172,8 @@ if [ "$QUITMODE" = "TRUE" ]; then
 fi
 
 if [ "$MKCONFLICT" = "TRUE" ]; then
+	prepare_standbys
+
 	pgsql_is_alive $ACTDATA
 	pgsql_is_alive ${SBYDATA[1]}
 
