@@ -22,7 +22,7 @@ RECCONF=$SBYDATA/recovery.conf
 
 usage ()
 {
-	echo "$PROGNAME sets up streaming replication"
+	echo "$PROGNAME sets up streaming replication."
 	echo ""
 	echo "Usage:"
 	echo "  $PROGNAME [OPTIONS]"
@@ -33,7 +33,7 @@ usage ()
 	echo ""
 	echo "Options:"
 	echo "  -a, --archive    uses the archive"
-	echo "  -c, --conflict   creates standby query conflict"
+	echo "  -C, --conflict   creates standby query conflict"
 	echo "  -n  NUMBER       specifys number of standbys"
 	echo "  -p, --primary    sets up only primary server"
 	echo "  -q, --quit       shuts down servers with fast mode"
@@ -49,13 +49,13 @@ QUITMODE="FALSE"
 MKCONFLICT="FALSE"
 while [ $# -gt 0 ]; do
 	case "$1" in
-		-a|--archive)
-			USEARCH="TRUE";;
-		-c|--conflict)
-			MKCONFLICT="TRUE";;
-		-h|--help|"-\?")
+		"-?"|--help)
 			usage
 			exit 0;;
+		-a|--archive)
+			USEARCH="TRUE";;
+		-C|--conflict)
+			MKCONFLICT="TRUE";;
 		-n)
 			SBYNUM=$2
 			shift;;
