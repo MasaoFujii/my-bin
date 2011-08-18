@@ -4,7 +4,7 @@
 
 usage ()
 {
-    echo "$PROGNAME creates a base backup"
+    echo "$PROGNAME creates a base backup."
     echo ""
     echo "Usage:"
     echo "  $PROGNAME [PGDATA]"
@@ -15,7 +15,7 @@ usage ()
 
 while [ $# -gt 0 ]; do
 	case "$1" in
-		-h|--help|"-\?")
+		"-?"|--help)
 			usage
 			exit 0;;
 		-*)
@@ -31,22 +31,24 @@ archiving_is_supported
 pgdata_exists
 pgsql_is_alive
 
+PSQL="$PGBIN/psql -p $PGPORT -c"
+
 rm -rf $PGDATABKP
 
 if [ $PGMAJOR -ge 91 ]; then
-	$PGBIN/psql -c "SET synchronous_commit TO local; SELECT pg_start_backup('pgbackup', true)" template1
+	$PSQL "SET synchronous_commit TO local; SELECT pg_start_backup('pgbackup', true)" template1
 elif [ $PGMAJOR -ge 84 ]; then
-	$PGBIN/psql -c "SELECT pg_start_backup('pgbackup', true)" template1
+	$PSQL "SELECT pg_start_backup('pgbackup', true)" template1
 else
-	$PGBIN/psql -c "CHECKPOINT; SELECT pg_start_backup('pgbackup')" template1
+	$PSQL "CHECKPOINT; SELECT pg_start_backup('pgbackup')" template1
 fi
 
 rsync -a --exclude=postmaster.pid --exclude=pg_xlog $PGDATA/ $PGDATABKP
 
 if [ $PGMAJOR -ge 91 ]; then
-	$PGBIN/psql -c "SET synchronous_commit TO local; SELECT pg_stop_backup()" template1
+	$PSQL "SET synchronous_commit TO local; SELECT pg_stop_backup()" template1
 else
-	$PGBIN/psql -c "SELECT pg_stop_backup()" template1
+	$PSQL "SELECT pg_stop_backup()" template1
 fi
 
 mkdir -p $PGDATABKP/pg_xlog/archive_status

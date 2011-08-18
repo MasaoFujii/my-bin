@@ -4,6 +4,7 @@ CURDIR=$(pwd)
 PROGNAME=$(basename ${0})
 TMPFILE=/tmp/pgscript_$(date +%Y%m%d%H%M%S).tmp
 PGMAJOR=
+PGPORT=5432
 
 PGBIN=$CURDIR/bin
 PGDATA=
@@ -75,6 +76,9 @@ pgsql_is_alive ()
 	$PGBIN/pg_ctl -D $_PGDATA status > /dev/null
 	if [ $? -ne 0 ]; then
 		elog "PostgreSQL server is NOT running; You have to start it right now."
+	fi
+	if [ ! -z $PGMAJOR -a $PGMAJOR -ge 91 ]; then
+		PGPORT=$(sed -n '4,4p' $PGDATA/postmaster.pid)
 	fi
 }
 
