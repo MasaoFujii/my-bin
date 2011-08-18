@@ -2,11 +2,11 @@
 
 . pgcommon.sh
 
-WAITOPT=
+OPT=
 
 usage ()
 {
-	echo "$PROGNAME starts the postgres server"
+	echo "$PROGNAME starts PostgreSQL server."
 	echo ""
 	echo "Usage:"
 	echo "  $PROGNAME [OPTIONS] [PGDATA]"
@@ -17,11 +17,11 @@ usage ()
 
 while [ $# -gt 0 ]; do
 	case "$1" in
-		-h|--help|"-\?")
+		"-?"|--help)
 			usage
 			exit 0;;
 		-w)
-			WAITOPT="-w";;
+			OPT="-w";;
 		-*)
 			elog "invalid option: $1";;
 		*)
@@ -38,4 +38,4 @@ fi
 
 pgsql_is_dead
 
-$PGBIN/pg_ctl $WAITOPT -D $PGDATA start
+$PGBIN/pg_ctl $OPT -D $PGDATA start
