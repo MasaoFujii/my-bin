@@ -12,7 +12,7 @@ usage ()
 	echo "  $PROGNAME [OPTIONS] [PGDATA]"
 	echo ""
 	echo "Options:"
-	echo "  -w       waits for the start to complete"
+	echo "  -w    waits for the start to complete"
 }
 
 while [ $# -gt 0 ]; do
