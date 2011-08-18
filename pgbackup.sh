@@ -43,7 +43,7 @@ else
 	$PSQL "CHECKPOINT; SELECT pg_start_backup('pgbackup')" template1
 fi
 
-rsync -a --exclude=postmaster.pid --exclude=pg_xlog $PGDATA/ $PGDATABKP
+pgrsync.sh -b $PGDATA $PGDATABKP
 
 if [ $PGMAJOR -ge 91 ]; then
 	$PSQL "SET synchronous_commit TO local; SELECT pg_stop_backup()" template1
