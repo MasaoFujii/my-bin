@@ -24,7 +24,7 @@ usage ()
 		echo "  This utility is a wrapper of rsync, especially customized for PostgreSQL-related files and directories."
 		echo ""
 		echo "Options:"
-		echo "  -b    backup mode (excludes pg_xlog and postmaster.pid)"
+		echo "  -b    backup mode (excludes pg_xlog and postmaster.pid and deletes extraneous files)"
 		echo "  -v    increases verbosity"
 }
 
@@ -34,7 +34,7 @@ while [ $# -gt 0 ]; do
 			usage
 			exit 0;;
 		-b)
-			OPT="$OPT --exclude=pg_xlog/* --exclude=postmaster.pid";;
+			OPT="$OPT --delete --exclude=pg_xlog/* --exclude=postmaster.pid";;
 		-v)
 			OPT="$OPT -v";;
 		-*)
