@@ -18,7 +18,6 @@ usage ()
 	echo "  -n NUM    number of standbys (default: 1)"
 	echo "  -A        sets Async mode (default)"
 	echo "  -S        sets Sync mode"
-	echo "  -q        shuts down master and standby(s)"
 	echo "  -C        creates standby query conflict"
 }
 
@@ -26,18 +25,6 @@ here_is_installation
 if [ $PGMAJOR -lt 90 ]; then
 	elog "streaming replication is NOT supported in $($PGBIN/pg_config --version)"
 fi
-
-quit_servers ()
-{
-	pgshutdown.sh -f $ACTDATA
-	for SBYID in $(seq $SBYMIN $SBYMAX); do
-		$PGBIN/pg_ctl -D $SBYDATA$SBYID status > /dev/null
-		if [ $? -eq 0 ]; then
-			pgshutdown.sh -f $SBYDATA$SBYID
-		fi
-	done
-	exit 0
-}
 
 make_conflict ()
 {
@@ -84,8 +71,6 @@ while [ $# -gt 0 ]; do
 			SYNC_OPT="";;
 		-S)
 			SYNC_OPT="-S";;
-		-q)
-			quit_servers;;
 		-C)
 			make_conflict;;
 		*)
