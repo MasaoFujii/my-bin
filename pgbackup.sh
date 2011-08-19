@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. pgcommon.sh
+. pgcommon
 
 MODE="normal"	# normal, start or stop
 

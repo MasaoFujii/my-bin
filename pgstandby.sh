@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. pgcommon.sh
+. pgcommon
 
 ACTPORT=5432
 ACTARCH=$CURDIR/act.arh

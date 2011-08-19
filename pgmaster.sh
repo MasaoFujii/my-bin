@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. pgcommon.sh
+. pgcommon
 
 ARCHIVE_MODE="FALSE"
 SYNC_MODE="FALSE"

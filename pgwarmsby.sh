@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. pgcommon.sh
+. pgcommon
 
 PGSTANDBY=$PGBIN/pg_standby
 

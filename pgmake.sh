@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. pgcommon.sh
+. pgcommon
 
 LOGFILE=/tmp/pgmake.log
 PREFIX=

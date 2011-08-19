@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. pgcommon.sh
+. pgcommon
 
 ARCHIVE_OPT=
 SYNC_OPT=

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. pgcommon.sh
+. pgcommon
 
 BATCH=false
 DELAY=1

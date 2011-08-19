@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. pgcommon.sh
+. pgcommon
 
 CLEAN_ALL="FALSE"
 CLEAN_MAINTAINER="FALSE"

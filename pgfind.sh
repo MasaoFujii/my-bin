@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. pgcommon.sh
+. pgcommon
 
 SEARCH_ALL="FALSE"
 SEARCH_DIR=src
