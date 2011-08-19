@@ -1,3 +1,3 @@
 #!/bin/sh
 
-pgconf.sh -h
+pgconf.sh -h $*
