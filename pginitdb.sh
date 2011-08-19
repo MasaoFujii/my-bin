@@ -45,5 +45,5 @@ set_guc checkpoint_segments 64 $PGCONF
 echo "host	all	all	0.0.0.0/0	trust" >> $PGHBA
 
 if [ "$ARCHIVE_MODE" = "TRUE" ]; then
-	pgarch.sh $PGDATA
+	pgarch $PGDATA
 fi

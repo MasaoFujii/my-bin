@@ -69,7 +69,7 @@ fi
 rm -rf $ACTDATA $SBYDATA $PGARCH $TRIGGER
 
 pginitdb.sh $ACTDATA
-pgarch.sh $ACTDATA
+pgarch $ACTDATA
 
 set_guc port $ACTPORT $ACTCONF
 set_guc log_line_prefix "'$ACTPREFIX '" $ACTCONF

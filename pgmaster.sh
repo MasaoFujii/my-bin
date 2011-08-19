@@ -48,7 +48,7 @@ fi
 pginitdb.sh $PGDATA
 
 if [ "$ARCHIVE_MODE" = "TRUE" ]; then
-	pgarch.sh $PGDATA
+	pgarch $PGDATA
 fi
 
 set_guc port $PGPORT $PGCONF
