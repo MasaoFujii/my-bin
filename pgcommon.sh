@@ -1,8 +1,8 @@
 #!/bin/sh
 
+. bincommon
+
 CURDIR=$(pwd)
-PROGNAME=$(basename ${0})
-TMPFILE=/tmp/pgscript_$(date +%Y%m%d%H%M%S).tmp
 PGMAJOR=
 PGPORT=5432
 
@@ -36,12 +36,6 @@ update_pgdata ()
 	RECOVERYCONF=$PGDATA/recovery.conf
 }
 update_pgdata "$CURDIR/data"
-
-elog ()
-{
-	echo "$PROGNAME:  $1" 1>&2
-	exit 1
-}
 
 here_is_source ()
 {
@@ -98,15 +92,6 @@ pgsql_is_dead ()
 	if [ $? -eq 0 ]; then
 		elog "PostgreSQL server is still running; You have to shut down it right now."
 	fi
-}
-
-remove_line ()
-{
-	PATTERN="$1"
-	TARGETFILE="$2"
-
-	sed /"$PATTERN"/D $TARGETFILE > $TMPFILE
-	mv $TMPFILE $TARGETFILE
 }
 
 set_guc ()

@@ -1,0 +1,19 @@
+#!/bin/sh
+
+PROGNAME=$(basename ${0})
+TMPFILE=/tmp/binscript_$(date +%Y%m%d%H%M%S).$$.tmp
+
+elog ()
+{
+	echo "$PROGNAME:  $1" 1>&2
+	exit 1
+}
+
+remove_line ()
+{
+	PATTERN="$1"
+	TARGETFILE="$2"
+
+	sed /"$PATTERN"/D $TARGETFILE > $TMPFILE
+	mv $TMPFILE $TARGETFILE
+}
