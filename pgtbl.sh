@@ -4,19 +4,15 @@
 
 usage ()
 {
-    echo "$PROGNAME creates a simple table"
+    echo "$PROGNAME creates a simple table."
     echo ""
     echo "Usage:"
-    echo "  $PROGNAME [OPTIONS]"
-    echo ""
-		echo "Default:"
-		echo "  This utility creates a simple table including two columns"
-		echo ""
+    echo "  $PROGNAME"
 }
 
 while [ $# -gt 0 ]; do
 	case "$1" in
-		-h|--help|"-\?")
+		"-?"|--help)
 			usage
 			exit 0;;
 		*)
