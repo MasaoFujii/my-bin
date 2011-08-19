@@ -118,3 +118,26 @@ set_guc ()
 	remove_line "^$GUCNAME" $CONFPATH
 	echo "$GUCNAME = $GUCVALUE" >> $CONFPATH
 }
+
+find_all_pgdata ()
+{
+	MUSTHAVE="base global pg_clog pg_xlog"
+
+	for pgdata in $(ls -I *.bkp $CURDIR); do
+		if [ ! -d "$pgdata" ]; then
+			continue
+		fi
+
+		ISPGDATA="TRUE"
+		for subdir in $MUSTHAVE; do
+			if [ ! -d "$pgdata/$subdir" ]; then
+				ISPGDATA="FALSE"
+				break
+			fi
+		done
+
+		if [ "$ISPGDATA" = "TRUE" ]; then
+			echo "$pgdata"
+		fi
+	done
+}
