@@ -5,8 +5,8 @@
 ARCHIVE_MODE="FALSE"
 SYNC_MODE="FALSE"
 
-MASTER_PGDATA=act
-update_pgdata $MASTER_PGDATA
+ACTDATA=act
+update_pgdata $ACTDATA
 
 usage ()
 {
