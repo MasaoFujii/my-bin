@@ -25,6 +25,8 @@ while [ $# -gt 0 ]; do
 		-d)
 			SEARCH_DIR="$2"
 			shift;;
+		-*)
+			elog "invalid option: $1";;
 		*)
 			if [ -z "$GREP_PATTERN" ]; then
 				GREP_PATTERN="$1"
