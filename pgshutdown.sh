@@ -12,9 +12,9 @@ usage ()
 	echo "  $PROGNAME [OPTIONS] [PGDATA]"
 	echo ""
 	echo "Options:"
+	echo "  -s    smart shutdown"
 	echo "  -f    fast shutdown (default)"
 	echo "  -i    immediate shutdown"
-	echo "  -s    smart shutdown"
 }
 
 while [ $# -gt 0 ]; do
