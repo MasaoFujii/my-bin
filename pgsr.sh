@@ -79,5 +79,5 @@ while [ $# -gt 0 ]; do
 	shift
 done
 
-pgmaster.sh $ARCHIVE_OPT $SYNC_OPT
+pgmaster $ARCHIVE_OPT $SYNC_OPT
 pgstandby.sh $ARCHIVE_OPT -n $SBYNUM

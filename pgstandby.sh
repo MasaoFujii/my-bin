@@ -63,7 +63,7 @@ for SBYID in $(seq $SBYMIN $SBYMAX); do
 	TRIGGER="trigger$SBYID"
 
 	rm -f $TRIGGER
-	pgrsync.sh -b $ACTBKP $PGDATA
+	pgrsync -b $ACTBKP $PGDATA
 
 	set_guc port $SBYPORT $PGCONF
 	set_guc log_line_prefix "'$PGDATA '" $PGCONF
