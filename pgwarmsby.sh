@@ -74,7 +74,7 @@ pgarch $ACTDATA
 set_guc port $ACTPORT $ACTCONF
 set_guc log_line_prefix "'$ACTPREFIX '" $ACTCONF
 
-pgstart.sh -w $ACTDATA
+pgstart -w $ACTDATA
 pgbackup $ACTDATA
 cp -r $PGBKP $SBYDATA
 
@@ -94,4 +94,4 @@ else
 	echo "restore_command = '$RESTORECMD'" > $RECOVERYCONF
 fi
 
-pgstart.sh $SBYDATA
+pgstart $SBYDATA

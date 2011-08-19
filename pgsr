@@ -80,4 +80,4 @@ while [ $# -gt 0 ]; do
 done
 
 pgmaster $ARCHIVE_OPT $SYNC_OPT
-pgstandby.sh $ARCHIVE_OPT -n $SBYNUM
+pgstandby $ARCHIVE_OPT -n $SBYNUM
