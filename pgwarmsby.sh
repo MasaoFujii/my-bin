@@ -68,7 +68,7 @@ fi
 
 rm -rf $ACTDATA $SBYDATA $PGARCH $TRIGGER
 
-pginitdb.sh $ACTDATA
+pginitdb $ACTDATA
 pgarch $ACTDATA
 
 set_guc port $ACTPORT $ACTCONF

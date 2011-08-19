@@ -33,6 +33,6 @@ fi
 
 pgclean -a
 git pull
-pgetags.sh
+pgetags
 rm -rf $PREFIX
 pgmake.sh -d $PREFIX

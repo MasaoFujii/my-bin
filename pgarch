@@ -31,7 +31,7 @@ here_is_installation
 archiving_is_supported
 
 if [ ! -d $PGDATA ]; then
-	pginitdb.sh
+	pginitdb
 fi
 
 pgsql_is_dead

@@ -45,7 +45,7 @@ if [ $PGMAJOR -lt 90 ]; then
 	elog "streaming replication is NOT supported in $($PGBIN/pg_config --version)"
 fi
 
-pginitdb.sh $PGDATA
+pginitdb $PGDATA
 
 if [ "$ARCHIVE_MODE" = "TRUE" ]; then
 	pgarch $PGDATA
