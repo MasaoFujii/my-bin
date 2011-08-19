@@ -2,16 +2,17 @@
 
 . bincommon
 
-FIND_PATTERN=
 GREP_PATTERN=
+FIND_PATTERN="*"
 SEARCH_DIR="."
+EXCLUDE="-name .git -prune -or"
 
 usage ()
 {
 	echo "$PROGNAME prints lines matching GREP_PATTERN from files matching FIND_PATTERN."
 	echo ""
 	echo "Usage:"
-	echo "  $PROGNAME [OPTIONS] FIND_PATTERN GREP_PATTERN"
+	echo "  $PROGNAME [OPTIONS] GREP_PATTERN [FIND_PATTERN]"
 	echo "Options:"
 	echo "  -d DIR    where to search (default: .)"
 }
@@ -25,10 +26,10 @@ while [ $# -gt 0 ]; do
 			SEARCH_DIR="$2"
 			shift;;
 		*)
-			if [ -z "$FIND_PATTERN" ]; then
-				FIND_PATTERN="$1"
-			elif [ -z "$GREP_PATTERN" ]; then
+			if [ -z "$GREP_PATTERN" ]; then
 				GREP_PATTERN="$1"
+			elif [ -z "$FIND_PATTERN" ]; then
+				FIND_PATTERN="$1"
 			else
 				elog "too many arguments"
 			fi
@@ -37,8 +38,8 @@ while [ $# -gt 0 ]; do
 	shift
 done
 
-if [ -z "$FIND_PATTERN" -o -z "$GREP_PATTERN" ]; then
-	elog "FIND_PATTERN and GREP_PATTERN must be required"
+if [ -z "$GREP_PATTERN" ]; then
+	elog "GREP_PATTERN must be required"
 fi
 
-find $SEARCH_DIR -name "$FIND_PATTERN" -exec grep -Hn "$GREP_PATTERN" {} \;
+find $SEARCH_DIR $EXCLUDE -name "$FIND_PATTERN" -exec grep -Hn "$GREP_PATTERN" {} \;
