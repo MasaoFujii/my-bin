@@ -26,7 +26,7 @@ while [ $# -gt 0 ]; do
 		-a|--all)
 			CLEAN_ALL="TRUE"
 	    CLEAN_MAINTAINER="TRUE";;
-		-h|--help|"-\?")
+		"-?"|--help)
 			usage
 			exit 0;;
 		-m|--maintainer)
