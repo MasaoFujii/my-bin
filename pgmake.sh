@@ -35,7 +35,7 @@ compile_pgsql ()
 	export LANG=C
 
 	if [ "$ONLYMAKE" = "false" ]; then
-		pgclean.sh -m
+		pgclean -m
 
 		if [ "$DEBUG" = "true" ]; then
 			./configure --prefix=$PREFIX $ENABLEDEBUG --enable-cassert $CONFOPTS

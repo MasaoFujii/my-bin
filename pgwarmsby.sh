@@ -75,7 +75,7 @@ set_guc port $ACTPORT $ACTCONF
 set_guc log_line_prefix "'$ACTPREFIX '" $ACTCONF
 
 pgstart.sh -w $ACTDATA
-pgbackup.sh $ACTDATA
+pgbackup $ACTDATA
 cp -r $PGBKP $SBYDATA
 
 set_guc port $SBYPORT $SBYCONF

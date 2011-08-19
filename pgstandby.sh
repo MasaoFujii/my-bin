@@ -49,7 +49,7 @@ if [ $PGMAJOR -lt 90 ]; then
 	elog "streaming replication is NOT supported in $($PGBIN/pg_config --version)"
 fi
 
-pgbackup.sh $ACTDATA
+pgbackup $ACTDATA
 
 for SBYID in $(seq $SBYMIN $SBYMAX); do
 	update_pgdata $SBYDATA$SBYID
