@@ -4,13 +4,16 @@
 
 FIND_PATTERN=
 GREP_PATTERN=
+SEARCH_DIR="."
 
 usage ()
 {
 	echo "$PROGNAME prints lines matching GREP_PATTERN from files matching FIND_PATTERN."
 	echo ""
 	echo "Usage:"
-	echo "  $PROGNAME FIND_PATTERN GREP_PATTERN"
+	echo "  $PROGNAME [OPTIONS] FIND_PATTERN GREP_PATTERN"
+	echo "Options:"
+	echo "  -d DIR    where to search (default: .)"
 }
 
 while [ $# -gt 0 ]; do
@@ -18,6 +21,9 @@ while [ $# -gt 0 ]; do
 		"-?"|--help)
 			usage
 			exit 0;;
+		-d)
+			SEARCH_DIR="$2"
+			shift;;
 		*)
 			if [ -z "$FIND_PATTERN" ]; then
 				FIND_PATTERN="$1"
@@ -35,4 +41,4 @@ if [ -z "$FIND_PATTERN" -o -z "$GREP_PATTERN" ]; then
 	elog "FIND_PATTERN and GREP_PATTERN must be required"
 fi
 
-find . -name "$FIND_PATTERN" -exec grep -Hn "$GREP_PATTERN" {} \;
+find $SEARCH_DIR -name "$FIND_PATTERN" -exec grep -Hn "$GREP_PATTERN" {} \;
