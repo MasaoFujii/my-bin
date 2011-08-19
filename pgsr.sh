@@ -35,13 +35,11 @@ usage ()
 	echo "  -a, --archive    uses the archive"
 	echo "  -C, --conflict   creates standby query conflict"
 	echo "  -n  NUMBER       specifys number of standbys"
-	echo "  -p, --primary    sets up only primary server"
 	echo "  -q, --quit       shuts down servers with fast mode"
 	echo "  -s, --standby    sets up only standby server"
 	echo "  -S, --sync       sets up synchronous replication"
 }
 
-ONLYACT="FALSE"
 ONLYSBY="FALSE"
 USEARCH="FALSE"
 SYNCREP="FALSE"
@@ -59,8 +57,6 @@ while [ $# -gt 0 ]; do
 		-n)
 			SBYNUM=$2
 			shift;;
-		-p|--primary)
-			ONLYACT="TRUE";;
 		-q|--quit)
 			QUITMODE="TRUE";;
 		-s|--standby)
@@ -192,10 +188,6 @@ if [ "$MKCONFLICT" = "TRUE" ]; then
 	$PGBIN/psql -p $ACTPORT -c "VACUUM $TMPTBL"
 
 	exit 0
-fi
-
-if [ "$ONLYACT" = "TRUE" ]; then
-	setup_primary
 fi
 
 if [ "$ONLYSBY" = "TRUE" ]; then
