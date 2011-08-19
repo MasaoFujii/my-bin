@@ -6,6 +6,12 @@ TMPFILE=/tmp/pgscript_$(date +%Y%m%d%H%M%S).tmp
 PGMAJOR=
 PGPORT=5432
 
+ACTDATA=act
+SBYDATA=sby
+
+SBYMIN=1
+SBYMAX=16
+
 PGBIN=$CURDIR/bin
 PGDATA=
 PGARCH=
