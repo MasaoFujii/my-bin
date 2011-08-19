@@ -41,8 +41,8 @@ usage ()
 }
 
 ONLYSBY="FALSE"
-USEARCH="FALSE"
-SYNCREP="FALSE"
+ARCHIVE_MODE="FALSE"
+SYNC_MODE="FALSE"
 QUITMODE="FALSE"
 MKCONFLICT="FALSE"
 while [ $# -gt 0 ]; do
@@ -51,7 +51,7 @@ while [ $# -gt 0 ]; do
 			usage
 			exit 0;;
 		-a|--archive)
-			USEARCH="TRUE";;
+			ARCHIVE_MODE="TRUE";;
 		-C|--conflict)
 			MKCONFLICT="TRUE";;
 		-n)
@@ -62,7 +62,7 @@ while [ $# -gt 0 ]; do
 		-s|--standby)
 			ONLYSBY="TRUE";;
 		-S|--sync)
-			SYNCREP="TRUE";;
+			SYNC_MODE="TRUE";;
 		*)
 			elog "invalid option: $1";;
 	esac
@@ -77,29 +77,17 @@ fi
 
 setup_primary ()
 {
-	pgsql_is_dead $ACTDATA
+	OPT=
 
-	pginitdb.sh $ACTDATA
-
-	if [ "$USEARCH" = "TRUE" ]; then
-		pgarch.sh $ACTDATA
+	if [ "$ARCHIVE_MODE" = "TRUE" ]; then
+		OPT="-a"
 	fi
 
-	set_guc port $ACTPORT $ACTCONF
-	set_guc log_line_prefix "'$ACTPREFIX '" $ACTCONF
-	set_guc max_wal_senders $(expr $SBYNUM + 4) $ACTCONF
-	set_guc wal_level hot_standby $ACTCONF
-	set_guc wal_keep_segments 32 $ACTCONF
-
-	if [ "$SYNCREP" = "TRUE" ]; then
-		set_guc synchronous_standby_names "'*'" $ACTCONF
+	if [ "$SYNC_MODE" = "TRUE" ]; then
+		OPT="$OPT -S"
 	fi
 
-	echo "local replication all trust" >> $ACTHBA
-	echo "host replication all 0.0.0.0/0 trust" >> $ACTHBA
-	echo "host replication all ::1/128   trust" >> $ACTHBA
-
-	pgstart.sh -w $ACTDATA
+	pgmaster.sh $OPT $ACTDATA
 }
 
 prepare_standbys ()
@@ -149,7 +137,7 @@ setup_standby ()
 		echo "primary_conninfo = 'host=localhost port=$ACTPORT application_name=${SBYPREFIX[$i]}'" >> ${RECCONF[$i]}
 		echo "trigger_file = '${TRIGGER[$i]}'" >> ${RECCONF[$i]}
 
-		if [ "$USEARCH" = "TRUE" ]; then
+		if [ "$ARCHIVE_MODE" = "TRUE" ]; then
 			echo "restore_command = 'cp $ACTARCH/%f %p'" >> ${RECCONF[$i]}
 		fi
 
@@ -190,11 +178,8 @@ if [ "$MKCONFLICT" = "TRUE" ]; then
 	exit 0
 fi
 
-if [ "$ONLYSBY" = "TRUE" ]; then
-	setup_standby
+if [ "$ONLYSBY" = "FALSE" ]; then
+	setup_primary
 fi
 
-if [ "$ONLYACT" = "FALSE" -a "$ONLYSBY" = "FALSE" ]; then
-	setup_primary
-	setup_standby
-fi
+setup_standby
