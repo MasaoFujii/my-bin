@@ -2,6 +2,7 @@
 
 PROGNAME=$(basename ${0})
 TMPFILE=/tmp/binscript_$(date +%Y%m%d%H%M%S).$$.tmp
+CURDIR=$(pwd)
 
 elog ()
 {

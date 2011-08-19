@@ -2,7 +2,6 @@
 
 . bincommon
 
-CURDIR=$(pwd)
 PGMAJOR=
 PGPORT=5432
 

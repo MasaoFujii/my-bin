@@ -6,7 +6,7 @@ ARCHIVE_MODE="FALSE"
 
 usage ()
 {
-	echo "$PROGNAME initializes a PostgreSQL database cluster."
+	echo "$PROGNAME initializes PGDATA."
 	echo ""
 	echo "Usage:"
 	echo "  $PROGNAME [OPTIONS] [PGDATA]"
