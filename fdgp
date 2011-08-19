@@ -1,0 +1,38 @@
+#!/bin/sh
+
+. bincommon
+
+FIND_PATTERN=
+GREP_PATTERN=
+
+usage ()
+{
+	echo "$PROGNAME prints lines matching GREP_PATTERN from files matching FIND_PATTERN."
+	echo ""
+	echo "Usage:"
+	echo "  $PROGNAME FIND_PATTERN GREP_PATTERN"
+}
+
+while [ $# -gt 0 ]; do
+	case "$1" in
+		"-?"|--help)
+			usage
+			exit 0;;
+		*)
+			if [ -z "$FIND_PATTERN" ]; then
+				FIND_PATTERN="$1"
+			elif [ -z "$GREP_PATTERN" ]; then
+				GREP_PATTERN="$1"
+			else
+				elog "too many arguments"
+			fi
+			;;
+	esac
+	shift
+done
+
+if [ -z "$FIND_PATTERN" -o -z "$GREP_PATTERN" ]; then
+	elog "FIND_PATTERN and GREP_PATTERN must be required"
+fi
+
+find . -name "$FIND_PATTERN" -exec grep -Hn "$GREP_PATTERN" {} \;
