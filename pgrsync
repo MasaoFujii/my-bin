@@ -5,6 +5,7 @@
 SRCDIR=
 DSTDIR=
 OPT="-a"
+BACKUP_MODE="FALSE"
 
 make_path_canonical ()
 {
@@ -34,7 +35,8 @@ while [ $# -gt 0 ]; do
 			usage
 			exit 0;;
 		-b)
-			OPT="$OPT --delete --exclude=pg_xlog/* --exclude=postmaster.pid";;
+			OPT="$OPT --delete --exclude=pg_xlog/* --exclude=postmaster.pid"
+			BACKUP_MODE="TRUE";;
 		-v)
 			OPT="$OPT -v";;
 		-*)
@@ -57,3 +59,8 @@ if [ -z "$SRCDIR" -o -z "$DSTDIR" ]; then
 fi
 
 rsync $OPT $SRCDIR/ $DSTDIR
+
+if [ "$BACKUP_MODE" = "TRUE" ]; then
+	rm -rf $DSTDIR/pg_xlog/*
+	mkdir $DSTDIR/pg_xlog/archive_status
+fi

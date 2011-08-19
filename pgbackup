@@ -41,8 +41,6 @@ normal_backup ()
 	pg_start_backup
 	pgrsync -b $PGDATA $PGDATABKP
 	pg_stop_backup
-
-	mkdir -p $PGDATABKP/pg_xlog/archive_status
 }
 
 while [ $# -gt 0 ]; do
