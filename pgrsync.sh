@@ -53,7 +53,7 @@ while [ $# -gt 0 ]; do
 done
 
 if [ -z "$SRCDIR" -o -z "$DSTDIR" ]; then
-	elog "SRCDIR and DSTDIR must be required"
+	elog "SRCDIR and DSTDIR must be supplied"
 fi
 
 rsync $OPT $SRCDIR/ $DSTDIR

@@ -30,7 +30,7 @@ while [ $# -gt 0 ]; do
 		*)
 			if [ -z "$GREP_PATTERN" ]; then
 				GREP_PATTERN="$1"
-			elif [ -z "$FIND_PATTERN" ]; then
+			elif [ "$FIND_PATTERN" = "*" ]; then
 				FIND_PATTERN="$1"
 			else
 				elog "too many arguments"
@@ -41,7 +41,7 @@ while [ $# -gt 0 ]; do
 done
 
 if [ -z "$GREP_PATTERN" ]; then
-	elog "GREP_PATTERN must be required"
+	elog "GREP_PATTERN must be supplied"
 fi
 
 find $SEARCH_DIR $EXCLUDE -name "$FIND_PATTERN" -exec grep -Hn "$GREP_PATTERN" {} \;

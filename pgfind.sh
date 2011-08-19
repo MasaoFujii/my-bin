@@ -2,41 +2,49 @@
 
 . pgcommon.sh
 
+SEARCH_ALL="FALSE"
+SEARCH_DIR=src
+PATTERN=
+REGEXP="*.[chy]"
+
 usage ()
 {
-	echo "$PROGNAME prints the lines matching PATTERN"
+	echo "$PROGNAME prints lines matching PATTERN"
 	echo ""
 	echo "Usage:"
 	echo "  $PROGNAME [OPTIONS] PATTERN"
 	echo ""
-	echo "Default:"
-	echo "  This utility searches in source code directory"
-	echo ""
 	echo "Options:"
-	echo "  -a    searches in both source code and document directory"
-	echo "  -c    searches in contrib directory"
-	echo "  -d    searches in document directory"
+	echo "  -a    searches in all"
+	echo "  -c    searches in contrib"
+	echo "  -d    searches in document"
+	echo "  -s    searches in source (default)"
 }
 
-ALL_MODE="FALSE"
-CONTRIB_MODE="FALSE"
-DOC_MODE="FALSE"
-PATTERN=
 while [ $# -gt 0 ]; do
 	case "$1" in
-		-a)
-			ALL_MODE="TRUE";;
-		-c)
-			CONTRIB_MODE="TRUE";;
-		-d)
-			DOC_MODE="TRUE";;
 		"-?"|--help)
 			usage
 			exit 0;;
+		-a)
+			SEARCH_ALL="TRUE";;
+		-c)
+			SEARCH_DIR=contrib
+			REGEXP="*.[chy]";;
+		-d)
+			SEARCH_DIR=doc
+			REGEXP="*.sgml";;
+		-s)
+			SEARCH_DIR=src
+			REGEXP="*.[chy]";;
 		-*)
 			elog "invalid option: $1";;
 		*)
-			PATTERN="$1";;
+			if [ ! -z "$PATTERN" ]; then
+				elog "too many arguments"
+			fi
+			PATTERN="$1"
+			;;
 	esac
 	shift
 done
@@ -47,24 +55,11 @@ if [ -z "$PATTERN" ]; then
 	elog "PATTERN must be supplied"
 fi
 
-if [ "$ALL_MODE" = "TRUE" ]; then
-	$PROGNAME "$PATTERN"
+if [ "$SEARCH_ALL" = "TRUE" ]; then
+	$PROGNAME -s "$PATTERN"
 	$PROGNAME -c "$PATTERN"
 	$PROGNAME -d "$PATTERN"
-	exit
+	exit 0
 fi
 
-REGEXP=
-SEARCHPATH=
-if [ "$DOC_MODE" = "TRUE" ]; then
-	REGEXP="*.sgml"
-	SEARCHPATH=doc
-elif [ "$CONTRIB_MODE" = "TRUE" ]; then
-	REGEXP="*.[chy]"
-	SEARCHPATH=contrib
-else
-	REGEXP="*.[chy]"
-	SEARCHPATH=src
-fi
-
-find $SEARCHPATH -name "$REGEXP" -exec grep -Hn "$PATTERN" {} \;
+grepfind -d $SEARCH_DIR "$PATTERN" "$REGEXP"
