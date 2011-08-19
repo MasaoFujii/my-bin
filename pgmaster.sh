@@ -5,22 +5,21 @@
 ARCHIVE_MODE="FALSE"
 SYNC_MODE="FALSE"
 
-DEFAULT_MASTER_PGDATA=act
+MASTER_PGDATA=act
+update_pgdata $MASTER_PGDATA
 
 usage ()
 {
 	echo "$PROGNAME sets up the master."
 	echo ""
 	echo "Usage:"
-	echo "  $PROGNAME [OPTIONS] [PGDATA]"
+	echo "  $PROGNAME [OPTIONS]"
 	echo ""
 	echo "Options:"
 	echo "  -a    enables WAL archiving"
 	echo "  -A    sets Async mode (default)"
 	echo "  -S    sets Sync mode"
 }
-
-update_pgdata $DEFAULT_MASTER_PGDATA
 
 while [ $# -gt 0 ]; do
 	case "$1" in
@@ -33,10 +32,8 @@ while [ $# -gt 0 ]; do
 			SYNC_MODE="FALSE";;
 		-S)
 			SYNC_MODE="TRUE";;
-		-*)
-			elog "invalid option: $1";;
 		*)
-			update_pgdata "$1";;
+			elog "invalid option: $1";;
 	esac
 	shift
 done
