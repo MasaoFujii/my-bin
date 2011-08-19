@@ -38,8 +38,6 @@ fi
 
 normal_backup ()
 {
-	rm -rf $PGDATABKP
-
 	pg_start_backup
 	pgrsync.sh -b $PGDATA $PGDATABKP
 	pg_stop_backup
