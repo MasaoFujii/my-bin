@@ -3,11 +3,12 @@
 . pgcommon.sh
 
 LOGFILE=/tmp/pgmake.log
+
 PREFIX=
-DEBUG="FALSE"
-CONFOPTS=
+DEBUG_MODE="FALSE"
 ONLYMAKE="FALSE"
-ENABLEDEBUG="--enable-debug"
+
+CONFOPT=
 MAKEOPT=
 
 usage ()
@@ -17,19 +18,13 @@ usage ()
 	echo "Usage:"
 	echo "  $PROGNAME [OPTIONS] PREFIX"
 	echo ""
-	echo "Description:"
-	echo "  PREFIX indicates an installation directory, which must be supplied."
-	echo "  By default, 'configure --enable-debug' and 'make install' are run."
-	echo "  The log messages of the compilation are output in $LOGFILE."
-	echo ""
 	echo "Options:"
-	echo "  -c  OPTIONS      uses OPTIONS as a configure options"
-	echo "  -d, --debug      compiles pgsql for debug; uses --enable-cassert"
-	echo "                   option and prevents the compiler's optimization"
-	echo "  -f, --flag FLAG  uses FLAG as CPPFLAGS, e.g. -f \"-DWAL_DEBUG\""
-	echo "  -j  NUM          number of jobs"
-	echo "  -m, --make       compiles pgsql without clean and configure"
-	echo "  -p, --plain      doesn't use --enable-debug option"
+	echo "  -c OPTIONS    uses OPTIONS as extra configure options"
+	echo "  -d            compiles for debug purpose: uses --enable-debug and"
+	echo "                --enable-cassert, and prevents compiler optimization"
+	echo "  -f FLAG       uses FLAG as CPPFLAGS, e.g. -f \"-DWAL_DEBUG\""
+	echo "  -j NUM        number of jobs"
+	echo "  -m            compiles without clean and configure"
 }
 
 compile_pgsql ()
@@ -39,13 +34,10 @@ compile_pgsql ()
 	if [ "$ONLYMAKE" = "FALSE" ]; then
 		pgclean.sh -m
 
-		if [ "$DEBUG" = "TRUE" ]; then
-			./configure --prefix=$PREFIX $ENABLEDEBUG --enable-cassert $CONFOPTS
+		./configure --prefix=$PREFIX $CONFOPT
+		if [ "$DEBUG_MODE" = "TRUE" ]; then
 			MAKEFILE=$CURDIR/src/Makefile.global
-			sed s/\-O2//g $MAKEFILE > $TMPFILE
-			mv $TMPFILE $MAKEFILE
-		else
-			./configure --prefix=$PREFIX $ENABLEDEBUG $CONFOPTS
+			remove_line "\-O2" $MAKEFILE
 		fi
 	fi
 
@@ -72,20 +64,19 @@ while [ $# -gt 0 ]; do
 			usage
 			exit 0;;
 		-c)
-			CONFOPTS="$2"
+			CONFOPT="$2 $CONFOPT"
 			shift;;
-		-d|--debug)
-			DEBUG=TRUE;;
+		-d)
+			CONFOPT="--enable-debug --enable-cassert $CONFOPT"
+			DEBUG_MODE="TRUE";;
 		-f|--flag)
 			export CPPFLAGS="$2 $CPPFLAGS"
 			shift;;
 		-j)
 			MAKEOPT="-j $2"
 			shift;;
-		-m|--make)
+		-m)
 			ONLYMAKE=TRUE;;
-		-p|--plain)
-			ENABLEDEBUG="";;
 		-*)
 			elog "invalid option: $1";;
 		*)
