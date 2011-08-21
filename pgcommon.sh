@@ -64,7 +64,7 @@ pgdata_exists ()
 	fi
 }
 
-ValidateArchiving ()
+validate_archiving ()
 {
 	if [ $PGMAJOR -lt 80 ]; then
 		HINT="You must run \"$PROGNAME\" with PostgreSQL >=8.0"
@@ -72,7 +72,7 @@ ValidateArchiving ()
 	fi
 }
 
-ValidateReplication ()
+validate_replication ()
 {
 	if [ $PGMAJOR -lt 90 ]; then
 		HINT="You must run \"$PROGNAME\" with PostgreSQL >=9.0"

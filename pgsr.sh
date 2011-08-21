@@ -22,7 +22,7 @@ usage ()
 }
 
 here_is_installation
-ValidateReplication
+validate_replication
 
 make_conflict ()
 {

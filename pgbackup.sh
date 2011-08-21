@@ -61,7 +61,7 @@ while [ $# -gt 0 ]; do
 done
 
 here_is_installation
-ValidateArchiving
+validate_archiving
 pgdata_exists
 pgsql_is_alive
 

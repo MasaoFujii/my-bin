@@ -28,7 +28,7 @@ while [ $# -gt 0 ]; do
 done
 
 here_is_installation
-ValidateArchiving
+validate_archiving
 
 if [ ! -d $PGDATA ]; then
 	pginitdb.sh

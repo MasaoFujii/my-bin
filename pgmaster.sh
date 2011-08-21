@@ -40,7 +40,7 @@ done
 
 here_is_installation
 pgsql_is_dead
-ValidateReplication
+validate_replication
 
 pginitdb.sh $PGDATA
 

@@ -50,7 +50,7 @@ while [ $# -gt 0 ]; do
 done
 
 here_is_installation
-ValidateArchiving
+validate_archiving
 
 if [ $PGMAJOR -lt 82 ]; then
 	elog "warm-standby is not supported"

@@ -44,7 +44,7 @@ while [ $# -gt 0 ]; do
 done
 
 here_is_installation
-ValidateReplication
+validate_replication
 
 pgbackup.sh $ACTDATA
 
