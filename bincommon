@@ -18,6 +18,8 @@ remove_line ()
 	PATTERN="$1"
 	TARGETFILE="$2"
 
+	PERM=$(stat -f "%p" $TARGETFILE)
 	sed /"$PATTERN"/D $TARGETFILE > $TMPFILE
 	mv $TMPFILE $TARGETFILE
+	chmod $PERM $TARGETFILE
 }
