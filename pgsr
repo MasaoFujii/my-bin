@@ -22,9 +22,7 @@ usage ()
 }
 
 here_is_installation
-if [ $PGMAJOR -lt 90 ]; then
-	elog "streaming replication is NOT supported in $PGVERSION"
-fi
+ValidateReplication
 
 make_conflict ()
 {

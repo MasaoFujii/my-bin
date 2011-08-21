@@ -64,10 +64,19 @@ pgdata_exists ()
 	fi
 }
 
-archiving_is_supported ()
+ValidateArchiving ()
 {
 	if [ $PGMAJOR -lt 80 ]; then
-		elog "WAL archiving is NOT supported in $PGVERSION"
+		HINT="You must run \"$PROGNAME\" with PostgreSQL >=8.0"
+		elog "WAL archiving is NOT supported in $PGVERSION" "$HINT"
+	fi
+}
+
+ValidateReplication ()
+{
+	if [ $PGMAJOR -lt 90 ]; then
+		HINT="You must run \"$PROGNAME\" with PostgreSQL >=9.0"
+		elog "streaming replication is NOT supported in $PGVERSION" "$HINT"
 	fi
 }
 
