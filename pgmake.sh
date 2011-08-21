@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. pgcommon
+. pgcommon.sh
 
 LOGFILE=/tmp/pgmake.log
 PREFIX=
@@ -35,7 +35,7 @@ compile_pgsql ()
 	export LANG=C
 
 	if [ "$ONLYMAKE" = "false" ]; then
-		pgclean -m
+		pgclean.sh -m
 
 		if [ "$DEBUG" = "true" ]; then
 			./configure --prefix=$PREFIX $ENABLEDEBUG --enable-cassert $CONFOPTS

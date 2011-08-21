@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. pgcommon
+. pgcommon.sh
 
 MODE="normal"	# normal, start or stop
 
@@ -19,11 +19,11 @@ usage ()
 pg_start_backup ()
 {
 	if [ $PGMAJOR -ge 91 ]; then
-		$PSQL "SET synchronous_commit TO local; SELECT pg_start_backup('pgbackup', true)" template1
+		$PSQL "SET synchronous_commit TO local; SELECT pg_start_backup('pgbackup.sh', true)" template1
 	elif [ $PGMAJOR -ge 84 ]; then
-		$PSQL "SELECT pg_start_backup('pgbackup', true)" template1
+		$PSQL "SELECT pg_start_backup('pgbackup.sh', true)" template1
 	else
-		$PSQL "CHECKPOINT; SELECT pg_start_backup('pgbackup')" template1
+		$PSQL "CHECKPOINT; SELECT pg_start_backup('pgbackup.sh')" template1
 	fi
 }
 
@@ -39,7 +39,7 @@ fi
 normal_backup ()
 {
 	pg_start_backup
-	pgrsync -b $PGDATA $PGDATABKP
+	pgrsync.sh -b $PGDATA $PGDATABKP
 	pg_stop_backup
 }
 

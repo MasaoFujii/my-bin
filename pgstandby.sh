@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. pgcommon
+. pgcommon.sh
 
 ACTPORT=5432
 ACTARCH=$CURDIR/act.arh
@@ -46,7 +46,7 @@ done
 here_is_installation
 ValidateReplication
 
-pgbackup $ACTDATA
+pgbackup.sh $ACTDATA
 
 for SBYID in $(seq $SBYMIN $SBYMAX); do
 	update_pgdata $SBYDATA$SBYID
@@ -60,7 +60,7 @@ for SBYID in $(seq $SBYMIN $SBYMAX); do
 	TRIGGER="trigger$SBYID"
 
 	rm -f $TRIGGER
-	pgrsync -b $ACTBKP $PGDATA
+	pgrsync.sh -b $ACTBKP $PGDATA
 
 	set_guc port $SBYPORT $PGCONF
 	set_guc log_line_prefix "'$PGDATA '" $PGCONF
@@ -76,7 +76,7 @@ EOF
 		echo "restore_command = 'cp $ACTARCH/%f %p'" >> $RECOVERYCONF
 	fi
 
-	pgstart $PGDATA
+	pgstart.sh $PGDATA
 
 	STARTED=$(expr $STARTED + 1)
 	if [ $STARTED -ge $SBYNUM ]; then

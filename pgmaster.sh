@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. pgcommon
+. pgcommon.sh
 
 ARCHIVE_MODE="FALSE"
 SYNC_MODE="FALSE"
@@ -42,10 +42,10 @@ here_is_installation
 pgsql_is_dead
 ValidateReplication
 
-pginitdb $PGDATA
+pginitdb.sh $PGDATA
 
 if [ "$ARCHIVE_MODE" = "TRUE" ]; then
-	pgarch $PGDATA
+	pgarch.sh $PGDATA
 fi
 
 set_guc port $PGPORT $PGCONF
@@ -62,4 +62,4 @@ echo "local replication all trust" >> $PGHBA
 echo "host replication all 0.0.0.0/0 trust" >> $PGHBA
 echo "host replication all ::1/128   trust" >> $PGHBA
 
-pgstart -w $PGDATA
+pgstart.sh -w $PGDATA

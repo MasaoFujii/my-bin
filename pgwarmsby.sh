@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. pgcommon
+. pgcommon.sh
 
 PGSTANDBY=$PGBIN/pg_standby
 
@@ -68,14 +68,14 @@ fi
 
 rm -rf $ACTDATA $SBYDATA $PGARCH $TRIGGER
 
-pginitdb $ACTDATA
-pgarch $ACTDATA
+pginitdb.sh $ACTDATA
+pgarch.sh $ACTDATA
 
 set_guc port $ACTPORT $ACTCONF
 set_guc log_line_prefix "'$ACTPREFIX '" $ACTCONF
 
-pgstart -w $ACTDATA
-pgbackup $ACTDATA
+pgstart.sh -w $ACTDATA
+pgbackup.sh $ACTDATA
 cp -r $PGBKP $SBYDATA
 
 set_guc port $SBYPORT $SBYCONF
@@ -94,4 +94,4 @@ else
 	echo "restore_command = '$RESTORECMD'" > $RECOVERYCONF
 fi
 
-pgstart $SBYDATA
+pgstart.sh $SBYDATA

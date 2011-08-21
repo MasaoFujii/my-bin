@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. pgcommon
+. pgcommon.sh
 
 SECS=
 
@@ -40,5 +40,5 @@ pgdata_exists
 if [ -z "$SECS" ]; then
 	ls $PGXLOG
 else
-	watch -n$SECS "pgxlog $PGDATA"
+	watch -n$SECS "pgxlog.sh $PGDATA"
 fi

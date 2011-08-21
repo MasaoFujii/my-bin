@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. bincommon
+. bincommon.sh
 
 GREP_PATTERN=
 FIND_PATTERN="*"

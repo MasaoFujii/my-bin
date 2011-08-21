@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. pgcommon
+. pgcommon.sh
 
 OPT=
 
@@ -33,7 +33,7 @@ done
 here_is_installation
 
 if [ ! -d $PGDATA ]; then
-	pginitdb
+	pginitdb.sh
 fi
 
 pgsql_is_dead

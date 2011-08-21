@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. pgcommon
+. pgcommon.sh
 
 ARCHIVE_OPT=
 SYNC_OPT=
@@ -77,5 +77,5 @@ while [ $# -gt 0 ]; do
 	shift
 done
 
-pgmaster $ARCHIVE_OPT $SYNC_OPT
-pgstandby $ARCHIVE_OPT -n $SBYNUM
+pgmaster.sh $ARCHIVE_OPT $SYNC_OPT
+pgstandby.sh $ARCHIVE_OPT -n $SBYNUM

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. pgcommon
+. pgcommon.sh
 
 PREFIX=/dav/head-pgsql
 
@@ -31,8 +31,8 @@ if [ ! -d $CURDIR/.git ]; then
 	elog "here \"$CURDIR\" is not git directory"
 fi
 
-pgclean -a
+pgclean.sh -a
 git pull
-pgetags
+pgetags.sh
 rm -rf $PREFIX
-pgmake -d $PREFIX
+pgmake.sh -d $PREFIX

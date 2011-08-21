@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. pgcommon
+. pgcommon.sh
 
 SEARCH_ALL="FALSE"
 SEARCH_DIR=src
@@ -62,4 +62,4 @@ if [ "$SEARCH_ALL" = "TRUE" ]; then
 	exit 0
 fi
 
-grepfind -d $SEARCH_DIR "$PATTERN" "$REGEXP"
+grepfind.sh -d $SEARCH_DIR "$PATTERN" "$REGEXP"

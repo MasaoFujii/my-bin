@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. pgcommon
+. pgcommon.sh
 
 usage ()
 {
@@ -31,7 +31,7 @@ here_is_installation
 ValidateArchiving
 
 if [ ! -d $PGDATA ]; then
-	pginitdb
+	pginitdb.sh
 fi
 
 pgsql_is_dead
