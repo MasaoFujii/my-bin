@@ -3,6 +3,7 @@
 . bincommon
 
 PGMAJOR=
+PGVERSION=
 PGPORT=5432
 
 ACTDATA=act
@@ -42,7 +43,8 @@ here_is_source ()
 		elog "here is NOT source directory: \"$CURDIR\""
 	fi
 
-	PGMAJOR=$($PGBIN/configure --version | head -1 | tr -d [A-z' '] | cut -d. -f1-2 | tr -d .)
+	PGVERSION=$($PGBIN/configure --version | head -1)
+	PGMAJOR=$(echo $PGVERSION | tr -d [A-z' '] | cut -d. -f1-2 | tr -d .)
 }
 
 here_is_installation ()
@@ -51,7 +53,8 @@ here_is_installation ()
 		elog "here is NOT installation directory: \"$CURDIR\""
 	fi
 
-	PGMAJOR=$($PGBIN/pg_config --version | tr -d [A-z' '] | cut -d. -f1-2 | tr -d .)
+	PGVERSION=$($PGBIN/pg_config --version)
+	PGMAJOR=$(echo $PGVERSION | tr -d [A-z' '] | cut -d. -f1-2 | tr -d .)
 }
 
 pgdata_exists ()
@@ -64,7 +67,7 @@ pgdata_exists ()
 archiving_is_supported ()
 {
 	if [ $PGMAJOR -lt 80 ]; then
-		elog "WAL archiving is NOT supported in $($PGBIN/pg_config --version)"
+		elog "WAL archiving is NOT supported in $PGVERSION"
 	fi
 }
 

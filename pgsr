@@ -23,7 +23,7 @@ usage ()
 
 here_is_installation
 if [ $PGMAJOR -lt 90 ]; then
-	elog "streaming replication is NOT supported in $($PGBIN/pg_config --version)"
+	elog "streaming replication is NOT supported in $PGVERSION"
 fi
 
 make_conflict ()
