@@ -41,6 +41,8 @@ here_is_source ()
 	if [ ! -f $CURDIR/configure ]; then
 		elog "here is NOT source directory: \"$CURDIR\""
 	fi
+
+	PGMAJOR=$($PGBIN/configure --version | head -1 | tr -d [A-z' '] | cut -d. -f1-2 | tr -d .)
 }
 
 here_is_installation ()
