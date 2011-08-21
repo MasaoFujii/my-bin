@@ -53,10 +53,17 @@ compile_pgsql ()
 	make install
 	echo -e "\n"
 
-	cd $CURDIR/contrib/pgbench
-	make install
-	cd $CURDIR/contrib/pg_standby
-	make install
+	CONTRIB=$CURDIR/contrib
+	PGBENCH=$CONTRIB/pgbench
+	if [ -d $PGBENCH ]; then
+		cd $PGBENCH
+		make install
+	fi
+	PGSBY=$CONTRIB/pg_standby
+	if [ -d $PGSBY ]; then
+		cd $PGSBY
+		make install
+	fi
 }
 
 while [ $# -gt 0 ]; do
