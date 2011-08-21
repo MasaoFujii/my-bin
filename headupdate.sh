@@ -6,12 +6,10 @@ PREFIX=/dav/head-pgsql
 
 usage ()
 {
-	echo "$PROGNAME downloads and compiles the HEAD"
+	echo "$PROGNAME updates source from HEAD and compiles it."
 	echo ""
 	echo "Usage:"
-	echo "  $PROGNAME [PREFIX]"
-	echo ""
-	echo "The default PREFIX is \"$PREFIX\"."
+	echo "  $PROGNAME"
 }
 
 while [ $# -gt 0 ]; do
@@ -35,4 +33,4 @@ pgclean.sh -a
 git pull
 pgetags.sh
 rm -rf $PREFIX
-pgmake.sh -d $PREFIX
+pgmake.sh -d -j 2 $PREFIX
