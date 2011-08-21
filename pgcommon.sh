@@ -43,7 +43,7 @@ here_is_source ()
 		elog "here is NOT source directory: \"$CURDIR\""
 	fi
 
-	PGVERSION=$($PGBIN/configure --version | head -1)
+	PGVERSION=$($CURDIR/configure --version | head -1)
 	PGMAJOR=$(echo $PGVERSION | tr -d [A-z' '] | cut -d. -f1-2 | tr -d .)
 }
 
