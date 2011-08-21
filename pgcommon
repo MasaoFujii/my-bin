@@ -107,7 +107,7 @@ find_all_pgdata ()
 {
 	MUSTHAVE="base global pg_clog pg_xlog"
 
-	for pgdata in $(ls -I *.bkp $CURDIR); do
+	for pgdata in $(ls $CURDIR | grep -v -e "\.bkp"); do
 		if [ ! -d "$pgdata" ]; then
 			continue
 		fi
