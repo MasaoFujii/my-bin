@@ -3,7 +3,7 @@
 . pgcommon.sh
 
 MODE="f"
-TARGETS=""
+TARGETS="$PGDATA"
 
 usage ()
 {
