@@ -3,6 +3,7 @@
 PROGNAME=$(basename ${0})
 TMPFILE=/tmp/binscript_$(date +%Y%m%d%H%M%S).$$.tmp
 CURDIR=$(pwd)
+KERNEL=$(uname)
 
 elog ()
 {
@@ -17,8 +18,16 @@ remove_line ()
 {
 	PATTERN="$1"
 	TARGETFILE="$2"
+	PERM=
 
-	PERM=$(stat -f "%p" $TARGETFILE)
+	case "$KERNEL" in
+		"Linux")
+			PERM=$(stat --format "%a" $TARGETFILE);;
+		"Darwin")
+			PERM=$(stat -f "%p" $TARGETFILE);;
+		*)
+			elog "unknown kernel: $KERNEL";;
+	esac
 	sed /"$PATTERN"/D $TARGETFILE > $TMPFILE
 	mv $TMPFILE $TARGETFILE
 	chmod $PERM $TARGETFILE
