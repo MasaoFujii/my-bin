@@ -44,6 +44,7 @@ here_is_installation
 
 for pgdata in $TARGETS; do
 	update_pgdata "$pgdata"
+	pgdata_exists
 
 	$PGBIN/pg_ctl -D $PGDATA status > /dev/null 2>&1
 	if [ $? -eq 0 ]; then
