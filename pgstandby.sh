@@ -48,7 +48,7 @@ validate_replication
 
 pgbackup.sh $ACTDATA
 
-for SBYID in $(seq $SBYMIN $SBYMAX); do
+for ((SBYID=$SBYMIN; SBYID<=$SBYMAX; SBYID++)); do
 	update_pgdata $SBYDATA$SBYID
 
 	$PGBIN/pg_ctl -D $PGDATA status > /dev/null
