@@ -3,6 +3,7 @@
 . bincommon.sh
 
 GREP_PATTERN=
+GREP_OPTIONS=
 FIND_PATTERN="*"
 SEARCH_DIR="."
 EXCLUDE="-name .git -prune -or"
@@ -15,6 +16,7 @@ usage ()
 	echo "  $PROGNAME [OPTIONS] GREP_PATTERN [FIND_PATTERN]"
 	echo "Options:"
 	echo "  -d DIR    where to search (default: .)"
+	echo "  -i        ignore case distinctions in GREP_PATTERN"
 }
 
 while [ $# -gt 0 ]; do
@@ -25,6 +27,8 @@ while [ $# -gt 0 ]; do
 		-d)
 			SEARCH_DIR="$2"
 			shift;;
+		-i)
+			GREP_OPTIONS="$GREP_OPTIONS -i";;
 		-*)
 			elog "invalid option: $1";;
 		*)
@@ -44,4 +48,4 @@ if [ -z "$GREP_PATTERN" ]; then
 	elog "GREP_PATTERN must be supplied"
 fi
 
-find $SEARCH_DIR $EXCLUDE -name "$FIND_PATTERN" -exec grep -Hn "$GREP_PATTERN" {} \;
+find $SEARCH_DIR $EXCLUDE -name "$FIND_PATTERN" -exec grep -Hn $GREP_OPTIONS "$GREP_PATTERN" {} \;
