@@ -6,6 +6,7 @@ SEARCH_ALL="FALSE"
 SEARCH_DIR=src
 PATTERN=
 REGEXP="*.[chy]"
+GF_OPTS=
 
 usage ()
 {
@@ -18,6 +19,7 @@ usage ()
 	echo "  -a    searches in all"
 	echo "  -c    searches in contrib"
 	echo "  -d    searches in document"
+	echo "  -i    ignore case distinctions in PATTERN"
 	echo "  -s    searches in source (default)"
 }
 
@@ -34,6 +36,8 @@ while [ $# -gt 0 ]; do
 		-d)
 			SEARCH_DIR=doc
 			REGEXP="*.sgml";;
+		-i)
+			GF_OPTS="$GF_OPTS -i";;
 		-s)
 			SEARCH_DIR=src
 			REGEXP="*.[chy]";;
@@ -62,4 +66,4 @@ if [ "$SEARCH_ALL" = "TRUE" ]; then
 	exit 0
 fi
 
-grepfind.sh -d $SEARCH_DIR "$PATTERN" "$REGEXP"
+grepfind.sh -d $SEARCH_DIR $GF_OPTS "$PATTERN" "$REGEXP"
