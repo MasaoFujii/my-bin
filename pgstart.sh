@@ -38,4 +38,4 @@ fi
 
 pgsql_is_dead
 
-$PGBIN/pg_ctl $OPT -D $PGDATA start
+$PGBIN/pg_ctl $OPT -D $PGDATA -c start
