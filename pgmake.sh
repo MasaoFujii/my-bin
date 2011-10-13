@@ -37,7 +37,8 @@ compile_pgsql ()
 		./configure --prefix=$PREFIX $CONFOPT
 		if [ "$DEBUG_MODE" = "TRUE" ]; then
 			MAKEFILE=$CURDIR/src/Makefile.global
-			remove_line "\-O2" $MAKEFILE
+			sed s/"\-O2"/"\-O0"/g $MAKEFILE > $TMPFILE
+			mv $TMPFILE $MAKEFILE
 		fi
 	fi
 
