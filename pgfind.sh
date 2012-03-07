@@ -19,6 +19,7 @@ usage ()
 	echo "  -a    searches in all"
 	echo "  -c    searches in contrib"
 	echo "  -d    searches in document"
+	echo "  -h    searches in header files"
 	echo "  -i    ignore case distinctions in PATTERN"
 	echo "  -s    searches in source (default)"
 }
@@ -38,6 +39,9 @@ while [ $# -gt 0 ]; do
 			REGEXP="*.sgml";;
 		-i)
 			GF_OPTS="$GF_OPTS -i";;
+		-h)
+			SEARCH_DIR=src
+			REGEXP="*.h";;
 		-s)
 			SEARCH_DIR=src
 			REGEXP="*.[chy]";;
