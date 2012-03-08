@@ -21,7 +21,8 @@ usage ()
     echo "  -b          batch mode; reports running processes in a row"
     echo "  -d SECS     specifies the delay between screen updates or"
 		echo "              reports in batch mode"
-		echo "  -u          uses user-oriented format (default)"
+		echo "  -o FORMAT   uses user-defined format, e.g., -o pid"
+		echo "  u           uses user-oriented format (default format)"
     echo "  -1          1-time mode; reports running processes only once"
 		echo ""
 		echo "Notes:"
@@ -38,7 +39,10 @@ while [ $# -gt 0 ]; do
 		"-?"|--help)
 			usage
 			exit 0;;
-		-u)
+		-o)
+			FORMAT="-o $2"
+			shift;;
+		u)
 			FORMAT="u";;
 		-1)
 			ONETIME=true;;
@@ -73,5 +77,5 @@ if [ "$BATCH" = "true" ]; then
 		sleep $DELAY
 	done
 else
-	watch -n$DELAY "$PROGNAME -1 -$FORMAT"
+	watch -n$DELAY "$PROGNAME -1 $FORMAT"
 fi
