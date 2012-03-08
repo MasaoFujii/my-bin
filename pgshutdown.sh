@@ -3,7 +3,9 @@
 . pgcommon.sh
 
 MODE="f"
+SIGNAL="INT"
 TARGETS="$PGDATA"
+STOPALL=false
 
 usage ()
 {
@@ -25,13 +27,16 @@ while [ $# -gt 0 ]; do
 			usage
 			exit 0;;
 		-a)
-			TARGETS=$(find_all_pgdata);;
+			STOPALL=true;;
 		-s)
-			MODE="s";;
+			MODE="s"
+			SIGNAL="TERM";;
 		-f)
-			MODE="f";;
+			MODE="f"
+			SIGNAL="INT";;
 		-i)
-			MODE="i";;
+			MODE="i"
+			SIGNAL="QUIT";;
 		-*)
 			elog "invalid option: $1";;
 		*)
@@ -39,6 +44,13 @@ while [ $# -gt 0 ]; do
 	esac
 	shift
 done
+
+if [ "$STOPALL" = "true" ]; then
+	for PMPID in $(pgps.sh -1 -o ppid,pid | awk '$1 == 1 {print $2}'); do
+		kill -$SIGNAL $PMPID
+	done
+	exit 0
+fi
 
 here_is_installation
 
