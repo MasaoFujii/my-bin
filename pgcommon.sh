@@ -122,7 +122,8 @@ show_guc ()
 	GUCNAME="$1"
 	CONFPATH="$2"
 
-	grep -E ^$GUCNAME\ \|\#$GUCNAME\  $CONFPATH | awk 'NR==1 {v=$3} NR!=1 && $1!~"#" {v=$3} END {print v}'
+	grep -E ^$GUCNAME\ \|\#$GUCNAME\  $CONFPATH | \
+		awk 'NR==1 {n=$1; v=$3} NR!=1 && $1!~"#" {n=$1; v=$3} END { if (n!="") print n " = " v}'
 }
 
 find_all_pgdata ()
