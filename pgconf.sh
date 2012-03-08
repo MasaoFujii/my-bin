@@ -3,7 +3,7 @@
 . pgcommon.sh
 
 CONFFILE="postgresql.conf"
-SHOWGUCS=
+SHOWGUCNAMES=
 
 usage ()
 {
@@ -31,7 +31,7 @@ while [ $# -gt 0 ]; do
 		-r)
 			CONFFILE="recovery.conf";;
 		-s)
-			SHOWGUCS="$2 $SHOWGUCS"
+			SHOWGUCNAMES="$SHOWGUCNAMES,$2"
 			shift;;
 		-*)
 			elog "invalid option: $1";;
@@ -44,10 +44,13 @@ done
 here_is_installation
 pgdata_exists
 
-if [ ! -z "$SHOWGUCS" ]; then
+if [ ! -z "$SHOWGUCNAMES" ]; then
 	CONFFILE="postgresql.conf"
-	for gucname in $(echo "$SHOWGUCS" | sed s/','/' '/g); do
-		show_guc "$gucname" $PGDATA/$CONFFILE
+	for GUCNAME in $(echo "$SHOWGUCNAMES" | sed s/','/' '/g); do
+		GUCVALUE=$(show_guc "$GUCNAME" $PGDATA/$CONFFILE)
+		if [ ! -z "$GUCVALUE" ]; then
+			echo "$GUCNAME = $GUCVALUE"
+		fi
 	done
 	exit 0
 fi
