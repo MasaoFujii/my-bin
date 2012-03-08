@@ -117,6 +117,14 @@ set_guc ()
 	echo "$GUCNAME = $GUCVALUE" >> $CONFPATH
 }
 
+show_guc ()
+{
+	GUCNAME="$1"
+	CONFPATH="$2"
+
+	grep -E ^$GUCNAME\ \|\#$GUCNAME\  $CONFPATH | awk 'NR==1 {v=$3} NR!=1 && $1!~"#" {v=$3} END {print v}'
+}
+
 find_all_pgdata ()
 {
 	MUSTHAVE="base global pg_clog pg_xlog"
