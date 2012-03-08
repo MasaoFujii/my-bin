@@ -18,11 +18,11 @@ usage ()
     echo "  By default, screen is updated every 1 second."
     echo ""
     echo "Options:"
-    echo "  -b, --batch       batch mode; reports running processes in a row"
-    echo "  -d, --delay SECS  specifies the delay between screen updates or"
-		echo "                    reports in batch mode"
-		echo "  -u                uses user-oriented format (default)"
-    echo "  -1                1-time mode; reports running processes only once"
+    echo "  -b          batch mode; reports running processes in a row"
+    echo "  -d SECS     specifies the delay between screen updates or"
+		echo "              reports in batch mode"
+		echo "  -u          uses user-oriented format (default)"
+    echo "  -1          1-time mode; reports running processes only once"
 		echo ""
 		echo "Notes:"
 		echo "  -1 is given priority over -b if both are specified."
@@ -30,9 +30,9 @@ usage ()
 
 while [ $# -gt 0 ]; do
 	case "$1" in
-		-b|--batch)
+		-b)
 			BATCH=true;;
-		-d|--delay)
+		-d)
 			DELAY="$2"
 			shift;;
 		"-?"|--help)
