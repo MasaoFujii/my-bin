@@ -6,6 +6,7 @@ MODE="f"
 SIGNAL="INT"
 TARGETS="$PGDATA"
 STOPALL=false
+MAXWAIT=6
 
 usage ()
 {
@@ -45,10 +46,26 @@ while [ $# -gt 0 ]; do
 	shift
 done
 
+pm_pids ()
+{
+	pgps.sh -1 -o ppid,pid | awk '$1 == 1 {print $2}'
+}
+
 if [ "$STOPALL" = "true" ]; then
-	for PMPID in $(pgps.sh -1 -o ppid,pid | awk '$1 == 1 {print $2}'); do
+	for PMPID in $(pm_pids); do
 		kill -$SIGNAL $PMPID
 	done
+
+	printf "waiting for servers to shut down..."
+	for i in $(seq 1 $MAXWAIT); do
+		if [ -z "$(pm_pids)" ]; then
+			echo " done"
+			exit 0
+		fi
+		printf "."
+		sleep 1
+	done
+	echo " failed"
 	exit 0
 fi
 
