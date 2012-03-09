@@ -6,6 +6,7 @@ CONFFILE=$GUCFILENAME
 SHOWGUCS=
 SETGUC=
 NSETGUC=0
+SHOWCHANGED=false
 
 usage ()
 {
@@ -22,6 +23,7 @@ usage ()
 	echo "                   (enclose VALUE with double quotes to include single"
 	echo "                   quote in it, e.g., listen_addresses=\"'*'\")"
 	echo "  -s NAME[,...]    shows values of specified parameters"
+	echo "  -S               shows all changed (not default) parameters"
 }
 
 while [ $# -gt 0 ]; do
@@ -42,6 +44,8 @@ while [ $# -gt 0 ]; do
 		-s)
 			SHOWGUCS="$SHOWGUCS,$2"
 			shift;;
+		-S)
+			SHOWCHANGED=true;;
 		-*)
 			elog "invalid option: $1";;
 		*)
@@ -63,6 +67,11 @@ show_params ()
 	done
 }
 
+show_changed ()
+{
+	grep -E ^[A-z] $PGCONF | cut -f1
+}
+
 change_params ()
 {
 	for ((i=0; i<$NSETGUC; i++)); do
@@ -82,6 +91,11 @@ fi
 
 if [ ! -z "$SHOWGUCS" ]; then
 	show_params
+	exit 0
+fi
+
+if [ "$SHOWCHANGED" = "true" ]; then
+	show_changed
 	exit 0
 fi
 
