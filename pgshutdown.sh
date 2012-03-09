@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 . pgcommon.sh
 
@@ -6,7 +6,7 @@ MODE="f"
 SIGNAL="INT"
 TARGETS="$PGDATA"
 STOPALL=false
-MAXWAIT=6
+MAXWAIT=60
 
 usage ()
 {
@@ -57,7 +57,7 @@ if [ "$STOPALL" = "true" ]; then
 	done
 
 	printf "waiting for servers to shut down..."
-	for i in $(seq 1 $MAXWAIT); do
+	for ((i=0; i<$MAXWAIT; i++)); do
 		if [ -z "$(pm_pids)" ]; then
 			echo " done"
 			exit 0
