@@ -23,6 +23,10 @@ PGCONF=
 PGHBA=
 RECOVERYCONF=
 
+GUCFILENAME=postgresql.conf
+HBAFILENAME=pg_hba.conf
+RECFILENAME=recovery.conf
+
 update_pgdata ()
 {
 	PGDATA="$1"
@@ -31,9 +35,9 @@ update_pgdata ()
 	PGARCHSTATUS=$PGXLOG/archive_status
 	PGDATABKP=$PGDATA.bkp
 	PGARCHBKP=$PGARCH.bkp
-	PGCONF=$PGDATA/postgresql.conf
-	PGHBA=$PGDATA/pg_hba.conf
-	RECOVERYCONF=$PGDATA/recovery.conf
+	PGCONF=$PGDATA/$GUCFILENAME
+	PGHBA=$PGDATA/$HBAFILENAME
+	RECOVERYCONF=$PGDATA/$RECFILENAME
 }
 update_pgdata "$CURDIR/data"
 
@@ -113,8 +117,11 @@ set_guc ()
 	GUCVALUE="$2"
 	CONFPATH="$3"
 
-	remove_line "^$GUCNAME" $CONFPATH
-	echo "$GUCNAME = $GUCVALUE" >> $CONFPATH
+	PREVALUE="$(show_guc $GUCNAME $CONFPATH)"
+	if [ ! -z "$PREVALUE" ]; then
+		remove_line "^$GUCNAME" $CONFPATH
+		echo "$GUCNAME = $GUCVALUE" >> $CONFPATH
+	fi
 }
 
 show_guc ()

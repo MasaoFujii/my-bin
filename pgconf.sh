@@ -2,8 +2,10 @@
 
 . pgcommon.sh
 
-CONFFILE="postgresql.conf"
-SHOWGUCNAMES=
+CONFFILE=$GUCFILENAME
+SHOWGUCS=
+SETGUC=
+NSETGUC=0
 
 usage ()
 {
@@ -13,9 +15,12 @@ usage ()
 	echo "  $PROGNAME [OPTIONS] [PGDATA]"
 	echo ""
 	echo "Options:"
-	echo "  -p               opens postgresql.conf (default)"
-	echo "  -h               opens pg_hba.conf"
-	echo "  -r               opens recovery.conf"
+	echo "  -p               opens $GUCFILENAME (default)"
+	echo "  -h               opens $HBAFILENAME"
+	echo "  -r               opens $RECFILENAME"
+	echo "  -c NAME=VALUE    changes specified parameter"
+	echo "                   (enclose VALUE with double quotes to include single"
+	echo "                   quote in it, e.g., listen_addresses=\"'*'\")"
 	echo "  -s NAME[,...]    shows values of specified parameters"
 }
 
@@ -25,13 +30,17 @@ while [ $# -gt 0 ]; do
 			usage
 			exit 0;;
 		-p)
-			CONFFILE="postgresql.conf";;
+			CONFFILE=$GUCFILENAME;;
 		-h)
-			CONFFILE="pg_hba.conf";;
+			CONFFILE=$HBAFILENAME;;
 		-r)
-			CONFFILE="recovery.conf";;
+			CONFFILE=$RECFILENAME;;
+		-c)
+			SETGUC[$NSETGUC]="$2"
+			NSETGUC=$(expr $NSETGUC + 1)
+			shift;;
 		-s)
-			SHOWGUCNAMES="$SHOWGUCNAMES,$2"
+			SHOWGUCS="$SHOWGUCS,$2"
 			shift;;
 		-*)
 			elog "invalid option: $1";;
@@ -44,14 +53,35 @@ done
 here_is_installation
 pgdata_exists
 
-if [ ! -z "$SHOWGUCNAMES" ]; then
-	CONFFILE="postgresql.conf"
-	for GUCNAME in $(echo "$SHOWGUCNAMES" | sed s/','/' '/g); do
-		GUCVALUE=$(show_guc "$GUCNAME" $PGDATA/$CONFFILE)
+show_params ()
+{
+	for GUCNAME in $(echo "$SHOWGUCS" | sed s/','/' '/g); do
+		GUCVALUE=$(show_guc "$GUCNAME" $PGCONF)
 		if [ ! -z "$GUCVALUE" ]; then
 			echo "$GUCNAME = $GUCVALUE"
 		fi
 	done
+}
+
+change_params ()
+{
+	for ((i=0; i<$NSETGUC; i++)); do
+		GUCNAME=$(echo "${SETGUC[$i]}" | cut -d= -f1)
+		GUCVALUE=$(echo "${SETGUC[$i]}" | cut -d= -f2)
+		set_guc "$GUCNAME" "$GUCVALUE" $PGCONF
+		SHOWGUCS="$SHOWGUCS,$GUCNAME"
+	done
+
+	show_params
+}
+
+if [ $NSETGUC -gt 0 ]; then
+	change_params
+	exit 0
+fi
+
+if [ ! -z "$SHOWGUCS" ]; then
+	show_params
 	exit 0
 fi
 
