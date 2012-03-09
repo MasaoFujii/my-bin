@@ -41,7 +41,7 @@ if [ ! -d $PGARCH ]; then
 fi
 
 RESTORECMD="cp ../$(basename $PGARCH)/%f %p"
-echo "restore_command = '${RESTORECMD}'" > $PGDATABKP/recovery.conf
+echo "restore_command = '${RESTORECMD}'" > $PGDATABKP/$RECFILENAME
 
 rm -rf $PGDATABKP/pg_xlog
 mv $PGDATA/pg_xlog $PGDATABKP
