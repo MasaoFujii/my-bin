@@ -25,6 +25,7 @@ usage ()
 	echo "  -f FLAG       uses FLAG as CPPFLAGS, e.g. -f \"-DWAL_DEBUG\""
 	echo "  -j NUM        number of jobs"
 	echo "  -m            compiles without clean and configure"
+	echo "  --wal-debug   same as -f \"-DWAL_DEBUG\""
 }
 
 compile_pgsql ()
@@ -78,6 +79,8 @@ while [ $# -gt 0 ]; do
 			shift;;
 		-m)
 			ONLYMAKE=TRUE;;
+		--wal-debug)
+			export CPPFLAGS="-DWAL_DEBUG $CPPFLAGS";;
 		-*)
 			elog "invalid option: $1";;
 		*)
