@@ -130,7 +130,8 @@ show_guc ()
 	CONFPATH="$2"
 
 	grep -E ^$GUCNAME\ \|\#$GUCNAME\  $CONFPATH | \
-		awk 'NR==1 {v=$3} NR!=1 && $1!~"#" {v=$3} END { if (v!="") print v}'
+		cut -f1 |\
+		awk -F" = " 'NR==1 {v=$2} NR!=1 && $1!~"#" {v=$2} END { if (v!="") print v}'
 }
 
 find_all_pgdata ()
