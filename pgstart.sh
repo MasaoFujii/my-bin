@@ -38,4 +38,8 @@ fi
 
 pgsql_is_dead
 
-$PGBIN/pg_ctl $OPT -D $PGDATA -c start
+if [ $PGMAJOR -ge 83 ]; then
+	OPT="-c $OPT"
+fi
+
+$PGBIN/pg_ctl $OPT -D $PGDATA start
