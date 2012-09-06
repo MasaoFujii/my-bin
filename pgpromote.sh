@@ -15,8 +15,6 @@ while [ $# -gt 0 ]; do
 		"-?"|--help)
 			usage
 			exit 0;;
-		-w)
-			OPT="-w";;
 		-*)
 			elog "invalid option: $1";;
 		*)
