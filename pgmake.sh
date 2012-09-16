@@ -58,6 +58,11 @@ compile_pgsql ()
 		cd $PGSBY
 		make install
 	fi
+	PGTRGM=$CONTRIB/pg_trgm
+	if [ -d $PGTRGM ]; then
+		cd $PGTRGM
+		make install
+	fi
 }
 
 while [ $# -gt 0 ]; do
