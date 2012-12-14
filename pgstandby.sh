@@ -10,6 +10,9 @@ SBYID=0
 SBYNUM=1
 STARTED=0
 
+SNDDATA=
+SNDPORT=
+
 ARCHIVE_MODE="FALSE"
 
 usage ()
@@ -20,8 +23,9 @@ usage ()
 	echo "  $PROGNAME [OPTIONS]"
 	echo ""
 	echo "Options:"
-	echo "  -a        enables WAL archiving"
-	echo "  -n NUM    number of standbys (default: 1)"
+	echo "  -a         enables WAL archiving"
+	echo "  -c SENDER  sets up the cascade standby"
+	echo "  -n NUM     number of standbys (default: 1)"
 }
 
 while [ $# -gt 0 ]; do
@@ -31,6 +35,9 @@ while [ $# -gt 0 ]; do
 			exit 0;;
 		-a)
 			ARCHIVE_MODE="TRUE";;
+		-c)
+			SNDDATA=$2
+			shift;;
 		-n)
 			SBYNUM=$2
 			if [ $SBYNUM -lt $SBYMIN ]; then
@@ -46,7 +53,20 @@ done
 here_is_installation
 validate_replication
 
-pgbackup.sh $ACTDATA
+if [ -z "$SNDDATA" ]; then
+	pgbackup.sh $ACTDATA
+else
+	validate_cascade_replication
+
+	SNDPORT=$(show_guc port $SNDDATA/postgresql.conf)
+	if [ -z "$SNDPORT" ]; then
+		SNDPORT=5432
+	fi
+	ACTPORT=$SNDPORT
+
+	rm -rf $ACTBKP
+	$PGBIN/pg_basebackup -D $ACTBKP -p $SNDPORT -c fast
+fi
 
 for ((SBYID=$SBYMIN; SBYID<=$SBYMAX; SBYID++)); do
 	update_pgdata $SBYDATA$SBYID

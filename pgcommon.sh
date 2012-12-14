@@ -84,6 +84,14 @@ validate_replication ()
 	fi
 }
 
+validate_cascade_replication ()
+{
+	if [ $PGMAJOR -lt 92 ]; then
+		HINT="You must run \"$PROGNAME\" with PostgreSQL >=9.2"
+		elog "cascade replication is NOT supported in $PGVERSION" "$HINT"
+	fi
+}
+
 pgsql_is_alive ()
 {
 	_PGDATA="$PGDATA"
