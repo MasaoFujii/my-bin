@@ -70,6 +70,7 @@ for ((SBYID=$SBYMIN; SBYID<=$SBYMAX; SBYID++)); do
 standby_mode = 'on'
 primary_conninfo = 'port=$ACTPORT application_name=$PGDATA'
 trigger_file = '$TRIGGER'
+recovery_target_timeline = 'latest'
 EOF
 
 	if [ "$ARCHIVE_MODE" = "TRUE" ]; then
