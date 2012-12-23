@@ -2,7 +2,6 @@
 
 . pgcommon.sh
 
-ACTPORT=5432
 ACTARCH=$CURDIR/act.arh
 ACTBKP=$CURDIR/act.bkp
 
@@ -11,7 +10,7 @@ SBYNUM=1
 STARTED=0
 
 SNDDATA=
-SNDPORT=
+SNDPORT=5432
 
 ARCHIVE_MODE="FALSE"
 
@@ -62,7 +61,6 @@ else
 	if [ -z "$SNDPORT" ]; then
 		SNDPORT=5432
 	fi
-	ACTPORT=$SNDPORT
 
 	rm -rf $ACTBKP
 	$PGBIN/pg_basebackup -D $ACTBKP -p $SNDPORT -c fast
@@ -76,7 +74,7 @@ for ((SBYID=$SBYMIN; SBYID<=$SBYMAX; SBYID++)); do
 		continue
 	fi
 
-	SBYPORT=$(expr $ACTPORT + $SBYID)
+	SBYPORT=$(expr 5432 + $SBYID)
 	TRIGGER="trigger$SBYID"
 
 	rm -f $TRIGGER
@@ -88,7 +86,7 @@ for ((SBYID=$SBYMIN; SBYID<=$SBYMAX; SBYID++)); do
 
 	cat << EOF > $RECOVERYCONF
 standby_mode = 'on'
-primary_conninfo = 'port=$ACTPORT application_name=$PGDATA'
+primary_conninfo = 'port=$SNDPORT application_name=$PGDATA'
 trigger_file = '$TRIGGER'
 recovery_target_timeline = 'latest'
 EOF
