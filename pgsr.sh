@@ -5,6 +5,7 @@
 ARCHIVE_OPT=
 SYNC_OPT=
 SBYNUM=1
+CASCADE=false
 
 usage ()
 {
@@ -18,7 +19,12 @@ usage ()
 	echo "  -n NUM      number of standbys (default: 1)"
 	echo "  -A          sets Async mode (default)"
 	echo "  -S          sets Sync mode"
+	echo "  -C          sets up Cascade standby"
 	echo "  --conflict  creates standby query conflict"
+	echo ""
+	echo "Note:"
+	echo "  -n option specifies the number of only standbys"
+	echo "  connecting directly to the master."
 }
 
 here_is_installation
@@ -69,6 +75,9 @@ while [ $# -gt 0 ]; do
 			SYNC_OPT="";;
 		-S)
 			SYNC_OPT="-S";;
+		-C)
+			CASCADE=true
+			validate_cascade_replication;;
 		--conflict)
 			make_conflict;;
 		*)
@@ -79,3 +88,7 @@ done
 
 pgmaster.sh $ARCHIVE_OPT $SYNC_OPT
 pgstandby.sh $ARCHIVE_OPT -n $SBYNUM
+
+if [ "$CASCADE" = "true" ]; then
+	pgstandby.sh $ARCHIVE_OPT -c sby1
+fi
