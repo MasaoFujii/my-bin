@@ -97,7 +97,7 @@ EOF
 		echo "restore_command = 'cp $ACTARCH/%f %p'" >> $RECOVERYCONF
 	fi
 
-	pgstart.sh $PGDATA
+	pgstart.sh -w $PGDATA
 
 	STARTED=$(expr $STARTED + 1)
 	if [ $STARTED -ge $SBYNUM ]; then
