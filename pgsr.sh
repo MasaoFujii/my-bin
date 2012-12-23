@@ -14,11 +14,11 @@ usage ()
 	echo "  $PROGNAME [OPTIONS]"
 	echo ""
 	echo "Options:"
-	echo "  -a        enables WAL archiving"
-	echo "  -n NUM    number of standbys (default: 1)"
-	echo "  -A        sets Async mode (default)"
-	echo "  -S        sets Sync mode"
-	echo "  -C        creates standby query conflict"
+	echo "  -a          enables WAL archiving"
+	echo "  -n NUM      number of standbys (default: 1)"
+	echo "  -A          sets Async mode (default)"
+	echo "  -S          sets Sync mode"
+	echo "  --conflict  creates standby query conflict"
 }
 
 here_is_installation
@@ -69,7 +69,7 @@ while [ $# -gt 0 ]; do
 			SYNC_OPT="";;
 		-S)
 			SYNC_OPT="-S";;
-		-C)
+		--conflict)
 			make_conflict;;
 		*)
 			elog "invalid option: $1";;
