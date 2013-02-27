@@ -63,6 +63,11 @@ compile_pgsql ()
 		cd $PGTRGM
 		make install
 	fi
+	PGXLOGDUMP=$CONTRIB/pg_xlogdump
+	if [ -d $PGXLOGDUMP ]; then
+		cd $PGXLOGDUMP
+		make install
+	fi
 }
 
 while [ $# -gt 0 ]; do
