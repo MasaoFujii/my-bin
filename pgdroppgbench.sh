@@ -23,7 +23,7 @@ done
 
 here_is_installation
 
-$PGBIN/psql -c "DROP TABLE pgbench_accounts;" postgres
-$PGBIN/psql -c "DROP TABLE pgbench_branches;" postgres
-$PGBIN/psql -c "DROP TABLE pgbench_tellers;" postgres
-$PGBIN/psql -c "DROP TABLE pgbench_history;" postgres
+$PGBIN/psql -c "DROP TABLE pgbench_accounts CASCADE;" postgres
+$PGBIN/psql -c "DROP TABLE pgbench_branches CASCADE;" postgres
+$PGBIN/psql -c "DROP TABLE pgbench_tellers CASCADE;" postgres
+$PGBIN/psql -c "DROP TABLE pgbench_history CASCADE;" postgres
