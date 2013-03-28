@@ -1,10 +1,17 @@
 -- Generate the specified number random text
 CREATE OR REPLACE FUNCTION random_text (num int) RETURNS text AS $$
+DECLARE
+    result text := '';
 BEGIN
-    IF num = 1 THEN
-		    RETURN chr(floor(random() * 95)::int + 32);
-    ELSE
-		    RETURN chr(floor(random() * 95)::int + 32) || random_text(num - 1);
-		END IF;
+    LOOP
+        IF num = 0 THEN
+				    EXIT;
+			  ELSE
+				    num = num - 1;
+        END IF;
+        result := result || chr(floor(random() * 95)::int + 32);
+    END LOOP;
+
+		RETURN result;
 END
 $$ LANGUAGE plpgsql;
