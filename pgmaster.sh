@@ -4,6 +4,7 @@
 
 ARCHIVE_MODE="FALSE"
 SYNC_MODE="FALSE"
+CHECKSUM=""
 
 ACTDATA=act
 update_pgdata $ACTDATA
@@ -18,6 +19,7 @@ usage ()
 	echo "Options:"
 	echo "  -a    enables WAL archiving"
 	echo "  -A    sets Async mode (default)"
+	echo "  -k    uses data page checksums"
 	echo "  -S    sets Sync mode"
 }
 
@@ -30,6 +32,8 @@ while [ $# -gt 0 ]; do
 			ARCHIVE_MODE="TRUE";;
 		-A)
 			SYNC_MODE="FALSE";;
+		-k)
+			CHECKSUM="-k";;
 		-S)
 			SYNC_MODE="TRUE";;
 		*)
@@ -41,8 +45,9 @@ done
 here_is_installation
 pgsql_is_dead
 validate_replication
+validate_datapage_checksums "$CHECKSUM"
 
-pginitdb.sh $PGDATA
+pginitdb.sh $PGDATA $CHECKSUM
 
 if [ "$ARCHIVE_MODE" = "TRUE" ]; then
 	pgarch.sh $PGDATA

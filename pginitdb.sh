@@ -36,12 +36,7 @@ done
 
 here_is_installation
 pgsql_is_dead
-
-if [ "$CHECKSUM" != "" ]; then
-	if [ $PGMAJOR -lt 93 ]; then
-		elog "data page checksums (-k) requires v9.3 or later"
-	fi
-fi
+validate_datapage_checksums "$CHECKSUM"
 
 rm -rf $PGDATA
 $PGBIN/initdb -D $PGDATA --locale=C --encoding=UTF8 $CHECKSUM

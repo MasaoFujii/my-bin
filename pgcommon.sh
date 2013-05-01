@@ -92,6 +92,15 @@ validate_cascade_replication ()
 	fi
 }
 
+validate_datapage_checksums ()
+{
+	CHECKSUM="$1"
+	if [ "$CHECKSUM" != "" -a $PGMAJOR -lt 93 ]; then
+		HINT="You must run \"$PROGNAME\" with PostgreSQL >=9.3"
+		elog "data page checksums is NOT supported in $PGVERSION" "$HINT"
+	fi
+}
+
 pgsql_is_alive ()
 {
 	_PGDATA="$PGDATA"
