@@ -25,8 +25,7 @@ while [ $# -gt 0 ]; do
 		-a)
 			ARCHIVE_MODE="TRUE";;
 		-k)
-			CHECKSUM="-k"
-			shift;;
+			CHECKSUM="-k";;
 		-*)
 			elog "invalid option: $1";;
 		*)
