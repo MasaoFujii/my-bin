@@ -6,6 +6,7 @@ ARCHIVE_OPT=
 SYNC_OPT=
 SBYNUM=1
 CASCADE=false
+CHECKSUM=""
 
 usage ()
 {
@@ -16,6 +17,7 @@ usage ()
 	echo ""
 	echo "Options:"
 	echo "  -a          enables WAL archiving"
+	echo "  -k          uses data page checksums"
 	echo "  -n NUM      number of standbys (default: 1)"
 	echo "  -A          sets Async mode (default)"
 	echo "  -S          sets Sync mode"
@@ -65,6 +67,8 @@ while [ $# -gt 0 ]; do
 			exit 0;;
 		-a)
 			ARCHIVE_OPT="-a";;
+		-k)
+			CHECKSUM="-k";;
 		-n)
 			SBYNUM=$2
 			if [ $SBYNUM -lt $SBYMIN ]; then
@@ -86,7 +90,9 @@ while [ $# -gt 0 ]; do
 	shift
 done
 
-pgmaster.sh $ARCHIVE_OPT $SYNC_OPT
+validate_datapage_checksums "$CHECKSUM"
+
+pgmaster.sh $ARCHIVE_OPT $SYNC_OPT $CHECKSUM
 pgstandby.sh $ARCHIVE_OPT -n $SBYNUM
 
 if [ "$CASCADE" = "true" ]; then
