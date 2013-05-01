@@ -109,4 +109,4 @@ compile_pgsql > $LOGFILE 2>&1
 
 cat $LOGFILE
 echo -e "\n"
-grep warning $LOGFILE
+grep -a warning $LOGFILE
