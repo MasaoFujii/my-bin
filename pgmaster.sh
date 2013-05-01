@@ -54,7 +54,7 @@ if [ "$ARCHIVE_MODE" = "TRUE" ]; then
 fi
 
 set_guc port $PGPORT $PGCONF
-set_guc log_line_prefix "'$PGDATA '" $PGCONF
+set_guc log_line_prefix "'%t $PGDATA '" $PGCONF
 set_guc max_wal_senders 4 $PGCONF
 set_guc wal_level hot_standby $PGCONF
 set_guc wal_keep_segments 32 $PGCONF

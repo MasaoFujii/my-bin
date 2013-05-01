@@ -47,6 +47,7 @@ else
 	set_guc listen_addresses "'*'" $PGCONF
 fi
 set_guc checkpoint_segments 64 $PGCONF
+set_guc log_line_prefix "'%t '" $PGCONF
 echo "host	all	all	0.0.0.0/0	trust" >> $PGHBA
 
 if [ "$ARCHIVE_MODE" = "TRUE" ]; then

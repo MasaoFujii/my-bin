@@ -72,14 +72,14 @@ pginitdb.sh $ACTDATA
 pgarch.sh $ACTDATA
 
 set_guc port $ACTPORT $ACTCONF
-set_guc log_line_prefix "'$ACTPREFIX '" $ACTCONF
+set_guc log_line_prefix "'%t $ACTPREFIX '" $ACTCONF
 
 pgstart.sh -w $ACTDATA
 pgbackup.sh $ACTDATA
 cp -r $PGBKP $SBYDATA
 
 set_guc port $SBYPORT $SBYCONF
-set_guc log_line_prefix "'$SBYPREFIX '" $SBYCONF
+set_guc log_line_prefix "'%t $SBYPREFIX '" $SBYCONF
 
 if [ $PGMAJOR -ge 90 ]; then
 	set_guc hot_standby on $SBYCONF
