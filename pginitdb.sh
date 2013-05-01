@@ -3,6 +3,7 @@
 . pgcommon.sh
 
 ARCHIVE_MODE="FALSE"
+CHECKSUM=""
 
 usage ()
 {
@@ -13,6 +14,7 @@ usage ()
 	echo ""
 	echo "Options:"
 	echo "  -a    enables WAL archiving"
+	echo "  -k    uses data page checksums"
 }
 
 while [ $# -gt 0 ]; do
@@ -22,6 +24,9 @@ while [ $# -gt 0 ]; do
 			exit 0;;
 		-a)
 			ARCHIVE_MODE="TRUE";;
+		-k)
+			CHECKSUM="-k"
+			shift;;
 		-*)
 			elog "invalid option: $1";;
 		*)
@@ -33,8 +38,14 @@ done
 here_is_installation
 pgsql_is_dead
 
+if [ "$CHECKSUM" != "" ]; then
+	if [ $PGMAJOR -lt 93 ]; then
+		elog "data page checksums (-k) requires v9.3 or later"
+	fi
+fi
+
 rm -rf $PGDATA
-$PGBIN/initdb -D $PGDATA --locale=C --encoding=UTF8
+$PGBIN/initdb -D $PGDATA --locale=C --encoding=UTF8 $CHECKSUM
 
 if [ $PGMAJOR -le 74 ]; then
 	set_guc tcpip_socket true $PGCONF
