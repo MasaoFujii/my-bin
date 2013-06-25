@@ -33,7 +33,7 @@ done
 here_is_installation
 
 if [ ! -d $PGDATA ]; then
-	pginitdb.sh
+	pginitdb.sh $PGDATA
 fi
 
 pgsql_is_dead
