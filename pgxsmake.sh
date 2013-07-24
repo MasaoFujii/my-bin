@@ -16,7 +16,7 @@ usage ()
 	echo "  $PROGNAME [OPTIONS] PREFIX"
 	echo ""
 	echo "Default:"
-	echo "  runs just \"make\""
+	echo "  runs \"make\" if neither -c, -i nor -u is specified."
 	echo ""
 	echo "Options:"
 	echo "  -c         runs \"make clean\""
