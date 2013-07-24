@@ -3,6 +3,7 @@
 . pgcommon.sh
 
 OPT=
+RENAMECONF="FALSE"
 
 usage ()
 {
@@ -12,6 +13,7 @@ usage ()
 	echo "  $PROGNAME [OPTIONS] [PGDATA]"
 	echo ""
 	echo "Options:"
+	echo "  -r    renames recovery.done to .conf before the start"
 	echo "  -w    waits for the start to complete"
 }
 
@@ -20,6 +22,8 @@ while [ $# -gt 0 ]; do
 		"-?"|--help)
 			usage
 			exit 0;;
+		-r)
+			RENAMECONF="TRUE";;
 		-w)
 			OPT="-w";;
 		-*)
@@ -40,6 +44,10 @@ pgsql_is_dead
 
 if [ $PGMAJOR -ge 83 ]; then
 	OPT="-c $OPT"
+fi
+
+if [ "$RENAMECONF" = "TRUE" -a -f $RECOVERYDONE ]; then
+	mv $RECOVERYDONE $RECOVERYCONF
 fi
 
 $PGBIN/pg_ctl $OPT -D $PGDATA start
