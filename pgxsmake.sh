@@ -6,6 +6,7 @@ LOGFILE=/tmp/pgxsmake.log
 
 PREFIX=
 MAKECMD=
+MAKEFLG=
 
 usage ()
 {
@@ -18,9 +19,10 @@ usage ()
 	echo "  runs just \"make\""
 	echo ""
 	echo "Options:"
-	echo "  -c    runs \"make clean\""
-	echo "  -i    runs \"make install\""
-	echo "  -u    runs \"make uninstall\""
+	echo "  -c         runs \"make clean\""
+	echo "  -f FLAG    uses FLAG, e.g., -f \"SENNA_CFG=/opt/senna-cfg\""
+	echo "  -i         runs \"make install\""
+	echo "  -u         runs \"make uninstall\""
 }
 
 while [ $# -gt 0 ]; do
@@ -30,6 +32,9 @@ while [ $# -gt 0 ]; do
 			exit 0;;
 		-c)
 			MAKECMD="clean";;
+		-f)
+			MAKEFLG="$2 $MAKEFLG"
+			shift;;
 		-i)
 			MAKECMD="install";;
 		-u)
@@ -50,7 +55,7 @@ if [ -z "$PREFIX" ]; then
 	elog "PREFIX must be supplied"
 fi
 
-make USE_PGXS=1 PG_CONFIG=$PREFIX/bin/pg_config $MAKECMD > $LOGFILE 2>&1
+make USE_PGXS=1 PG_CONFIG=$PREFIX/bin/pg_config $MAKEFLG $MAKECMD > $LOGFILE 2>&1
 
 cat $LOGFILE
 echo -e "\n"
