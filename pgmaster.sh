@@ -67,4 +67,11 @@ echo "local replication all trust" >> $PGHBA
 echo "host replication all 0.0.0.0/0 trust" >> $PGHBA
 echo "host replication all ::1/128   trust" >> $PGHBA
 
+	cat << EOF > $RECOVERYDONE
+standby_mode = 'on'
+primary_conninfo = 'port=5433 application_name=$PGDATA'
+trigger_file = 'trigger0'
+recovery_target_timeline = 'latest'
+EOF
+
 pgstart.sh -w $PGDATA
