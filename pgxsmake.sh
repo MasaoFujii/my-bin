@@ -55,6 +55,7 @@ if [ -z "$PREFIX" ]; then
 	elog "PREFIX must be supplied"
 fi
 
+export LANG=C
 make USE_PGXS=1 PG_CONFIG=$PREFIX/bin/pg_config $MAKEFLG $MAKECMD > $LOGFILE 2>&1
 
 cat $LOGFILE
