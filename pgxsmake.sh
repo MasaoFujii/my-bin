@@ -19,10 +19,12 @@ usage ()
 	echo "  runs \"make\" if neither -c, -i nor -u is specified."
 	echo ""
 	echo "Options:"
-	echo "  -c         runs \"make clean\""
-	echo "  -f FLAG    uses FLAG, e.g., -f \"SENNA_CFG=/opt/senna-cfg\""
-	echo "  -i         runs \"make install\""
-	echo "  -u         runs \"make uninstall\""
+	echo "  -c, --clean        runs \"make clean\""
+	echo "  -f, --flag=FLAG    uses FLAG, e.g., -f \"SENNA_CFG=/opt/senna-cfg\""
+	echo "  -i, --install      runs \"make install\""
+	echo "  -u, --uninstall    runs \"make uninstall\""
+	echo "  --check            runs \"make check\""
+	echo "  --installcheck     runs \"make installcheck\""
 }
 
 while [ $# -gt 0 ]; do
@@ -30,15 +32,19 @@ while [ $# -gt 0 ]; do
 		"-?"|--help)
 			usage
 			exit 0;;
-		-c)
+		-c|--clean)
 			MAKECMD="clean";;
-		-f)
+		-f|--flag)
 			MAKEFLG="$2 $MAKEFLG"
 			shift;;
-		-i)
+		-i|--install)
 			MAKECMD="install";;
-		-u)
+		-u|--uninstall)
 			MAKECMD="uninstall";;
+		--check)
+			MAKECMD="check";;
+		--installcheck)
+			MAKECMD="installcheck";;
 		-*)
 			elog "invalid option: $1";;
 		*)
