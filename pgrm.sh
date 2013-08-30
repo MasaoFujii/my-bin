@@ -4,14 +4,16 @@
 
 usage ()
 {
-	echo "$PROGNAME removes the deletable PostgreSQL directories."
-	echo ""
-	echo "Usage:"
-	echo "  $PROGNAME"
-	echo ""
-	echo "Description:"
-	echo "  All obsolete database cluster, archive and backup directories"
-	echo "  are removed from current directory."
+cat <<EOF
+$PROGNAME removes the deletable PostgreSQL directories.
+
+Usage:
+  $PROGNAME
+
+Description:
+  All obsolete database cluster, archive and backup directories
+  are removed from current directory.
+EOF
 }
 
 while [ $# -gt 0 ]; do
