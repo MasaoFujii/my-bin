@@ -3,6 +3,7 @@
 . pgcommon.sh
 
 OPT=
+INITDB_OPT=
 RENAMECONF="FALSE"
 MAXWAIT=3600
 
@@ -15,6 +16,8 @@ Usage:
   $PROGNAME [OPTIONS] [PGDATA]
 
 Options:
+  -a         enables WAL archiving
+  -k         uses data page checksums
   -r         renames recovery.done to .conf before the start
   -t SECS    seconds to wait when using -w option (default: 3600s)
   -w         waits for the start to complete
@@ -26,6 +29,10 @@ while [ $# -gt 0 ]; do
 		"-?"|--help)
 			usage
 			exit 0;;
+		-a)
+			INITDB_OPT="-a $INITDB_OPT";;
+		-k)
+			INITDB_OPT="-k $INITDB_OPT";;
 		-r)
 			RENAMECONF="TRUE";;
 		-t)
@@ -44,7 +51,7 @@ done
 here_is_installation
 
 if [ ! -d $PGDATA ]; then
-	pginitdb.sh $PGDATA
+	pginitdb.sh $INITDB_OPT $PGDATA
 fi
 
 pgsql_is_dead
