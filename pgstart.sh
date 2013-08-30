@@ -13,8 +13,9 @@ usage ()
 	echo "  $PROGNAME [OPTIONS] [PGDATA]"
 	echo ""
 	echo "Options:"
-	echo "  -r    renames recovery.done to .conf before the start"
-	echo "  -w    waits for the start to complete"
+	echo "  -r         renames recovery.done to .conf before the start"
+	echo "  -t SECS    seconds to wait when using -w option"
+	echo "  -w         waits for the start to complete"
 }
 
 while [ $# -gt 0 ]; do
@@ -24,8 +25,11 @@ while [ $# -gt 0 ]; do
 			exit 0;;
 		-r)
 			RENAMECONF="TRUE";;
+		-t)
+			OPT="-t $2 $OPT"
+			shift;;
 		-w)
-			OPT="-w";;
+			OPT="-w $OPT";;
 		-*)
 			elog "invalid option: $1";;
 		*)
