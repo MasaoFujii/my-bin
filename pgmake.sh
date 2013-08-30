@@ -13,19 +13,21 @@ MAKEOPT=
 
 usage ()
 {
-	echo "$PROGNAME compiles and installs PostgreSQL."
-	echo ""
-	echo "Usage:"
-	echo "  $PROGNAME [OPTIONS] PREFIX"
-	echo ""
-	echo "Options:"
-	echo "  -c OPTIONS    uses OPTIONS as extra configure options"
-	echo "  -d            compiles for debug purpose: uses --enable-debug and"
-	echo "                --enable-cassert, and prevents compiler optimization"
-	echo "  -f FLAG       uses FLAG as CPPFLAGS, e.g. -f \"-DWAL_DEBUG\""
-	echo "  -j NUM        number of jobs"
-	echo "  -m            compiles without clean and configure"
-	echo "  --wal-debug   same as -f \"-DWAL_DEBUG\""
+cat <<EOF
+$PROGNAME compiles and installs PostgreSQL.
+
+Usage:
+  $PROGNAME [OPTIONS] PREFIX
+
+Options:
+  -c OPTIONS    uses OPTIONS as extra configure options
+  -d            compiles for debug purpose: uses --enable-debug and
+                --enable-cassert, and prevents compiler optimization
+  -f FLAG       uses FLAG as CPPFLAGS, e.g. -f "-DWAL_DEBUG"
+  -j NUM        number of jobs
+  -m            compiles without clean and configure
+  --wal-debug   same as -f "-DWAL_DEBUG"
+EOF
 }
 
 compile_pgsql ()
