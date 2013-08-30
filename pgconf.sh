@@ -18,13 +18,13 @@ Options:
   -p               open $GUCFILENAME (default)
   -h               open $HBAFILENAME
   -r               open $RECFILENAME
-  -a               auto tuning
   -c NAME=VALUE    change parameter
                    (enclose VALUE with double quotes to include single
                    quote in it, e.g., listen_addresses="'*'")
   -d NAME          default parameter
   -s NAME          show parameter
   -S               show all changed parameters
+  -t               auto tuning
 EOF
 }
 
@@ -42,8 +42,6 @@ while [ $# -gt 0 ]; do
 		-r)
 			CONFCMD=open
 			CONFFILE=$RECFILENAME;;
-		-a)
-			CONFCMD=tune;;
 		-c)
 			CONFCMD=change
 			CONFARG="$2"
@@ -58,6 +56,8 @@ while [ $# -gt 0 ]; do
 			shift;;
 		-S)
 			CONFCMD=showall;;
+		-t)
+			CONFCMD=tune;;
 		-*)
 			elog "invalid option: $1";;
 		*)
