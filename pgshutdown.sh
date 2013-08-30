@@ -6,20 +6,23 @@ MODE="f"
 SIGNAL="INT"
 TARGETS="$PGDATA"
 STOPALL=false
-MAXWAIT=60
+MAXWAIT=3600
 
 usage ()
 {
-	echo "$PROGNAME shuts down PostgreSQL server."
-	echo ""
-	echo "Usage:"
-	echo "  $PROGNAME [OPTIONS] [PGDATA]"
-	echo ""
-	echo "Options:"
-	echo "  -a    shuts down all servers"
-	echo "  -s    smart shutdown"
-	echo "  -f    fast shutdown (default)"
-	echo "  -i    immediate shutdown"
+cat <<EOF
+$PROGNAME shuts down PostgreSQL server.
+
+Usage:
+  $PROGNAME [OPTIONS] [PGDATA]
+
+Options:
+  -a         shuts down all servers
+  -s         smart shutdown
+  -f         fast shutdown (default)
+  -i         immediate shutdown
+  -t SECS    seconds to wait (default: 3600s)
+EOF
 }
 
 while [ $# -gt 0 ]; do
@@ -38,6 +41,9 @@ while [ $# -gt 0 ]; do
 		-i)
 			MODE="i"
 			SIGNAL="QUIT";;
+		-t)
+			MAXWAIT=$2
+			shift;;
 		-*)
 			elog "invalid option: $1";;
 		*)
@@ -77,6 +83,6 @@ for pgdata in $TARGETS; do
 
 	$PGBIN/pg_ctl -D $PGDATA status > /dev/null 2>&1
 	if [ $? -eq 0 ]; then
-		$PGBIN/pg_ctl -D $PGDATA -m$MODE stop
+		$PGBIN/pg_ctl -D $PGDATA -m$MODE -t $MAXWAIT stop
 	fi
 done
