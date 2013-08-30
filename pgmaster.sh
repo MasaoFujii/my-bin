@@ -2,7 +2,7 @@
 
 . pgcommon.sh
 
-ARCHIVE_MODE="FALSE"
+ARCHIVE_OPT=
 SYNC_MODE="FALSE"
 CHECKSUM=""
 
@@ -11,16 +11,18 @@ update_pgdata $ACTDATA
 
 usage ()
 {
-	echo "$PROGNAME sets up the master."
-	echo ""
-	echo "Usage:"
-	echo "  $PROGNAME [OPTIONS]"
-	echo ""
-	echo "Options:"
-	echo "  -a    enables WAL archiving"
-	echo "  -A    sets Async mode (default)"
-	echo "  -k    uses data page checksums"
-	echo "  -S    sets Sync mode"
+cat <<EOF
+$PROGNAME sets up the master.
+
+Usage:
+  $PROGNAME [OPTIONS]
+
+Options:
+  -a    enables WAL archiving
+  -A    sets Async mode (default)
+  -k    uses data page checksums
+  -S    sets Sync mode
+EOF
 }
 
 while [ $# -gt 0 ]; do
@@ -29,7 +31,7 @@ while [ $# -gt 0 ]; do
 			usage
 			exit 0;;
 		-a)
-			ARCHIVE_MODE="TRUE";;
+			ARCHIVE_OPT="-a";;
 		-A)
 			SYNC_MODE="FALSE";;
 		-k)
@@ -47,11 +49,7 @@ pgsql_is_dead
 validate_replication
 validate_datapage_checksums "$CHECKSUM"
 
-pginitdb.sh $PGDATA $CHECKSUM
-
-if [ "$ARCHIVE_MODE" = "TRUE" ]; then
-	pgarch.sh $PGDATA
-fi
+pginitdb.sh $PGDATA $ARCHIVE_OPT $CHECKSUM
 
 set_guc port $PGPORT $PGCONF
 set_guc log_line_prefix "'%t $PGDATA '" $PGCONF

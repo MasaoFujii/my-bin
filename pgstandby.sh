@@ -16,15 +16,17 @@ ARCHIVE_MODE="FALSE"
 
 usage ()
 {
-	echo "$PROGNAME sets up the standby(s)."
-	echo ""
-	echo "Usage:"
-	echo "  $PROGNAME [OPTIONS]"
-	echo ""
-	echo "Options:"
-	echo "  -a         enables WAL archiving"
-	echo "  -c SENDER  sets up the cascade standby"
-	echo "  -n NUM     number of standbys (default: 1)"
+cat <<EOF
+$PROGNAME sets up the standby(s).
+
+Usage:
+  $PROGNAME [OPTIONS]
+
+Options:
+  -a         enables WAL archiving
+  -c SENDER  sets up the cascade standby
+  -n NUM     number of standbys (default: 1)
+EOF
 }
 
 while [ $# -gt 0 ]; do
