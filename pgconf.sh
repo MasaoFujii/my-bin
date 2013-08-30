@@ -78,6 +78,16 @@ report_guc ()
 	fi
 }
 
+MEM_KB=0
+MEM_MB=0
+tune_mem ()
+{
+	GUCNAME="$1"
+	TUNENUM="$2"
+	set_guc "$GUCNAME" "$(echo "$MEM_MB / $TUNENUM" | bc)MB" $PGCONF
+	report_guc "$GUCNAME"
+}
+
 case "$CONFCMD" in
 	open)
 		case "$KERNEL" in
@@ -96,10 +106,10 @@ case "$CONFCMD" in
 				MEM_KB=$(echo "$MEM_BYTES / 1024" | bc);;
 		esac
 		MEM_MB=$(echo "$MEM_KB / 1024" | bc)
-		set_guc shared_buffers       "$(echo "$MEM_MB / 10"   | bc)MB" $PGCONF
-		set_guc effective_cache_size "$(echo "$MEM_MB / 50"   | bc)MB" $PGCONF
-		set_guc work_mem             "$(echo "$MEM_MB / 1000" | bc)MB" $PGCONF
-		set_guc maintenance_work_mem "$(echo "$MEM_MB / 40"   | bc)MB" $PGCONF;;
+		tune_mem shared_buffers       10
+		tune_mem effective_cache_size 50
+		tune_mem work_mem             1000
+		tune_mem maintenance_work_mem 40;;
 
 	change)
 		GUCNAME=$(echo "$CONFARG" | cut -d= -f1)
