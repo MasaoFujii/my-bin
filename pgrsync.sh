@@ -4,7 +4,7 @@
 
 SRCDIR=
 DSTDIR=
-OPT="-a"
+OPT="-a --delete"
 BACKUP_MODE="FALSE"
 
 make_path_canonical ()
