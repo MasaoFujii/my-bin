@@ -2,6 +2,8 @@
 
 . pgcommon.sh
 
+PGPITR_DONE=pgpitr.done
+
 usage ()
 {
 cat <<EOF
@@ -42,14 +44,19 @@ if [ ! -d $PGARCH ]; then
 	echo "archive directory is not found: \"$PGARCH\""
 fi
 
-RESTORECMD="cp ../$(basename $PGARCH)/%f %p"
-echo "restore_command = '${RESTORECMD}'" > $PGDATABKP/$RECFILENAME
+if [ ! -f $PGDATABKP/$PGPITR_DONE ]; then
+	RESTORECMD="cp ../$(basename $PGARCH)/%f %p"
+	echo "restore_command = '${RESTORECMD}'" > $PGDATABKP/$RECFILENAME
 
-rm -rf $PGDATABKP/pg_xlog
-mv $PGDATA/pg_xlog $PGDATABKP
+	rm -rf $PGDATABKP/pg_xlog
+	mv $PGDATA/pg_xlog $PGDATABKP
 
-rm -rf $PGDATA
-cp -r $PGDATABKP $PGDATA
+	pgrsync.sh $PGARCH $PGARCHBKP
 
-rm -rf $PGARCHBKP
-cp -r $PGARCH $PGARCHBKP
+	touch $PGDATABKP/$PGPITR_DONE
+else
+	pgrsync.sh $PGARCHBKP $PGARCH
+fi
+
+pgrsync.sh $PGDATABKP $PGDATA
+rm -f $PGDATA/$PGPITR_DONE
