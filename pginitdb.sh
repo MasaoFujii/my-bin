@@ -7,14 +7,16 @@ CHECKSUM=""
 
 usage ()
 {
-	echo "$PROGNAME initializes PGDATA."
-	echo ""
-	echo "Usage:"
-	echo "  $PROGNAME [OPTIONS] [PGDATA]"
-	echo ""
-	echo "Options:"
-	echo "  -a    enables WAL archiving"
-	echo "  -k    uses data page checksums"
+cat <<EOF
+$PROGNAME initializes PGDATA.
+
+Usage:
+  $PROGNAME [OPTIONS] [PGDATA]
+
+Options:
+  -a    enables WAL archiving
+  -k    uses data page checksums
+EOF
 }
 
 while [ $# -gt 0 ]; do

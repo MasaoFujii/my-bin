@@ -10,23 +10,25 @@ CHECKSUM=""
 
 usage ()
 {
-	echo "$PROGNAME sets up the master and standby(s)."
-	echo ""
-	echo "Usage:"
-	echo "  $PROGNAME [OPTIONS]"
-	echo ""
-	echo "Options:"
-	echo "  -a          enables WAL archiving"
-	echo "  -k          uses data page checksums"
-	echo "  -n NUM      number of standbys (default: 1)"
-	echo "  -A          sets Async mode (default)"
-	echo "  -S          sets Sync mode"
-	echo "  -C          sets up Cascade standby"
-	echo "  --conflict  creates standby query conflict"
-	echo ""
-	echo "Note:"
-	echo "  -n option specifies the number of only standbys"
-	echo "  connecting directly to the master."
+cat <<EOF
+$PROGNAME sets up the master and standby(s).
+
+Usage:
+  $PROGNAME [OPTIONS]
+
+Options:
+  -a          enables WAL archiving
+  -k          uses data page checksums
+  -n NUM      number of standbys (default: 1)
+  -A          sets Async mode (default)
+  -S          sets Sync mode
+  -C          sets up Cascade standby
+  --conflict  creates standby query conflict
+
+Note:
+  -n option specifies the number of only standbys
+  connecting directly to the master.
+EOF
 }
 
 here_is_installation
