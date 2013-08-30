@@ -5,6 +5,7 @@
 CONFFILE=$GUCFILENAME
 SHOWGUCS=
 SETGUC=
+DEFAULTGUCS=
 NSETGUC=0
 SHOWCHANGED=false
 
@@ -23,6 +24,7 @@ Options:
   -c NAME=VALUE    changes specified parameter
                    (enclose VALUE with double quotes to include single
                    quote in it, e.g., listen_addresses="'*'")
+  -d NAME[,...]    defaults specified parameters
   -s NAME[,...]    shows values of specified parameters
   -S               shows all changed (not default) parameters
 EOF
@@ -42,6 +44,9 @@ while [ $# -gt 0 ]; do
 		-c)
 			SETGUC[$NSETGUC]="$2"
 			NSETGUC=$(expr $NSETGUC + 1)
+			shift;;
+		-d)
+			DEFAULTGUCS="$DEFAULTGUCS,$2"
 			shift;;
 		-s)
 			SHOWGUCS="$SHOWGUCS,$2"
@@ -86,8 +91,20 @@ change_params ()
 	show_params
 }
 
+remove_params ()
+{
+	for GUCNAME in $(echo "$DEFAULTGUCS" | sed s/','/' '/g); do
+		remove_line "^$GUCNAME" $PGCONF
+	done
+}
+
 if [ $NSETGUC -gt 0 ]; then
 	change_params
+	exit 0
+fi
+
+if [ ! -z "$DEFAULTGUCS" ]; then
+	remove_params
 	exit 0
 fi
 
