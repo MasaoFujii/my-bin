@@ -3,13 +3,8 @@
 . pgcommon.sh
 
 CONFFILE=$GUCFILENAME
-SHOWGUCS=
-SETGUC=
-DEFAULTGUCS=
-NSETGUC=0
-SHOWCHANGED=false
-AUTOTUNE=false
-OPENCONF=true
+CONFCMD=open
+CONFARG=
 
 usage ()
 {
@@ -23,12 +18,12 @@ Options:
   -p               open $GUCFILENAME (default)
   -h               open $HBAFILENAME
   -r               open $RECFILENAME
-  -a               auto tuning mode
+  -a               auto tuning
   -c NAME=VALUE    change parameter
                    (enclose VALUE with double quotes to include single
                    quote in it, e.g., listen_addresses="'*'")
-  -d NAME[,...]    default parameters
-  -s NAME[,...]    show parameters
+  -d NAME          default parameter
+  -s NAME          show parameter
   -S               show all changed parameters
 EOF
 }
@@ -39,25 +34,30 @@ while [ $# -gt 0 ]; do
 			usage
 			exit 0;;
 		-p)
+			CONFCMD=open
 			CONFFILE=$GUCFILENAME;;
 		-h)
+			CONFCMD=open
 			CONFFILE=$HBAFILENAME;;
 		-r)
+			CONFCMD=open
 			CONFFILE=$RECFILENAME;;
 		-a)
-			AUTOTUNE=true;;
+			CONFCMD=tune;;
 		-c)
-			SETGUC[$NSETGUC]="$2"
-			NSETGUC=$(expr $NSETGUC + 1)
+			CONFCMD=change
+			CONFARG="$2"
 			shift;;
 		-d)
-			DEFAULTGUCS="$DEFAULTGUCS,$2"
+			CONFCMD=default
+			CONFARG="$2"
 			shift;;
 		-s)
-			SHOWGUCS="$SHOWGUCS,$2"
+			CONFCMD=show
+			CONFARG="$2"
 			shift;;
 		-S)
-			SHOWCHANGED=true;;
+			CONFCMD=showall;;
 		-*)
 			elog "invalid option: $1";;
 		*)
@@ -69,76 +69,30 @@ done
 here_is_installation
 pgdata_exists
 
-show_params ()
-{
-	for GUCNAME in $(echo "$SHOWGUCS" | sed s/','/' '/g); do
-		GUCVALUE=$(show_guc "$GUCNAME" $PGCONF)
-		if [ ! -z "$GUCVALUE" ]; then
-			echo "$GUCNAME = $GUCVALUE"
-		fi
-	done
-}
+case "$CONFCMD" in
+	open)
+		emacs $PGDATA/$CONFFILE &;;
 
-show_changed ()
-{
-	grep -E ^[A-z] $PGCONF | cut -f1
-}
+	tune)
+		MEM_KB=$(grep MemTotal /proc/meminfo | awk '{print $2}')
+		MEM_MB=$(echo "$MEM_KB / 1024" | bc)
+		set_guc shared_buffers       "$(echo "$MEM_MB / 10"   | bc)MB" $PGCONF
+		set_guc effective_cache_size "$(echo "$MEM_MB / 50"   | bc)MB" $PGCONF
+		set_guc work_mem             "$(echo "$MEM_MB / 1000" | bc)MB" $PGCONF
+		set_guc maintenance_work_mem "$(echo "$MEM_MB / 40"   | bc)MB" $PGCONF;;
 
-change_params ()
-{
-	for ((i=0; i<$NSETGUC; i++)); do
-		GUCNAME=$(echo "${SETGUC[$i]}" | cut -d= -f1)
-		GUCVALUE=$(echo "${SETGUC[$i]}" | cut -d= -f2)
+	change)
+		GUCNAME=$(echo "$CONFARG" | cut -d= -f1)
+		GUCVALUE=$(echo "$CONFARG" | cut -d= -f2)
 		set_guc "$GUCNAME" "$GUCVALUE" $PGCONF
-		SHOWGUCS="$SHOWGUCS,$GUCNAME"
-	done
+		show_guc "$GUCNAME" $PGCONF
 
-	show_params
-}
+	default)
+		remove_line "^$CONFARG" $PGCONF;;
 
-remove_params ()
-{
-	for GUCNAME in $(echo "$DEFAULTGUCS" | sed s/','/' '/g); do
-		remove_line "^$GUCNAME" $PGCONF
-	done
-}
+	show)
+		show_guc "$CONFARG" $PGCONF;;
 
-autotune_params ()
-{
-	MEM_KB=$(grep MemTotal /proc/meminfo | awk '{print $2}')
-	MEM_MB=$(echo "$MEM_KB / 1024" | bc)
-
-	set_guc shared_buffers       "$(echo "$MEM_MB / 10"   | bc)MB" $PGCONF
-	set_guc effective_cache_size "$(echo "$MEM_MB / 50"   | bc)MB" $PGCONF
-	set_guc work_mem             "$(echo "$MEM_MB / 1000" | bc)MB" $PGCONF
-	set_guc maintenance_work_mem "$(echo "$MEM_MB / 40"   | bc)MB" $PGCONF
-}
-
-if [ ! -z "$DEFAULTGUCS" ]; then
-	remove_params
-	OPENCONF=false
-fi
-
-if [ "$AUTOTUNE" = "true" ]; then
-	autotune_params
-	OPENCONF=false
-fi
-
-if [ $NSETGUC -gt 0 ]; then
-	change_params
-	OPENCONF=false
-fi
-
-if [ ! -z "$SHOWGUCS" ]; then
-	show_params
-	OPENCONF=false
-fi
-
-if [ "$SHOWCHANGED" = "true" ]; then
-	show_changed
-	OPENCONF=false
-fi
-
-if [ "$OPENCONF" = "true" ]; then
-	emacs $PGDATA/$CONFFILE &
-fi
+	showall)
+		grep -E ^[A-z] $PGCONF | cut -f1;;
+esac
