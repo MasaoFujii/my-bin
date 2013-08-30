@@ -48,9 +48,10 @@ if [ $PGMAJOR -le 74 ]; then
 else
 	set_guc listen_addresses "'*'" $PGCONF
 fi
-set_guc checkpoint_segments 64 $PGCONF
+set_guc checkpoint_segments 256 $PGCONF
 set_guc log_line_prefix "'%t '" $PGCONF
 set_guc log_checkpoints on $PGCONF
+set_guc wal_sync_method fdatasync $PGCONF
 echo "host	all	all	0.0.0.0/0	trust" >> $PGHBA
 
 if [ "$ARCHIVE_MODE" = "TRUE" ]; then
