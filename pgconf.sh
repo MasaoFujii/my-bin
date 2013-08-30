@@ -88,7 +88,13 @@ case "$CONFCMD" in
 		esac;;
 
 	tune)
-		MEM_KB=$(grep MemTotal /proc/meminfo | awk '{print $2}')
+		case "$KERNEL" in
+			"Linux")
+				MEM_KB=$(grep MemTotal /proc/meminfo | awk '{print $2}');;
+			"Darwin")
+				MEM_BYTES=$(sysctl hw.memsize | awk '{print $2}')
+				MEM_KB=$(echo "$MEM_BYTES / 1024" | bc);;
+		esac
 		MEM_MB=$(echo "$MEM_KB / 1024" | bc)
 		set_guc shared_buffers       "$(echo "$MEM_MB / 10"   | bc)MB" $PGCONF
 		set_guc effective_cache_size "$(echo "$MEM_MB / 50"   | bc)MB" $PGCONF
