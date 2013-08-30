@@ -8,17 +8,19 @@ LISTARCHSTATUS=false
 
 usage ()
 {
-    echo "$PROGNAME lists files in pg_xlog directory"
-    echo ""
-    echo "Usage:"
-    echo "  $PROGNAME [OPTIONS] [PGDATA]"
-    echo ""
-    echo "Description:"
-    echo "  By default, WAL files in pg_xlog are listed once"
-    echo ""
-    echo "Options:"
-		echo "  -a        lists archive status files"
-    echo "  -n SECS   interval; lists every SECS"
+cat <<EOF
+$PROGNAME lists files in pg_xlog directory
+
+Usage:
+  $PROGNAME [OPTIONS] [PGDATA]
+
+Description:
+  By default, WAL files in pg_xlog are listed once
+
+Options:
+  -a        lists archive status files
+  -n SECS   interval; lists every SECS
+EOF
 }
 
 while [ $# -gt 0 ]; do
