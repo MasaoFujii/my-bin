@@ -7,15 +7,16 @@ RENAMECONF="FALSE"
 
 usage ()
 {
-	echo "$PROGNAME starts PostgreSQL server."
-	echo ""
-	echo "Usage:"
-	echo "  $PROGNAME [OPTIONS] [PGDATA]"
-	echo ""
-	echo "Options:"
-	echo "  -r         renames recovery.done to .conf before the start"
-	echo "  -t SECS    seconds to wait when using -w option"
-	echo "  -w         waits for the start to complete"
+cat <<EOF
+$PROGNAME starts PostgreSQL server.
+
+Usage:
+  $PROGNAME [OPTIONS] [PGDATA]
+
+Options:
+  -r    renames recovery.done to .conf before the start
+  -w    waits for the start to complete (timeout: 1 hour)
+EOF
 }
 
 while [ $# -gt 0 ]; do
@@ -25,11 +26,8 @@ while [ $# -gt 0 ]; do
 			exit 0;;
 		-r)
 			RENAMECONF="TRUE";;
-		-t)
-			OPT="-t $2 $OPT"
-			shift;;
 		-w)
-			OPT="-w $OPT";;
+			OPT="-w -t 3600 $OPT";;
 		-*)
 			elog "invalid option: $1";;
 		*)
