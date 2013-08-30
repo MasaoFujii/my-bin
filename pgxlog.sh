@@ -47,9 +47,9 @@ pgdata_exists
 
 if [ -z "$SECS" ]; then
 	if [ "$LISTARCHSTATUS" = "true" ]; then
-		ls $PGARCHSTATUS
+		ls -x $PGARCHSTATUS
 	else
-		ls $PGXLOG
+		ls -x $PGXLOG
 	fi
 else
 	watch -n$SECS "pgxlog.sh $OPTS $PGDATA"
