@@ -4,14 +4,16 @@
 
 usage ()
 {
-	echo "$PROGNAME prepares for an archive recovery"
-	echo ""
-	echo "Usage:"
-	echo "  $PROGNAME [PGDATA]"
-	echo ""
-	echo "Description:"
-	echo "  This utility restores a base backup and creates recovery.conf."
-	echo "  This must be called after a base backup has been taken."
+cat <<EOF
+$PROGNAME prepares for an archive recovery
+
+Usage:
+  $PROGNAME [PGDATA]
+
+Description:
+  This utility restores a base backup and creates recovery.conf.
+  This must be called after a base backup has been taken.
+EOF
 }
 
 while [ $# -gt 0 ]; do

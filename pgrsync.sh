@@ -16,17 +16,19 @@ make_path_canonical ()
 
 usage ()
 {
-    echo "$PROGNAME is a fast PostgreSQL-related file-copying tool."
-    echo ""
-    echo "Usage:"
-    echo "  $PROGNAME [OPTIONS] SRCDIR DSTDIR"
-    echo ""
-		echo "Description:"
-		echo "  This utility is a wrapper of rsync, especially customized for PostgreSQL-related files and directories."
-		echo ""
-		echo "Options:"
-		echo "  -b    backup mode (excludes pg_xlog and postmaster.pid and deletes extraneous files)"
-		echo "  -v    increases verbosity"
+cat <<EOF
+$PROGNAME is a fast PostgreSQL-related file-copying tool.
+
+Usage:
+  $PROGNAME [OPTIONS] SRCDIR DSTDIR
+
+Description:
+  This utility is a wrapper of rsync, especially customized for PostgreSQL-related files and directories.
+
+Options:
+  -b    backup mode (excludes pg_xlog and postmaster.pid and deletes extraneous files)
+  -v    increases verbosity
+EOF
 }
 
 while [ $# -gt 0 ]; do
