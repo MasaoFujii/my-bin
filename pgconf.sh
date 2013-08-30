@@ -8,6 +8,8 @@ SETGUC=
 DEFAULTGUCS=
 NSETGUC=0
 SHOWCHANGED=false
+AUTOTUNE=false
+OPENCONF=true
 
 usage ()
 {
@@ -18,15 +20,16 @@ Usage:
   $PROGNAME [OPTIONS] [PGDATA]
 
 Options:
-  -p               opens $GUCFILENAME (default)
-  -h               opens $HBAFILENAME
-  -r               opens $RECFILENAME
-  -c NAME=VALUE    changes specified parameter
+  -p               open $GUCFILENAME (default)
+  -h               open $HBAFILENAME
+  -r               open $RECFILENAME
+  -a               auto tuning mode
+  -c NAME=VALUE    change parameter
                    (enclose VALUE with double quotes to include single
                    quote in it, e.g., listen_addresses="'*'")
-  -d NAME[,...]    defaults specified parameters
-  -s NAME[,...]    shows values of specified parameters
-  -S               shows all changed (not default) parameters
+  -d NAME[,...]    default parameters
+  -s NAME[,...]    show parameters
+  -S               show all changed parameters
 EOF
 }
 
@@ -41,6 +44,8 @@ while [ $# -gt 0 ]; do
 			CONFFILE=$HBAFILENAME;;
 		-r)
 			CONFFILE=$RECFILENAME;;
+		-a)
+			AUTOTUNE=true;;
 		-c)
 			SETGUC[$NSETGUC]="$2"
 			NSETGUC=$(expr $NSETGUC + 1)
@@ -98,24 +103,42 @@ remove_params ()
 	done
 }
 
-if [ $NSETGUC -gt 0 ]; then
-	change_params
-	exit 0
-fi
+autotune_params ()
+{
+	MEM_KB=$(grep MemTotal /proc/meminfo | awk '{print $2}')
+	MEM_MB=$(echo "$MEM_KB / 1024" | bc)
+
+	set_guc shared_buffers       "$(echo "$MEM_MB / 10"   | bc)MB" $PGCONF
+	set_guc effective_cache_size "$(echo "$MEM_MB / 50"   | bc)MB" $PGCONF
+	set_guc work_mem             "$(echo "$MEM_MB / 1000" | bc)MB" $PGCONF
+	set_guc maintenance_work_mem "$(echo "$MEM_MB / 40"   | bc)MB" $PGCONF
+}
 
 if [ ! -z "$DEFAULTGUCS" ]; then
 	remove_params
-	exit 0
+	OPENCONF=false
+fi
+
+if [ "$AUTOTUNE" = "true" ]; then
+	autotune_params
+	OPENCONF=false
+fi
+
+if [ $NSETGUC -gt 0 ]; then
+	change_params
+	OPENCONF=false
 fi
 
 if [ ! -z "$SHOWGUCS" ]; then
 	show_params
-	exit 0
+	OPENCONF=false
 fi
 
 if [ "$SHOWCHANGED" = "true" ]; then
 	show_changed
-	exit 0
+	OPENCONF=false
 fi
 
-emacs $PGDATA/$CONFFILE &
+if [ "$OPENCONF" = "true" ]; then
+	emacs $PGDATA/$CONFFILE &
+fi
