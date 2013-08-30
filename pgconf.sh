@@ -69,6 +69,15 @@ done
 here_is_installation
 pgdata_exists
 
+report_guc ()
+{
+	GUCNAME="$1"
+	GUCVALUE=$(show_guc "$GUCNAME" $PGCONF)
+	if [ ! -z "$GUCVALUE" ]; then
+		echo "$GUCNAME = $GUCVALUE"
+	fi
+}
+
 case "$CONFCMD" in
 	open)
 		emacs $PGDATA/$CONFFILE &;;
@@ -85,13 +94,13 @@ case "$CONFCMD" in
 		GUCNAME=$(echo "$CONFARG" | cut -d= -f1)
 		GUCVALUE=$(echo "$CONFARG" | cut -d= -f2)
 		set_guc "$GUCNAME" "$GUCVALUE" $PGCONF
-		show_guc "$GUCNAME" $PGCONF
+		report_guc "$GUCNAME";;
 
 	default)
 		remove_line "^$CONFARG" $PGCONF;;
 
 	show)
-		show_guc "$CONFARG" $PGCONF;;
+		report_guc "$CONFARG";;
 
 	showall)
 		grep -E ^[A-z] $PGCONF | cut -f1;;
