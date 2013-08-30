@@ -16,8 +16,8 @@ Usage:
   $PROGNAME [OPTIONS] [PGDATA]
 
 Options:
-  -a         enables WAL archiving
-  -k         uses data page checksums
+  -a         enables WAL archiving if initializing PGDATA
+  -k         uses data page checksums if initializing PGDATA
   -r         renames recovery.done to .conf before the start
   -t SECS    seconds to wait when using -w option (default: 3600s)
   -w         waits for the start to complete
