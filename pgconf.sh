@@ -80,7 +80,12 @@ report_guc ()
 
 case "$CONFCMD" in
 	open)
-		emacs $PGDATA/$CONFFILE &;;
+		case "$KERNEL" in
+			"Linux")
+				emacs $PGDATA/$CONFFILE &;;
+			"Darwin")
+				emacs $PGDATA/$CONFFILE;;
+		esac;;
 
 	tune)
 		MEM_KB=$(grep MemTotal /proc/meminfo | awk '{print $2}')
