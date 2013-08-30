@@ -10,20 +10,22 @@ SHOWCHANGED=false
 
 usage ()
 {
-	echo "$PROGNAME opens PostgreSQL configuration file."
-	echo ""
-	echo "Usage:"
-	echo "  $PROGNAME [OPTIONS] [PGDATA]"
-	echo ""
-	echo "Options:"
-	echo "  -p               opens $GUCFILENAME (default)"
-	echo "  -h               opens $HBAFILENAME"
-	echo "  -r               opens $RECFILENAME"
-	echo "  -c NAME=VALUE    changes specified parameter"
-	echo "                   (enclose VALUE with double quotes to include single"
-	echo "                   quote in it, e.g., listen_addresses=\"'*'\")"
-	echo "  -s NAME[,...]    shows values of specified parameters"
-	echo "  -S               shows all changed (not default) parameters"
+cat <<EOF
+$PROGNAME manipulates PostgreSQL configuration file.
+
+Usage:
+  $PROGNAME [OPTIONS] [PGDATA]
+
+Options:
+  -p               opens $GUCFILENAME (default)
+  -h               opens $HBAFILENAME
+  -r               opens $RECFILENAME
+  -c NAME=VALUE    changes specified parameter
+                   (enclose VALUE with double quotes to include single
+                   quote in it, e.g., listen_addresses="'*'")
+  -s NAME[,...]    shows values of specified parameters
+  -S               shows all changed (not default) parameters
+EOF
 }
 
 while [ $# -gt 0 ]; do
