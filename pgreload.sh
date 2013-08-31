@@ -4,10 +4,12 @@
 
 usage ()
 {
-	echo "$PROGNAME reloads the postgres configuration file"
-	echo ""
-	echo "Usage:"
-	echo "  $PROGNAME [PGDATA]"
+cat <<EOF
+$PROGNAME reloads PostgreSQL configuration file.
+
+Usage:
+  $PROGNAME [PGDATA]
+EOF
 }
 
 while [ $# -gt 0 ]; do
