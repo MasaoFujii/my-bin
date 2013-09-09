@@ -6,10 +6,12 @@ PREFIX=/dav/head-pgsql
 
 usage ()
 {
-	echo "$PROGNAME updates source from HEAD and compiles it."
-	echo ""
-	echo "Usage:"
-	echo "  $PROGNAME"
+cat <<EOF
+$PROGNAME updates source from HEAD and compiles it.
+
+Usage:
+  $PROGNAME
+EOF
 }
 
 while [ $# -gt 0 ]; do
