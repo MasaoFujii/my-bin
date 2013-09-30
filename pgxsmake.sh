@@ -10,21 +10,24 @@ MAKEFLG=
 
 usage ()
 {
-	echo "$PROGNAME compiles and installs PostgreSQL module with PGXS."
-	echo ""
-	echo "Usage:"
-	echo "  $PROGNAME [OPTIONS] PREFIX"
-	echo ""
-	echo "Default:"
-	echo "  runs \"make\" if neither -c, -i nor -u is specified."
-	echo ""
-	echo "Options:"
-	echo "  -c, --clean        runs \"make clean\""
-	echo "  -f, --flag=FLAG    uses FLAG, e.g., -f \"SENNA_CFG=/opt/senna-cfg\""
-	echo "  -i, --install      runs \"make install\""
-	echo "  -u, --uninstall    runs \"make uninstall\""
-	echo "  --check            runs \"make check\""
-	echo "  --installcheck     runs \"make installcheck\""
+cat <<EOF
+$PROGNAME compiles and installs PostgreSQL module with PGXS.
+
+Usage:
+  $PROGNAME [OPTIONS] PREFIX
+
+Default:
+  runs plain \"make\" command.
+
+Options:
+  -c, --clean        runs \"make clean\"
+  -C CMD             runs \"make CMD\"
+  -f, --flag=FLAG    uses FLAG, e.g., -f \"SENNA_CFG=/opt/senna-cfg\"
+  -i, --install      runs \"make install\"
+  -u, --uninstall    runs \"make uninstall\"
+  --check            runs \"make check\"
+  --installcheck     runs \"make installcheck\"
+EOF
 }
 
 while [ $# -gt 0 ]; do
@@ -34,6 +37,9 @@ while [ $# -gt 0 ]; do
 			exit 0;;
 		-c|--clean)
 			MAKECMD="clean";;
+		-C)
+			MAKECMD="$2"
+			shift;;
 		-f|--flag)
 			MAKEFLG="$2 $MAKEFLG"
 			shift;;
