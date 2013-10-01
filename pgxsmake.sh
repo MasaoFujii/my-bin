@@ -14,14 +14,13 @@ cat <<EOF
 $PROGNAME compiles and installs PostgreSQL module with PGXS.
 
 Usage:
-  $PROGNAME [OPTIONS] PREFIX
+  $PROGNAME [OPTIONS] PREFIX [COMMAND]
 
 Default:
   runs plain \"make\" command.
 
 Options:
   -c, --clean        runs \"make clean\"
-  -C CMD             runs \"make CMD\"
   -f, --flag=FLAG    uses FLAG, e.g., -f \"SENNA_CFG=/opt/senna-cfg\"
   -i, --install      runs \"make install\"
   -u, --uninstall    runs \"make uninstall\"
@@ -37,9 +36,6 @@ while [ $# -gt 0 ]; do
 			exit 0;;
 		-c|--clean)
 			MAKECMD="clean";;
-		-C)
-			MAKECMD="$2"
-			shift;;
 		-f|--flag)
 			MAKEFLG="$2 $MAKEFLG"
 			shift;;
@@ -54,7 +50,14 @@ while [ $# -gt 0 ]; do
 		-*)
 			elog "invalid option: $1";;
 		*)
-			PREFIX="$1";;
+			if [ -z "$PREFIX" ]; then
+				PREFIX="$1"
+			elif [ -z "$MAKECMD" ]; then
+				MAKECMD="$1"
+			else
+				elog "too many arguments"
+			fi
+			;;
 	esac
 	shift
 done
