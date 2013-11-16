@@ -32,7 +32,7 @@ RECDONENAME=recovery.done
 update_pgdata ()
 {
 	PGDATA="$1"
-	PGARCH=$PGDATA.arh
+	PGARCH=$PGDATA.arch
 	PGXLOG=$PGDATA/pg_xlog
 	PGARCHSTATUS=$PGXLOG/archive_status
 	PGDATABKP=$PGDATA.bkp
@@ -42,7 +42,7 @@ update_pgdata ()
 	RECOVERYCONF=$PGDATA/$RECFILENAME
 	RECOVERYDONE=$PGDATA/$RECDONENAME
 }
-update_pgdata "$CURDIR/data"
+update_pgdata "data"
 
 here_is_source ()
 {
