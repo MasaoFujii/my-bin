@@ -14,6 +14,17 @@ elog ()
 	exit 1
 }
 
+exit_on_error ()
+{
+	if [ $? -ne 0 ]; then
+		if [ ! -z "$1" ]; then
+			exit $1
+		else
+			exit 1
+		fi
+	fi
+}
+
 remove_line ()
 {
 	PATTERN="$1"
