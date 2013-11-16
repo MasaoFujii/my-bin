@@ -5,6 +5,7 @@
 ARCHIVE_OPT=
 SYNC_MODE="FALSE"
 CHECKSUM=""
+XLOGDIR=""
 
 ACTDATA=act
 update_pgdata $ACTDATA
@@ -18,10 +19,11 @@ Usage:
   $PROGNAME [OPTIONS]
 
 Options:
-  -a    enables WAL archiving
-  -A    sets Async mode (default)
-  -k    uses data page checksums
-  -S    sets Sync mode
+  -a        enables WAL archiving
+  -A        sets Async mode (default)
+  -k        uses data page checksums
+  -S        sets Sync mode
+  -X DIR    location for XLOG directory
 EOF
 }
 
@@ -38,6 +40,9 @@ while [ $# -gt 0 ]; do
 			CHECKSUM="-k";;
 		-S)
 			SYNC_MODE="TRUE";;
+		-X)
+			XLOGDIR="-X $2"
+			shift;;
 		*)
 			elog "invalid option: $1";;
 	esac
@@ -49,7 +54,8 @@ pgsql_is_dead
 validate_replication
 validate_datapage_checksums "$CHECKSUM"
 
-pginitdb.sh $PGDATA $ARCHIVE_OPT $CHECKSUM
+pginitdb.sh $PGDATA $ARCHIVE_OPT $CHECKSUM $XLOGDIR
+exit_on_error
 
 set_guc port $PGPORT $PGCONF
 set_guc log_line_prefix "'%t $PGDATA '" $PGCONF
