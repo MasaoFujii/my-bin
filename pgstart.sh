@@ -21,7 +21,7 @@ Options:
   -r         renames recovery.done to .conf before the start
   -t SECS    seconds to wait when using -w option (default: 3600s)
   -w         waits for the start to complete
-  -X DIR     specifies XLOG directory if initializing PGDATA
+  -X         uses external XLOG directory if initializing PGDATA
 EOF
 }
 
@@ -42,8 +42,7 @@ while [ $# -gt 0 ]; do
 		-w)
 			OPT="-w $OPT";;
 		-X)
-			INITDB_OPT="-X $2 $INITDB_OPT"
-			shift;;
+			INITDB_OPT="-X $INITDB_OPT";;
 		-*)
 			elog "invalid option: $1";;
 		*)

@@ -15,9 +15,9 @@ Usage:
   $PROGNAME [OPTIONS] [PGDATA]
 
 Options:
-  -a        enables WAL archiving
-  -k        uses data page checksums
-  -X DIR    location for XLOG directory
+  -a    enables WAL archiving
+  -k    uses data page checksums
+  -X    uses external XLOG directory
 EOF
 }
 
@@ -31,8 +31,7 @@ while [ $# -gt 0 ]; do
 		-k)
 			CHECKSUM="-k";;
 		-X)
-			XLOGDIR="-X $2"
-			shift;;
+			XLOGDIR="-X $CURDIR/$PGXLOGEXT";;
 		-*)
 			elog "invalid option: $1";;
 		*)
@@ -46,7 +45,7 @@ pgsql_is_dead
 validate_datapage_checksums "$CHECKSUM"
 
 rm -rf $PGDATA
-$PGBIN/initdb -D $PGDATA $XLOGDIR --locale=C --encoding=UTF8 $CHECKSUM
+$PGBIN/initdb -D $PGDATA --locale=C --encoding=UTF8 $CHECKSUM $XLOGDIR
 exit_on_error
 
 if [ $PGMAJOR -le 74 ]; then

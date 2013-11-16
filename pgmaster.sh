@@ -19,11 +19,11 @@ Usage:
   $PROGNAME [OPTIONS]
 
 Options:
-  -a        enables WAL archiving
-  -A        sets Async mode (default)
-  -k        uses data page checksums
-  -S        sets Sync mode
-  -X DIR    location for XLOG directory
+  -a    enables WAL archiving
+  -A    sets Async mode (default)
+  -k    uses data page checksums
+  -S    sets Sync mode
+  -X    uses external XLOG directory
 EOF
 }
 
@@ -41,8 +41,7 @@ while [ $# -gt 0 ]; do
 		-S)
 			SYNC_MODE="TRUE";;
 		-X)
-			XLOGDIR="-X $2"
-			shift;;
+			XLOGDIR="-X";;
 		*)
 			elog "invalid option: $1";;
 	esac
