@@ -21,6 +21,7 @@ Options:
   -r         renames recovery.done to .conf before the start
   -t SECS    seconds to wait when using -w option (default: 3600s)
   -w         waits for the start to complete
+  -X DIR     specifies XLOG directory if initializing PGDATA
 EOF
 }
 
@@ -40,6 +41,9 @@ while [ $# -gt 0 ]; do
 			shift;;
 		-w)
 			OPT="-w $OPT";;
+		-X)
+			INITDB_OPT="-X $2 $INITDB_OPT"
+			shift;;
 		-*)
 			elog "invalid option: $1";;
 		*)
@@ -52,6 +56,7 @@ here_is_installation
 
 if [ ! -d $PGDATA ]; then
 	pginitdb.sh $INITDB_OPT $PGDATA
+	exit_on_error
 fi
 
 pgsql_is_dead
