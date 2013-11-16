@@ -38,8 +38,7 @@ for pgdata in $(find_all_pgdata); do
 		continue
 	fi
 
-	REALPGXLOG=$(readlink $PGXLOG)
-	TARGETS="$PGDATA $PGDATABKP $PGARCH $PGARCHBKP $REALPGXLOG"
+	TARGETS="$PGDATA $PGXLOGEXT $PGDATABKP $PGARCH $PGARCHBKP"
 	for target in $TARGETS; do
 		if [ ! -d $target ]; then
 			continue
