@@ -55,6 +55,11 @@ compile_pgsql ()
 		cd $PGBENCH
 		make install
 	fi
+	PGSTATSTATEMENTS=$CONTRIB/pg_stat_statements
+	if [ -d $PGSTATSTATEMENTS ]; then
+		cd $PGSTATSTATEMENTS
+		make install
+	fi
 	PGSBY=$CONTRIB/pg_standby
 	if [ -d $PGSBY ]; then
 		cd $PGSBY
