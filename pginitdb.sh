@@ -56,6 +56,7 @@ fi
 set_guc checkpoint_segments 256 $PGCONF
 set_guc log_line_prefix "'%t '" $PGCONF
 set_guc log_checkpoints on $PGCONF
+set_guc log_error_verbosity verbose $PGCONF
 set_guc wal_sync_method fdatasync $PGCONF
 echo "host	all	all	0.0.0.0/0	trust" >> $PGHBA
 
