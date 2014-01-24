@@ -89,6 +89,7 @@ elif [ "$GITCMD" = "update-all" ]; then
 	for PGVERSION in $(echo "$SUPPORTED_VERS"); do
 		update_branch "REL${PGVERSION}_STABLE"
 	done
+	back_to_current
 
 else
 	elog "unsupported command was specified: $GITCMD"
