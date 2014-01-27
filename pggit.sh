@@ -17,6 +17,7 @@ Command:
   help            shows help message (default)
   make            compiles and installs current branch into /dav/<branch-name>
   merge           updates master and merges it into current branch
+  push            pushes current branch to github
   remove          removes current branch and moves to master
   reset           resets current branch to HEAD
   u[pdate]        updates master
@@ -79,6 +80,9 @@ elif [ "$GITCMD" = "merge" ]; then
 	git pull -u origin master
 	back_to_current
 	git merge master
+
+elif [ "$GITCMD" = "push" ]; then
+	git push -u github $CURBRANCH
 
 elif [ "$GITCMD" = "remove" ]; then
 	if [ "$CURBRANCH" = "master" ]; then
