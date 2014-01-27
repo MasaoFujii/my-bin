@@ -16,6 +16,7 @@ Usage:
 Command:
   help            shows help message (default)
   merge-master    updates master and merges it into current branch
+  remove          removes current branch and moves to master
   reset           resets current branch to HEAD
   u[pdate]        updates master
   update-all      updates master and all supported versions
@@ -74,6 +75,14 @@ elif [ "$GITCMD" = "merge-master" ]; then
 	git pull -u origin master
 	back_to_current
 	git merge master
+
+elif [ "$GITCMD" = "remove" ]; then
+	if [ "$CURBRANCH" = "master" ]; then
+		elog "could not remove master branch"
+	fi
+	git reset --hard HEAD
+	git co master
+	git b -D $CURBRANCH
 
 elif [ "$GITCMD" = "reset" ]; then
 	git reset --hard HEAD
