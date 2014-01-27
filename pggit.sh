@@ -16,7 +16,7 @@ Usage:
 Command:
   help            shows help message (default)
   make            compiles and installs current branch into /dav/<branch-name>
-  merge-master    updates master and merges it into current branch
+  merge           updates master and merges it into current branch
   remove          removes current branch and moves to master
   reset           resets current branch to HEAD
   u[pdate]        updates master
@@ -73,7 +73,7 @@ if [ "$GITCMD" = "" -o "$GITCMD" = "help" ]; then
 elif [ "$GITCMD" = "make" ]; then
 	pgmake.sh -j 2 -d /dav/$CURBRANCH
 
-elif [ "$GITCMD" = "merge-master" ]; then
+elif [ "$GITCMD" = "merge" ]; then
 	current_must_not_have_uncommitted
 	git checkout master
 	git pull -u origin master
