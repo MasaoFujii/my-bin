@@ -24,6 +24,7 @@ Command:
   reset           resets current branch to HEAD
   u[pdate]        updates master
   update-all      updates master and all supported versions
+  wip             commits current change with message "wip"
 EOF
 }
 
@@ -124,6 +125,9 @@ elif [ "$GITCMD" = "update-all" ]; then
 		update_branch "REL${PGVERSION}_STABLE"
 	done
 	back_to_current
+
+elif [ "$GITCMD" = "wip" ]; then
+	git commit -a -m "wip"
 
 else
 	elog "unsupported command was specified: $GITCMD"
