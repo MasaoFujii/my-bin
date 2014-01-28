@@ -3,6 +3,7 @@
 . pgcommon.sh
 
 GITCMD=
+ARGV1=
 SUPPORTED_VERS="9_3 9_2 9_1 9_0 8_4"
 
 usage ()
@@ -17,6 +18,7 @@ Command:
   help            shows help message (default)
   make            compiles and installs current branch into /dav/<branch-name>
   merge           updates master and merges it into current branch
+  patch PATCH     creates new branch and applies PATCH
   push            pushes current branch to github
   remove          removes current branch and moves to master
   reset           resets current branch to HEAD
@@ -35,8 +37,8 @@ while [ $# -gt 0 ]; do
 		*)
 			if [ -z "$GITCMD" ]; then
 				GITCMD="$1"
-			else
-				elog "too many arguments"
+			elif [ -z "$ARGV1" ]; then
+				ARGV1="$1"
 			fi
 			;;
 	esac
@@ -80,6 +82,21 @@ elif [ "$GITCMD" = "merge" ]; then
 	git pull -u origin master
 	back_to_current
 	git merge master
+
+elif [ "$GITCMD" = "patch" ]; then
+	if [ -z "$ARGV1" ]; then
+		elog "PATCH must be specified in \"patch\" command"
+	fi
+	PATCHPATH="$ARGV1"
+	NEWBRANCH=$(basename $PATCHPATH .patch)
+	current_must_not_have_uncommitted
+	git checkout master
+	git pull -u origin master
+	git checkout -b $NEWBRANCH
+	pgclean.sh -a
+	patch -p1 -d. < $PATCHPATH
+	git status
+	pgetags.sh
 
 elif [ "$GITCMD" = "push" ]; then
 	git push -u github $CURBRANCH
