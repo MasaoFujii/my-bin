@@ -7,6 +7,7 @@ GREP_OPTIONS=
 FIND_PATTERN="*"
 SEARCH_DIR="."
 EXCLUDE="-name .git -prune -or"
+SHOWFILENAME="TRUE"
 
 usage ()
 {
@@ -18,6 +19,7 @@ Usage:
 Options:
   -d DIR    where to search (default: .)
   -i        ignore case distinctions in GREP_PATTERN
+  -k        show neither filename nor line number
 EOF
 }
 
@@ -31,6 +33,8 @@ while [ $# -gt 0 ]; do
 			shift;;
 		-i)
 			GREP_OPTIONS="$GREP_OPTIONS -i";;
+		-k)
+			SHOWFILENAME="FALSE";;
 		-*)
 			elog "invalid option: $1";;
 		*)
@@ -50,4 +54,8 @@ if [ -z "$GREP_PATTERN" ]; then
 	elog "GREP_PATTERN must be supplied"
 fi
 
-find $SEARCH_DIR $EXCLUDE -name "$FIND_PATTERN" -exec grep -Hn $GREP_OPTIONS "$GREP_PATTERN" {} \;
+if [ "$SHOWFILENAME" = "TRUE" ]; then
+	GREP_OPTIONS="$GREP_OPTIONS -Hn"
+fi
+
+find $SEARCH_DIR $EXCLUDE -name "$FIND_PATTERN" -exec grep $GREP_OPTIONS "$GREP_PATTERN" {} \;
