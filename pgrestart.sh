@@ -7,16 +7,18 @@ STARTOPT=
 
 usage ()
 {
-	echo "$PROGNAME restarts PostgreSQL server."
-	echo ""
-	echo "Usage:"
-	echo "  $PROGNAME [OPTIONS] [PGDATA]"
-	echo ""
-	echo "Options:"
-	echo "  -s    smart shutdown"
-	echo "  -f    fast shutdown (default)"
-	echo "  -i    immediate shutdown"
-	echo "  -w    waits for the start to complete"
+cat <<EOF
+$PROGNAME restarts PostgreSQL server.
+
+Usage:
+  $PROGNAME [OPTIONS] [PGDATA]
+
+Options:
+  -s    smart shutdown
+  -f    fast shutdown (default)
+  -i    immediate shutdown
+  -w    waits for the start to complete
+EOF
 }
 
 while [ $# -gt 0 ]; do
@@ -41,8 +43,11 @@ while [ $# -gt 0 ]; do
 done
 
 here_is_installation
-pgdata_exists
-pgsql_is_alive
 
-pgshutdown.sh $STOPOPT $PGDATA
+if [ -d $PGDATA ]; then
+	$PGBIN/pg_ctl -D $PGDATA status > /dev/null
+	if [ $? -eq 0 ]; then
+		pgshutdown.sh $STOPOPT $PGDATA
+	fi
+fi
 pgstart.sh $STARTOPT $PGDATA
