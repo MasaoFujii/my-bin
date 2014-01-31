@@ -15,10 +15,10 @@ Usage:
   $PROGNAME [COMMAND]
 
 Command:
+  apply PATCH     creates new branch and applies PATCH
   help            shows help message (default)
   make            compiles and installs current branch into /dav/<branch-name>
   merge           updates master and merges it into current branch
-  patch PATCH     creates new branch and applies PATCH
   push            pushes current branch to github
   remove          removes current branch and moves to master
   reset           resets current branch to HEAD
@@ -70,21 +70,7 @@ back_to_current ()
 	git checkout $CURBRANCH
 }
 
-if [ "$GITCMD" = "" -o "$GITCMD" = "help" ]; then
-	usage
-	exit 0
-
-elif [ "$GITCMD" = "make" ]; then
-	pgmake.sh -j 2 -d /dav/$CURBRANCH
-
-elif [ "$GITCMD" = "merge" ]; then
-	current_must_not_have_uncommitted
-	git checkout master
-	git pull -u origin master
-	back_to_current
-	git merge master
-
-elif [ "$GITCMD" = "patch" ]; then
+if [ "$GITCMD" = "apply" ]; then
 	if [ -z "$ARGV1" ]; then
 		elog "PATCH must be specified in \"patch\" command"
 	fi
@@ -98,6 +84,20 @@ elif [ "$GITCMD" = "patch" ]; then
 	patch -p1 -d. < $PATCHPATH
 	git status
 	pgetags.sh
+
+elif [ "$GITCMD" = "" -o "$GITCMD" = "help" ]; then
+	usage
+	exit 0
+
+elif [ "$GITCMD" = "make" ]; then
+	pgmake.sh -j 2 -d /dav/$CURBRANCH
+
+elif [ "$GITCMD" = "merge" ]; then
+	current_must_not_have_uncommitted
+	git checkout master
+	git pull -u origin master
+	back_to_current
+	git merge master
 
 elif [ "$GITCMD" = "push" ]; then
 	git push -u github $CURBRANCH
