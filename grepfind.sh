@@ -10,13 +10,15 @@ EXCLUDE="-name .git -prune -or"
 
 usage ()
 {
-	echo "$PROGNAME prints lines matching GREP_PATTERN from files matching FIND_PATTERN."
-	echo ""
-	echo "Usage:"
-	echo "  $PROGNAME [OPTIONS] GREP_PATTERN [FIND_PATTERN]"
-	echo "Options:"
-	echo "  -d DIR    where to search (default: .)"
-	echo "  -i        ignore case distinctions in GREP_PATTERN"
+cat <<EOF
+$PROGNAME prints lines matching GREP_PATTERN from files matching FIND_PATTERN.
+
+Usage:
+  $PROGNAME [OPTIONS] GREP_PATTERN [FIND_PATTERN]
+Options:
+  -d DIR    where to search (default: .)
+  -i        ignore case distinctions in GREP_PATTERN
+EOF
 }
 
 while [ $# -gt 0 ]; do
