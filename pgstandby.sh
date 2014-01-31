@@ -2,8 +2,8 @@
 
 . pgcommon.sh
 
-ACTARCH=$CURDIR/act.arch
-ACTBKP=$CURDIR/act.bkp
+ACTARCH=$CURDIR/data.arch
+ACTBKP=$CURDIR/data.bkp
 
 SBYID=0
 SBYNUM=1

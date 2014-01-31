@@ -7,9 +7,6 @@ SYNC_MODE="FALSE"
 CHECKSUM=""
 XLOGDIR=""
 
-ACTDATA=act
-update_pgdata $ACTDATA
-
 usage ()
 {
 cat <<EOF

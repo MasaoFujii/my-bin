@@ -36,7 +36,7 @@ validate_replication
 
 make_conflict ()
 {
-	ACTDATA=act
+	ACTDATA=data
 	ACTPORT=5432
 	ACTPSQL="$PGBIN/psql -p $ACTPORT -c"
 
