@@ -15,16 +15,17 @@ Usage:
   $PROGNAME [COMMAND]
 
 Command:
-  apply PATCH     creates new branch and applies PATCH
-  help            shows help message (default)
-  make            compiles and installs current branch into /dav/<branch-name>
-  merge           updates master and merges it into current branch
-  push            pushes current branch to github
-  remove          removes current branch and moves to master
-  reset           resets current branch to HEAD
-  u[pdate]        updates master
-  update-all      updates master and all supported versions
-  wip             commits current change with message "wip"
+  apply PATCH       creates new branch and applies PATCH
+  help              shows help message (default)
+  make              compiles and installs current branch into /dav/<branch-name>
+  merge             updates master and merges it into current branch
+  patch [PATCH]     creates patch with name PATCH against master in /dav
+  push              pushes current branch to github
+  remove            removes current branch and moves to master
+  reset             resets current branch to HEAD
+  u[pdate]          updates master
+  update-all        updates master and all supported versions
+  wip               commits current change with message "wip"
 EOF
 }
 
@@ -98,6 +99,13 @@ elif [ "$GITCMD" = "merge" ]; then
 	git pull -u origin master
 	back_to_current
 	git merge master
+
+elif [ "$GITCMD" = "patch" ]; then
+	PATCHNAME="$CURBRANCH".patch
+	if [ ! -z "$ARGV1" ]; then
+		PATCHNAME="$ARGV1"
+	fi
+	git diff master | filterdiff --format=context > /dav/"$PATCHNAME"
 
 elif [ "$GITCMD" = "push" ]; then
 	git push -u github $CURBRANCH
