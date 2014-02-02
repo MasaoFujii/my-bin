@@ -16,6 +16,7 @@ Usage:
 
 Command:
   apply PATCH       creates new branch and applies PATCH
+  [b]ranch          shows all local branches
   help              shows help message (default)
   make              compiles and installs current branch into /dav/<branch-name>
   merge             updates master and merges it into current branch
@@ -85,6 +86,9 @@ if [ "$GITCMD" = "apply" ]; then
 	patch -p1 -d. < $PATCHPATH
 	git status
 	pgetags.sh
+
+elif [ "$GITCMD" = "b" -o "$GITCMD" = "branch" ]; then
+	git branch
 
 elif [ "$GITCMD" = "" -o "$GITCMD" = "help" ]; then
 	usage
