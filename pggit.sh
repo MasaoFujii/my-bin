@@ -17,6 +17,7 @@ Usage:
 Command:
   apply PATCH       creates new branch and applies PATCH
   [b]ranch          shows all local branches
+  committer         shows how many patches each committer committed
   help              shows help message (default)
   make              compiles and installs current branch into /dav/<branch-name>
   merge             updates master and merges it into current branch
@@ -89,6 +90,9 @@ if [ "$GITCMD" = "apply" ]; then
 
 elif [ "$GITCMD" = "b" -o "$GITCMD" = "branch" ]; then
 	git branch
+
+elif [ "$GITCMD" = "committer" ]; then
+	git shortlog -sn
 
 elif [ "$GITCMD" = "" -o "$GITCMD" = "help" ]; then
 	usage
