@@ -50,6 +50,10 @@ BEGIN
      WHERE
        n.nspname = ' || quote_literal(schemaname)
   LOOP
+  RAISE NOTICE 'removing function %.%(%)',
+    quote_ident(row.nspname),
+    quote_ident(row.proname),
+    row.proargs;
   EXECUTE 'DROP FUNCTION '
     || quote_ident(row.nspname) || '.'
     || quote_ident(row.proname) || '('
