@@ -32,3 +32,28 @@ BEGIN
 		RETURN result;
 END
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION DROP_ALL_FUNCTIONS_ON_SCHEMA (schemaname TEXT)
+RETURNS VOID AS $$
+DECLARE
+  row RECORD;
+BEGIN
+  FOR row IN EXECUTE
+    'SELECT
+       n.nspname,
+       p.proname,
+       pg_catalog.pg_get_function_arguments(p.oid) proargs
+     FROM
+       pg_catalog.pg_proc p LEFT JOIN pg_catalog.pg_namespace n
+     ON
+       n.oid = p.pronamespace
+     WHERE
+       n.nspname = ' || quote_literal(schemaname)
+  LOOP
+  EXECUTE 'DROP FUNCTION '
+    || quote_ident(row.nspname) || '.'
+    || quote_ident(row.proname) || '('
+    || row.proargs || ')';
+  END LOOP;
+END;
+$$ LANGUAGE plpgsql;
