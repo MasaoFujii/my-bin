@@ -17,15 +17,15 @@ Usage:
   $PROGNAME [OPTIONS] PREFIX [COMMAND]
 
 Default:
-  runs plain \"make\" command.
+  runs plain "make" command.
 
 Options:
-  -c, --clean        runs \"make clean\"
-  -f, --flag=FLAG    uses FLAG, e.g., -f \"SENNA_CFG=/opt/senna-cfg\"
-  -i, --install      runs \"make install\"
-  -u, --uninstall    runs \"make uninstall\"
-  --check            runs \"make check\"
-  --installcheck     runs \"make installcheck\"
+  -c, --clean        runs "make clean"
+  -f, --flag=FLAG    uses FLAG, e.g., -f "SENNA_CFG=/opt/senna-cfg"
+  -i, --install      runs "make install"
+  -u, --uninstall    runs "make uninstall"
+  --check            runs "make check"
+  --installcheck     runs "make installcheck"
 EOF
 }
 
