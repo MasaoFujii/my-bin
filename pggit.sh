@@ -110,7 +110,6 @@ elif [ "$GITCMD" = "create" ]; then
 
 elif [ "$GITCMD" = "" -o "$GITCMD" = "help" ]; then
 	usage
-	exit 0
 
 elif [ "$GITCMD" = "make" ]; then
 	pgmake.sh -j 2 -d /dav/$CURBRANCH
