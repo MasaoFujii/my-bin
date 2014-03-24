@@ -17,6 +17,7 @@ Usage:
 Command:
   apply PATCH       creates new branch and applies PATCH
   [b]ranch          shows all local branches
+  co [PATTERN]      moves to branch matching PATTERN (master branch by default)
   committer         shows how many patches each committer committed
   create BRANCH     creates new branch named BRANCH
   help              shows help message (default)
@@ -94,6 +95,17 @@ if [ "$GITCMD" = "apply" ]; then
 	git branch
 
 elif [ "$GITCMD" = "b" -o "$GITCMD" = "branch" ]; then
+	git branch
+
+elif [ "$GITCMD" = "co" ]; then
+	MOVETO=master
+	if [ ! -z "$ARGV1" ]; then
+		MOVETO=$(git branch | cut -c3- | grep "$ARGV1" | head -1)
+		if [ -z "$MOVETO" ]; then
+			elog "could not find branch matching the pattern \"$ARGV1\""
+		fi
+	fi
+	git checkout $MOVETO
 	git branch
 
 elif [ "$GITCMD" = "committer" ]; then
