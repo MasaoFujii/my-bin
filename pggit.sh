@@ -135,6 +135,11 @@ elif [ "$GITCMD" = "remove" ]; then
 	if [ "$CURBRANCH" = "master" ]; then
 		elog "could not remove master branch"
 	fi
+	for PGVERSION in $(echo "$SUPPORTED_VERS"); do
+		if [ "$CURBRANCH" = "REL${PGVERSION}_STABLE" ]; then
+			elog "could not remove branch for supported version"
+		fi
+	done
 	git reset --hard HEAD
 	git co master
 	git b -D $CURBRANCH
