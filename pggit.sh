@@ -155,6 +155,7 @@ elif [ "$GITCMD" = "remove" ]; then
 	git reset --hard HEAD
 	git co master
 	git b -D $CURBRANCH
+	git branch
 
 elif [ "$GITCMD" = "reset" ]; then
 	git reset --hard HEAD
