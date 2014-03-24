@@ -30,6 +30,9 @@ Command:
   u[pdate]          updates master
   update-all        updates master and all supported versions
   wip               commits current change with message "wip"
+
+Move to branch matching COMMAND if it's not supported and there is branch
+matching it.
 EOF
 }
 
@@ -77,6 +80,15 @@ create_new_branch ()
 	pgclean.sh -a
 }
 
+move_to_branch ()
+{
+	MOVETO=$(git branch | cut -c3- | grep "$1" | head -1)
+	if [ ! -z "$MOVETO" ]; then
+		git checkout $MOVETO
+	fi
+	git branch
+}
+
 back_to_current ()
 {
 	git checkout $CURBRANCH
@@ -98,15 +110,11 @@ elif [ "$GITCMD" = "b" -o "$GITCMD" = "branch" ]; then
 	git branch
 
 elif [ "$GITCMD" = "co" ]; then
-	MOVETO=master
-	if [ ! -z "$ARGV1" ]; then
-		MOVETO=$(git branch | cut -c3- | grep "$ARGV1" | head -1)
-		if [ -z "$MOVETO" ]; then
-			elog "could not find branch matching the pattern \"$ARGV1\""
-		fi
+	if [ -z "$ARGV1" ]; then
+		move_to_branch master
+	else
+		move_to_branch "$ARGV1"
 	fi
-	git checkout $MOVETO
-	git branch
 
 elif [ "$GITCMD" = "committer" ]; then
 	git shortlog -sn
@@ -177,5 +185,5 @@ elif [ "$GITCMD" = "wip" ]; then
 	git commit -a -m "wip"
 
 else
-	elog "unsupported command was specified: $GITCMD"
+	move_to_branch "$GITCMD"
 fi
