@@ -18,6 +18,7 @@ Command:
   apply PATCH       creates new branch and applies PATCH
   [b]ranch          shows all local branches
   committer         shows how many patches each committer committed
+  create BRANCH     creates new branch named BRANCH
   help              shows help message (default)
   make              compiles and installs current branch into /dav/<branch-name>
   merge             updates master and merges it into current branch
@@ -63,9 +64,16 @@ current_must_not_have_uncommitted ()
 
 update_branch ()
 {
-	GITBRANCH="$1"
-	git checkout $GITBRANCH
-	git pull -u origin $GITBRANCH
+	git checkout "$1"
+	git pull -u origin "$1"
+}
+
+create_new_branch ()
+{
+	current_must_not_have_uncommitted
+	update_branch master
+	git checkout -b "$1"
+	pgclean.sh -a
 }
 
 back_to_current ()
@@ -79,20 +87,26 @@ if [ "$GITCMD" = "apply" ]; then
 	fi
 	PATCHPATH="$ARGV1"
 	NEWBRANCH=$(basename $PATCHPATH .patch)
-	current_must_not_have_uncommitted
-	git checkout master
-	git pull -u origin master
-	git checkout -b $NEWBRANCH
-	pgclean.sh -a
+	create_new_branch $NEWBRANCH
 	patch -p1 -d. < $PATCHPATH
 	git status
 	pgetags.sh
+	git branch
 
 elif [ "$GITCMD" = "b" -o "$GITCMD" = "branch" ]; then
 	git branch
 
 elif [ "$GITCMD" = "committer" ]; then
 	git shortlog -sn
+
+elif [ "$GITCMD" = "create" ]; then
+	if [ -z "$ARGV1" ]; then
+		elog "BRANCH must be specified in \"create\" command"
+	fi
+	NEWBRANCH="$ARGV1"
+	create_new_branch $NEWBRANCH
+	pgetags.sh
+	git branch
 
 elif [ "$GITCMD" = "" -o "$GITCMD" = "help" ]; then
 	usage
