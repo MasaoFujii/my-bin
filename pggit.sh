@@ -124,7 +124,8 @@ elif [ "$GITCMD" = "create" ]; then
 		elog "BRANCH must be specified in \"create\" command"
 	fi
 	NEWBRANCH="$ARGV1"
-	create_new_branch $NEWBRANCH
+	current_must_not_have_uncommitted
+	git checkout -b "$NEWBRANCH"
 	pgetags.sh
 	git branch
 
