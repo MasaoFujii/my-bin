@@ -20,6 +20,7 @@ Command:
   co [PATTERN]      moves to branch matching PATTERN (master branch by default)
   committer         shows how many patches each committer committed
   create BRANCH     creates new branch named BRANCH
+  diff [TARGET]     shows changes between commits, commit and working tree, etc
   help              shows help message (default)
   make              compiles and installs current branch into /dav/<branch-name>
   merge             updates master and merges it into current branch
@@ -128,6 +129,10 @@ elif [ "$GITCMD" = "create" ]; then
 	git checkout -b "$NEWBRANCH"
 	pgetags.sh
 	git branch
+
+elif [ "$GITCMD" = "diff" ]; then
+	DIFFTARGET="$ARGV1"
+	git diff $DIFFTARGET
 
 elif [ "$GITCMD" = "" -o "$GITCMD" = "help" ]; then
 	usage
