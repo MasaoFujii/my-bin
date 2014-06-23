@@ -20,6 +20,7 @@ Options:
   -k         uses data page checksums if initializing PGDATA
   -r         renames recovery.done to .conf before the start
   -t SECS    seconds to wait when using -w option (default: 3600s)
+  -T         uses auto tuning
   -w         waits for the start to complete
   -X         uses external XLOG directory if initializing PGDATA
 EOF
@@ -39,6 +40,8 @@ while [ $# -gt 0 ]; do
 		-t)
 			MAXWAIT=$2
 			shift;;
+		-T)
+			INITDB_OPT="-T $INITDB_OPT";;
 		-w)
 			OPT="-w $OPT";;
 		-X)
