@@ -24,7 +24,7 @@ Options:
   -d NAME          default parameter
   -s NAME          show parameter
   -S               show all changed parameters
-  -t               auto tuning
+  -T               auto tuning
 EOF
 }
 
@@ -56,7 +56,7 @@ while [ $# -gt 0 ]; do
 			shift;;
 		-S)
 			CONFCMD=showall;;
-		-t)
+		-T)
 			CONFCMD=tune;;
 		-*)
 			elog "invalid option: $1";;

@@ -18,7 +18,7 @@ Usage:
 Options:
   -a    enables WAL archiving
   -k    uses data page checksums
-  -t    uses auto tuning
+  -T    uses auto tuning
   -X    uses external XLOG directory
 EOF
 }
@@ -32,7 +32,7 @@ while [ $# -gt 0 ]; do
 			ARCHIVE_MODE="TRUE";;
 		-k)
 			CHECKSUM="-k";;
-		-t)
+		-T)
 			AUTOTUNE="TRUE";;
 		-X)
 			XLOGDIR="-X $CURDIR/$PGXLOGEXT";;
@@ -69,5 +69,5 @@ if [ "$ARCHIVE_MODE" = "TRUE" ]; then
 fi
 
 if [ "$AUTOTUNE" = "TRUE" ]; then
-	pgconf.sh -t $PGDATA
+	pgconf.sh -T $PGDATA
 fi
