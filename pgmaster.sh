@@ -2,10 +2,8 @@
 
 . pgcommon.sh
 
-ARCHIVE_OPT=
+INITDB_OPT=
 SYNC_MODE="FALSE"
-CHECKSUM=""
-XLOGDIR=""
 
 usage ()
 {
@@ -20,6 +18,7 @@ Options:
   -A    sets Async mode (default)
   -k    uses data page checksums
   -S    sets Sync mode
+  -T    uses auto tuning
   -X    uses external XLOG directory
 EOF
 }
@@ -30,15 +29,17 @@ while [ $# -gt 0 ]; do
 			usage
 			exit 0;;
 		-a)
-			ARCHIVE_OPT="-a";;
+			INITDB_OPT="-a $INITDB_OPT";;
 		-A)
 			SYNC_MODE="FALSE";;
 		-k)
-			CHECKSUM="-k";;
+			INITDB_OPT="-k $INITDB_OPT";;
 		-S)
 			SYNC_MODE="TRUE";;
+		-T)
+			INITDB_OPT="-T $INITDB_OPT";;
 		-X)
-			XLOGDIR="-X";;
+			INITDB_OPT="-X $INITDB_OPT";;
 		*)
 			elog "invalid option: $1";;
 	esac
@@ -50,7 +51,7 @@ pgsql_is_dead
 validate_replication
 validate_datapage_checksums "$CHECKSUM"
 
-pginitdb.sh $PGDATA $ARCHIVE_OPT $CHECKSUM $XLOGDIR
+pginitdb.sh $INITDB_OPT $PGDATA
 exit_on_error
 
 set_guc port $PGPORT $PGCONF
