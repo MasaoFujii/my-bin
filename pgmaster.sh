@@ -60,6 +60,10 @@ set_guc max_wal_senders 4 $PGCONF
 set_guc wal_level hot_standby $PGCONF
 set_guc wal_keep_segments 32 $PGCONF
 
+if [ $PGMAJOR -ge 94 ]; then
+	set_guc max_replication_slots 4 $PGCONF
+fi
+
 if [ "$SYNC_MODE" = "TRUE" ]; then
 	set_guc synchronous_standby_names "'*'" $PGCONF
 fi
