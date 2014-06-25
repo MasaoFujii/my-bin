@@ -8,7 +8,7 @@ cat <<EOF
 $PROGNAME drops any pgbench objects.
 
 Usage:
-  $PROGNAME
+  $PROGNAME [PGDATA]
 EOF
 }
 
@@ -17,15 +17,23 @@ while [ $# -gt 0 ]; do
 		"-?"|--help)
 			usage
 			exit 0;;
-		*)
+		-*)
 			elog "invalid option: $1";;
+		*)
+			update_pgdata "$1";;
 	esac
 	shift
 done
 
 here_is_installation
+pgdata_exists
+pgsql_is_alive
 
-$PGBIN/psql -c "DROP TABLE pgbench_accounts CASCADE;" postgres
-$PGBIN/psql -c "DROP TABLE pgbench_branches CASCADE;" postgres
-$PGBIN/psql -c "DROP TABLE pgbench_tellers CASCADE;" postgres
-$PGBIN/psql -c "DROP TABLE pgbench_history CASCADE;" postgres
+prepare_psql
+
+cat <<EOF | $PSQL
+DROP TABLE pgbench_accounts CASCADE;
+DROP TABLE pgbench_branches CASCADE;
+DROP TABLE pgbench_tellers  CASCADE;
+DROP TABLE pgbench_history  CASCADE;
+EOF
