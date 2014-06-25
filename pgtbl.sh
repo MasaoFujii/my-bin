@@ -2,6 +2,8 @@
 
 . pgcommon.sh
 
+MYTBL=t
+
 usage ()
 {
 cat <<EOF
@@ -25,4 +27,8 @@ done
 
 here_is_installation
 
-$PGBIN/psql -c "CREATE TABLE t (i int, j int); INSERT INTO t VALUES (1, 11), (2, 22), (3, 33)" postgres
+cat <<EOF | $PGBIN/psql postgres
+DROP TABLE ${MYTBL} ;
+CREATE TABLE ${MYTBL} AS SELECT x i, x * 10 + x j FROM generate_series(1, 10) x ;
+SELECT * FROM ${MYTBL} ;
+EOF
