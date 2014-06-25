@@ -4,10 +4,12 @@
 
 usage ()
 {
-    echo "$PROGNAME drops any pgbench object."
-    echo ""
-    echo "Usage:"
-    echo "  $PROGNAME"
+cat <<EOF
+$PROGNAME drops any pgbench objects.
+
+Usage:
+  $PROGNAME
+EOF
 }
 
 while [ $# -gt 0 ]; do
