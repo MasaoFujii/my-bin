@@ -8,7 +8,7 @@ cat <<EOF
 $PROGNAME shows current WAL location.
 
 Usage:
-  $PROGNAME
+  $PROGNAME [PGDATA]
 EOF
 }
 
@@ -17,12 +17,20 @@ while [ $# -gt 0 ]; do
 		"-?"|--help)
 			usage
 			exit 0;;
-		*)
+		-*)
 			elog "invalid option: $1";;
+		*)
+			update_pgdata "$1";;
 	esac
 	shift
 done
 
 here_is_installation
+pgdata_exists
+pgsql_is_alive
 
-$PGBIN/psql -c "SELECT pg_current_xlog_location()" postgres
+prepare_psql
+
+cat <<EOF | $PSQL
+SELECT pg_current_xlog_location();
+EOF
