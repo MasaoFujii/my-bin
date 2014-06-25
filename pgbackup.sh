@@ -6,14 +6,16 @@ MODE="normal"	# normal, start or stop
 
 usage ()
 {
-    echo "$PROGNAME creates a base backup."
-    echo ""
-    echo "Usage:"
-    echo "  $PROGNAME [OPTIONS] [PGDATA]"
-    echo ""
-		echo "Options:"
-		echo "  --start    executes only pg_start_backup"
-		echo "  --stop     executes only pg_stop_backup"
+cat <<EOF
+$PROGNAME creates a base backup.
+
+Usage:
+  $PROGNAME [OPTIONS] [PGDATA]
+
+Options:
+  --start    executes only pg_start_backup
+  --stop     executes only pg_stop_backup
+EOF
 }
 
 pg_start_backup ()
