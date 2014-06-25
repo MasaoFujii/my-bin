@@ -1,15 +1,15 @@
 #!/bin/sh
 
-. bincommon.sh
-
-LSN=
+. pgcommon.sh
 
 usage ()
 {
-    echo "$PROGNAME converts a lsn to a byte offset"
-    echo ""
-    echo "Usage:"
-    echo "  $PROGNAME LSN"
+cat <<EOF
+$PROGNAME shows current WAL location.
+
+Usage:
+  $PROGNAME
+EOF
 }
 
 while [ $# -gt 0 ]; do
@@ -18,22 +18,11 @@ while [ $# -gt 0 ]; do
 			usage
 			exit 0;;
 		*)
-			if [ -z "$LSN" ]; then
-				LSN="$1"
-			else
-				elog "too many arguments"
-			fi;;
+			elog "invalid option: $1";;
 	esac
 	shift
 done
 
-if [ -z "$LSN" ]; then
-	elog "LSN must be supplied"
-fi
+here_is_installation
 
-XLOGID=$(echo $LSN | cut -d/ -f1)
-XRECOFF=$(echo $LSN | cut -d/ -f2)
-
-XLOGFILESIZE=FFFFFFFF
-
-echo "ibase=16; $XLOGID * $XLOGFILESIZE + $XRECOFF" | bc
+$PGBIN/psql -c "SELECT pg_current_xlog_location()" postgres
