@@ -21,20 +21,20 @@ EOF
 pg_start_backup ()
 {
 	if [ $PGMAJOR -ge 91 ]; then
-		$PSQL "SET synchronous_commit TO local; SELECT pg_start_backup('pgbackup.sh', true)" template1
+		$PSQL "SET synchronous_commit TO local; SELECT pg_start_backup('pgbackup.sh', true)"
 	elif [ $PGMAJOR -ge 84 ]; then
-		$PSQL "SELECT pg_start_backup('pgbackup.sh', true)" template1
+		$PSQL "SELECT pg_start_backup('pgbackup.sh', true)"
 	else
-		$PSQL "CHECKPOINT; SELECT pg_start_backup('pgbackup.sh')" template1
+		$PSQL "CHECKPOINT; SELECT pg_start_backup('pgbackup.sh')"
 	fi
 }
 
 pg_stop_backup ()
 {
 	if [ $PGMAJOR -ge 91 ]; then
-		$PSQL "SET synchronous_commit TO local; SELECT pg_stop_backup()" template1
+		$PSQL "SET synchronous_commit TO local; SELECT pg_stop_backup()"
 	else
-		$PSQL "SELECT pg_stop_backup()" template1
+		$PSQL "SELECT pg_stop_backup()"
 fi
 }
 
@@ -67,7 +67,8 @@ validate_archiving
 pgdata_exists
 pgsql_is_alive
 
-PSQL="$PGBIN/psql -p $PGPORT -c"
+prepare_psql
+PSQL="$PSQL -d template1 -c"
 
 case "$MODE" in
 	normal)
