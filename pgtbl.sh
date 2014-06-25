@@ -4,10 +4,12 @@
 
 usage ()
 {
-    echo "$PROGNAME creates a simple table."
-    echo ""
-    echo "Usage:"
-    echo "  $PROGNAME"
+cat <<EOF
+$PROGNAME creates a simple table.
+
+Usage:
+  $PROGNAME
+EOF
 }
 
 while [ $# -gt 0 ]; do
