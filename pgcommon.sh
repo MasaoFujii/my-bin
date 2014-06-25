@@ -25,6 +25,8 @@ PGHBA=
 RECOVERYCONF=
 RECOVERYDONE=
 
+PSQL=
+
 GUCFILENAME=postgresql.conf
 HBAFILENAME=pg_hba.conf
 RECFILENAME=recovery.conf
@@ -131,6 +133,16 @@ pgsql_is_dead ()
 	if [ $? -eq 0 ]; then
 		elog "PostgreSQL server is still running; You have to shut down it right now."
 	fi
+}
+
+prepare_psql ()
+{
+	PGPORT=$(show_guc "port" $PGCONF)
+	PSQLOPT=""
+	if [ ! -z "$PGPORT" ]; then
+		PSQLOPT="-p $PGPORT"
+	fi
+	PSQL="$PGBIN/psql $PSQLOPT"
 }
 
 set_guc ()
