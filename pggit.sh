@@ -22,6 +22,7 @@ Command:
   create BRANCH     creates new branch named BRANCH
   diff [TARGET]     shows changes between commits, commit and working tree, etc
   help              shows help message (default)
+  log [KEYWORD]     shows commit logs
   make              compiles and installs current branch into /dav/<branch-name>
   merge             updates master and merges it into current branch
   patch [PATCH]     creates patch with name PATCH against master in /dav
@@ -136,6 +137,13 @@ elif [ "$GITCMD" = "diff" ]; then
 
 elif [ "$GITCMD" = "" -o "$GITCMD" = "help" ]; then
 	usage
+
+elif [ "$GITCMD" = "log" ]; then
+	if [ -z "$ARGV1" ]; then
+		git log --abbrev-commit
+	else
+		git log --abbrev-commit --grep="${ARGV1}"
+	fi
 
 elif [ "$GITCMD" = "make" ]; then
 	pgmake.sh -j 2 -d /dav/$CURBRANCH
