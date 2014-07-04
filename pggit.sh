@@ -22,7 +22,7 @@ Command:
   create BRANCH     creates new branch named BRANCH
   diff [TARGET]     shows changes between commits, commit and working tree, etc
   help              shows help message (default)
-  log [KEYWORD]     shows commit logs
+  log [PATTERN]     shows commit logs
   make              compiles and installs current branch into /dav/<branch-name>
   merge             updates master and merges it into current branch
   patch [PATCH]     creates patch with name PATCH against master in /dav
