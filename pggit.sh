@@ -29,7 +29,7 @@ Command:
   pull              pulles current branch from github
   push              pushes current branch to github
   remove            removes current branch and moves to master
-  reset             resets current branch to HEAD
+  reset [TARGET]    resets current branch to HEAD (or TARGET)
   untrack [clean]   shows (or cleans up) all untracked objects
   u[pdate] [all]    updates master (and all supported versions)
   wip               commits current change with message "wip"
@@ -184,7 +184,11 @@ elif [ "$GITCMD" = "remove" ]; then
 	git branch
 
 elif [ "$GITCMD" = "reset" ]; then
-	git reset --hard HEAD
+	RESETTARGET="HEAD"
+	if [ ! -z "$ARGV1" ]; then
+		RESETTARGET="$ARGV1"
+	fi
+	git reset --hard "$RESETTARGET"
 
 elif [ "$GITCMD" = "untrack" ]; then
 	if [ "$ARGV1" = "clean" ]; then
