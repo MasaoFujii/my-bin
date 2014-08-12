@@ -30,8 +30,7 @@ Command:
   remove            removes current branch and moves to master
   reset             resets current branch to HEAD
   untrack [clean]   shows (or cleans up) all untracked objects
-  u[pdate]          updates master
-  update-all        updates master and all supported versions
+  u[pdate] [all]    updates master (and all supported versions)
   wip               commits current change with message "wip"
 
 Move to branch matching COMMAND if it's not supported and there is branch
@@ -193,14 +192,11 @@ elif [ "$GITCMD" = "untrack" ]; then
 elif [ "$GITCMD" = "u" -o "$GITCMD" = "update" ]; then
 	current_must_not_have_uncommitted
 	update_branch master
-	back_to_current
-
-elif [ "$GITCMD" = "update-all" ]; then
-	current_must_not_have_uncommitted
-	update_branch master
-	for PGVERSION in $(echo "$SUPPORTED_VERS"); do
-		update_branch "REL${PGVERSION}_STABLE"
-	done
+	if [ "$ARGV1" = "all" ]; then
+		for PGVERSION in $(echo "$SUPPORTED_VERS"); do
+			update_branch "REL${PGVERSION}_STABLE"
+		done	
+	fi
 	back_to_current
 
 elif [ "$GITCMD" = "wip" ]; then
