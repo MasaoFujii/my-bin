@@ -26,6 +26,7 @@ Command:
   make              compiles and installs current branch into /dav/<branch-name>
   merge             updates master and merges it into current branch
   patch [PATCH]     creates patch with name PATCH against master in /dav
+  pull              pulles current branch from github
   push              pushes current branch to github
   remove            removes current branch and moves to master
   reset             resets current branch to HEAD
@@ -161,6 +162,9 @@ elif [ "$GITCMD" = "patch" ]; then
 		PATCHNAME="$ARGV1"
 	fi
 	git diff master | filterdiff --format=context > /dav/"$PATCHNAME"
+
+elif [ "$GITCMD" = "pull" ]; then
+	git pull -u github $CURBRANCH
 
 elif [ "$GITCMD" = "push" ]; then
 	git push -u github $CURBRANCH
