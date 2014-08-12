@@ -29,8 +29,7 @@ Command:
   push              pushes current branch to github
   remove            removes current branch and moves to master
   reset             resets current branch to HEAD
-  untrack           shows all untracked objects
-  untrack-clean     cleans up all untracked objects
+  untrack [clean]   shows (or cleans up) all untracked objects
   u[pdate]          updates master
   update-all        updates master and all supported versions
   wip               commits current change with message "wip"
@@ -185,10 +184,11 @@ elif [ "$GITCMD" = "reset" ]; then
 	git reset --hard HEAD
 
 elif [ "$GITCMD" = "untrack" ]; then
-	git clean -d -f --dry-run
-
-elif [ "$GITCMD" = "untrack-clean" ]; then
-	git clean -d -f
+	if [ "$ARGV1" = "clean" ]; then
+		git clean -d -f
+	else
+		git clean -d -f --dry-run
+	fi
 
 elif [ "$GITCMD" = "u" -o "$GITCMD" = "update" ]; then
 	current_must_not_have_uncommitted
