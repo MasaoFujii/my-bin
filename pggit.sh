@@ -29,6 +29,7 @@ Command:
   pull              pulles current branch from github
   push              pushes current branch to github
   remove            removes current branch and moves to master
+  rename NAME       renames current branch to NAME
   reset [TARGET]    resets current branch to HEAD (or TARGET)
   untrack [clean]   shows (or cleans up) all untracked objects
   u[pdate] [all]    updates master (and all supported versions)
@@ -180,7 +181,17 @@ elif [ "$GITCMD" = "remove" ]; then
 	done
 	git reset --hard HEAD
 	git co master
-	git b -D $CURBRANCH
+	git branch -D $CURBRANCH
+	git branch
+
+elif [ "$GITCMD" = "rename" ]; then
+	if [ -z "$ARGV1" ]; then
+		elog "NAME must be specified in \"rename\" command"
+	fi
+	NEWNAME="$ARGV1"
+	current_must_not_have_uncommitted
+	git checkout -b "$NEWNAME"
+	git branch -D $CURBRANCH
 	git branch
 
 elif [ "$GITCMD" = "reset" ]; then
