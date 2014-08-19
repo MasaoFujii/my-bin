@@ -30,6 +30,17 @@ Options:
 EOF
 }
 
+compile_contrib ()
+{
+	CONTRIB=$CURDIR/contrib
+	MYMODULE=$CONTRIB/"$1"
+
+	if [ -d $MYMODULE ]; then
+		cd $MYMODULE
+		make install
+	fi
+}
+
 compile_pgsql ()
 {
 	export LANG=C
@@ -49,32 +60,13 @@ compile_pgsql ()
 	make install
 	echo -e "\n"
 
-	CONTRIB=$CURDIR/contrib
-	PGBENCH=$CONTRIB/pgbench
-	if [ -d $PGBENCH ]; then
-		cd $PGBENCH
-		make install
-	fi
-	PGSTATSTATEMENTS=$CONTRIB/pg_stat_statements
-	if [ -d $PGSTATSTATEMENTS ]; then
-		cd $PGSTATSTATEMENTS
-		make install
-	fi
-	PGSBY=$CONTRIB/pg_standby
-	if [ -d $PGSBY ]; then
-		cd $PGSBY
-		make install
-	fi
-	PGTRGM=$CONTRIB/pg_trgm
-	if [ -d $PGTRGM ]; then
-		cd $PGTRGM
-		make install
-	fi
-	PGXLOGDUMP=$CONTRIB/pg_xlogdump
-	if [ -d $PGXLOGDUMP ]; then
-		cd $PGXLOGDUMP
-		make install
-	fi
+	compile_contrib pgbench
+	compile_contrib pg_stat_statements
+	compile_contrib pg_standby
+	compile_contrib pg_trgm
+	compile_contrib pg_xlogdump
+	compile_contrib pgstattuple
+	compile_contrib pgcrypto
 }
 
 while [ $# -gt 0 ]; do
