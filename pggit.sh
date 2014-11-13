@@ -214,7 +214,7 @@ elif [ "$GITCMD" = "u" -o "$GITCMD" = "update" ]; then
 	if [ "$ARGV1" = "all" ]; then
 		for PGVERSION in $(echo "$SUPPORTED_VERS"); do
 			update_branch "REL${PGVERSION}_STABLE"
-		done	
+		done
 	fi
 	back_to_current
 

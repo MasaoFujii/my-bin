@@ -8,7 +8,7 @@ usage ()
 $PROGNAME creates some useful functions.
 
 Usage:
-  $PROGNAME [PGDATA] 
+  $PROGNAME [PGDATA]
 
 Functions:
   random_text (num int)    generate the specified number random text
