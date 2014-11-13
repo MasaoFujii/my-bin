@@ -54,17 +54,21 @@ while [ $# -gt 0 ]; do
 	shift
 done
 
+
+
 report_pgsql_processes ()
 {
 	date
 
-	for processname in postgres postmaster; do
-		PIDLIST=$(pgrep -d, -x $processname)
-		if [ ! -z "$PIDLIST" ]; then
-			ps $FORMAT -p $PIDLIST
-			echo ""
-			return
-		fi
+	pmpids=$(pgrep -P 1 -x "postgres|postmaster")
+	if [ -z "$pmpids" ]; then
+		return
+	fi
+
+	for pmpid in $pmpids; do
+		PIDLIST=$(pgrep -d, -P $pmpid)$pmpid
+		ps $FORMAT -p $PIDLIST | head -1 && ps $FORMAT -p $PIDLIST | sed '1d' | sort
+		echo ""
 	done
 }
 
