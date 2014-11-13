@@ -10,18 +10,20 @@ GF_OPTS=
 
 usage ()
 {
-	echo "$PROGNAME prints lines matching PATTERN"
-	echo ""
-	echo "Usage:"
-	echo "  $PROGNAME [OPTIONS] PATTERN"
-	echo ""
-	echo "Options:"
-	echo "  -a    searches in all"
-	echo "  -c    searches in contrib"
-	echo "  -d    searches in document"
-	echo "  -h    searches in header files"
-	echo "  -i    ignore case distinctions in PATTERN"
-	echo "  -s    searches in source (default)"
+cat <<EOF
+$PROGNAME prints lines matching PATTERN
+
+Usage:
+  $PROGNAME [OPTIONS] PATTERN
+
+Options:
+  -a    searches in all
+  -c    searches in contrib
+  -d    searches in document
+  -h    searches in header files
+  -i    ignore case distinctions in PATTERN
+  -s    searches in source (default)
+EOF
 }
 
 while [ $# -gt 0 ]; do
