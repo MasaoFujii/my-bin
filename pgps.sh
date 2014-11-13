@@ -9,24 +9,26 @@ FORMAT="u"
 
 usage ()
 {
-    echo "$PROGNAME provides a dynamic real-time view of running postgres processes."
-    echo ""
-    echo "Usage:"
-    echo "  $PROGNAME [OPTIONS]"
-		echo ""
-		echo "Description:"
-    echo "  By default, screen is updated every 1 second."
-    echo ""
-    echo "Options:"
-    echo "  -b          batch mode; reports running processes in a row"
-    echo "  -d SECS     specifies the delay between screen updates or"
-		echo "              reports in batch mode"
-		echo "  -o FORMAT   uses user-defined format, e.g., -o pid"
-		echo "  u           uses user-oriented format (default format)"
-    echo "  -1          1-time mode; reports running processes only once"
-		echo ""
-		echo "Notes:"
-		echo "  -1 is given priority over -b if both are specified."
+cat <<EOF
+$PROGNAME provides a dynamic real-time view of running postgres processes.
+
+Usage:
+  $PROGNAME [OPTIONS]
+
+Description:
+  By default, screen is updated every 1 second.
+
+Options:
+  -b          batch mode; reports running processes in a row
+  -d SECS     specifies the delay between screen updates or
+              reports in batch mode
+  -o FORMAT   uses user-defined format, e.g., -o pid
+  u           uses user-oriented format (default format)
+  -1          1-time mode; reports running processes only once
+
+Notes:
+  -1 is given priority over -b if both are specified.
+EOF
 }
 
 while [ $# -gt 0 ]; do
