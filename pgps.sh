@@ -66,7 +66,7 @@ report_pgsql_processes ()
 	fi
 
 	for pmpid in $pmpids; do
-		PIDLIST=$(pgrep -d, -P $pmpid)$pmpid
+		PIDLIST=${pmpid},$(pgrep -d, -P $pmpid)
 		ps $FORMAT -p $PIDLIST | head -1 && ps $FORMAT -p $PIDLIST | sed '1d' | sort
 		echo ""
 	done
