@@ -115,7 +115,8 @@ elif [ "$GITCMD" = "b" -o "$GITCMD" = "branch" ]; then
 
 elif [ "$GITCMD" = "co" ]; then
 	if [ -z "$ARGV1" ]; then
-		move_to_branch master
+		git checkout master
+		git branch
 	else
 		move_to_branch "$ARGV1"
 	fi
