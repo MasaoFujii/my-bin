@@ -58,7 +58,8 @@ pm_pids ()
 }
 
 if [ "$STOPALL" = "true" ]; then
-	for PMPID in $(pm_pids); do
+	PMPIDS=$(pm_pids)
+	for PMPID in $PMPIDS; do
 		kill -$SIGNAL $PMPID
 	done
 
