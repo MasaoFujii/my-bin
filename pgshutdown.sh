@@ -59,8 +59,15 @@ pm_pids ()
 
 if [ "$STOPALL" = "true" ]; then
 	PMPIDS=$(pm_pids)
+	if [ -z "${PMPIDS}" ]; then
+		echo "$PROGNAME: no postmaster is running"
+		exit 0
+	fi
 	for PMPID in $PMPIDS; do
 		kill -$SIGNAL $PMPID
+		if [ $? -ne 0 ]; then
+			echo "$PROGNAME: WARNING: failed to send ${SIGNAL} signal to postmaster (PID=${PMPID})"
+		fi
 	done
 
 	printf "waiting for servers to shut down..."
