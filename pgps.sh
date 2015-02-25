@@ -66,9 +66,11 @@ report_pgsql_processes ()
 	fi
 
 	for pmpid in $pmpids; do
-		PIDLIST=${pmpid},$(pgrep -d, -P $pmpid)
+		PIDLIST=$(pgrep -d, -P $pmpid)
 		if [ -z "${PIDLIST}" ]; then
-			continue
+			PIDLIST=${pmpid}
+		else
+			PIDLIST=${pmpid},${PIDLIST}
 		fi
 		case "$KERNEL" in
 			"Linux")
