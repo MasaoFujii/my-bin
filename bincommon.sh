@@ -36,10 +36,12 @@ remove_line ()
 			PERM=$(stat --format "%a" $TARGETFILE);;
 		"Darwin")
 			PERM=$(stat -f "%p" $TARGETFILE);;
-		*)
-			elog "unknown kernel: $KERNEL";;
 	esac
 	sed /"$PATTERN"/D $TARGETFILE > $TMPFILE
 	mv $TMPFILE $TARGETFILE
 	chmod $PERM $TARGETFILE
 }
+
+if [ "$KERNEL" != "Linux" -a "$KERNEL" != "Darwin" ]; then
+			elog "unknown kernel: $KERNEL"
+fi

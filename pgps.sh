@@ -70,7 +70,12 @@ report_pgsql_processes ()
 		if [ -z "${PIDLIST}" ]; then
 			continue
 		fi
-		ps $FORMAT -p $PIDLIST | head -1 && ps $FORMAT -p $PIDLIST | sed '1d' | sort
+		case "$KERNEL" in
+			"Linux")
+				ps $FORMAT -p $PIDLIST --sort=pid;;
+			"Darwin")
+				ps $FORMAT -p $PIDLIST | head -1 && ps $FORMAT -p $PIDLIST | sed '1d' | sort;;
+		esac
 		echo ""
 	done
 }
