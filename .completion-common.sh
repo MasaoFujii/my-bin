@@ -1,0 +1,9 @@
+CURWORD="${COMP_WORDS[COMP_CWORD]}"
+PREVWORD="${COMP_WORDS[COMP_CWORD-1]}"
+
+WORDLIST=""
+
+mycompgen ()
+{
+	COMPREPLY=( $(compgen -W "$WORDLIST" $CURWORD) )
+}
