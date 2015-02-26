@@ -24,6 +24,7 @@ Options:
   -d NAME          default parameter
   -s NAME          show parameter
   -S               show all changed parameters
+  --showall        show all possible parameters
   -T               auto tuning
 EOF
 }
@@ -55,6 +56,8 @@ while [ $# -gt 0 ]; do
 			CONFARG="$2"
 			shift;;
 		-S)
+			CONFCMD=showchanged;;
+		--showall)
 			CONFCMD=showall;;
 		-T)
 			CONFCMD=tune;;
@@ -123,6 +126,9 @@ case "$CONFCMD" in
 	show)
 		report_guc "$CONFARG";;
 
-	showall)
+	showchanged)
 		grep -E ^[A-z] $PGCONF | cut -f1;;
+
+	showall)
+		grep -E ^[A-z]\|\#[A-z] $PGCONF | tr -d \# | cut -d= -f1 | sort | uniq;;
 esac
