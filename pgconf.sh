@@ -21,6 +21,7 @@ Options:
   -c NAME=VALUE    change parameter
                    (enclose VALUE with double quotes to include single
                    quote in it, e.g., listen_addresses="'*'")
+  -c NAME VALUE    same as above
   -d NAME          default parameter
   -s NAME          show parameter
   -S               show all changed parameters
@@ -46,6 +47,11 @@ while [ $# -gt 0 ]; do
 		-c)
 			CONFCMD=change
 			CONFARG="$2"
+			echo "$CONFARG" | grep --quiet "="
+			if [ $? -ne 0 ]; then
+				shift
+				CONFARG="${CONFARG}=${2}"
+			fi
 			shift;;
 		-d)
 			CONFCMD=default
