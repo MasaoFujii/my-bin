@@ -2,9 +2,6 @@ _pggit()
 {
 	. .completion-common.sh
 
-	WORDLIST="apply branch co committer create diff help log make merge patch \
-pull push remove rename reset untrack update wip"
-
 	case "$PREVWORD" in
 		co)
 			WORDLIST=$(git branch 2> /dev/null | tr -d "* ")
@@ -15,9 +12,12 @@ pull push remove rename reset untrack update wip"
 			WORDLIST="clean";;
 		update|u)
 			WORDLIST="all";;
+		pggit.sh)
+			WORDLIST="apply branch co committer create diff help log make merge \
+patch pull push remove rename reset untrack update wip";;
 	esac
 
 	mycompgen
 }
 
-complete -F _pggit pggit.sh
+complete -o bashdefault -o default -F _pggit pggit.sh
