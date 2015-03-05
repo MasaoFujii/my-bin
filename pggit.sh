@@ -28,7 +28,7 @@ Command:
   patch [PATCH]     creates patch with name PATCH against master in /dav
   pull              pulles current branch from github
   push              pushes current branch to github
-  remove            removes current branch and moves to master
+  remove [cascade]  removes current branch (and its installation directory)
   rename NAME       renames current branch to NAME
   reset [TARGET]    resets current branch to HEAD (or TARGET)
   untrack [clean]   shows (or cleans up) all untracked objects
@@ -184,6 +184,9 @@ elif [ "$GITCMD" = "remove" ]; then
 	git co master
 	git branch -D $CURBRANCH
 	git branch
+	if [ "$ARGV1" = "cascade" ]; then
+		rm -rf /dav/$CURBRANCH
+	fi
 
 elif [ "$GITCMD" = "rename" ]; then
 	if [ -z "$ARGV1" ]; then

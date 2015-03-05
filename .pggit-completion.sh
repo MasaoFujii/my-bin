@@ -8,6 +8,8 @@ _pggit()
 			if [ $? -ne 0 ]; then
 				return 0
 			fi;;
+		remove)
+			WORDLIST="cascade";;
 		untrack)
 			WORDLIST="clean";;
 		update|u)
