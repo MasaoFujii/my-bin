@@ -81,7 +81,7 @@ create_new_branch ()
 	current_must_not_have_uncommitted
 	update_branch master
 	git checkout -b "$1"
-	pgclean.sh -a
+	pgclean.sh
 }
 
 move_to_branch ()
