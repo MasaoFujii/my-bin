@@ -66,9 +66,9 @@ if [ -z "$PATTERN" ]; then
 fi
 
 if [ "$SEARCH_ALL" = "TRUE" ]; then
-	$PROGNAME -s "$PATTERN"
-	$PROGNAME -c "$PATTERN"
-	$PROGNAME -d "$PATTERN"
+	$PROGNAME $GF_OPTS -s "$PATTERN"
+	$PROGNAME $GF_OPTS -c "$PATTERN"
+	$PROGNAME $GF_OPTS -d "$PATTERN"
 	exit 0
 fi
 
