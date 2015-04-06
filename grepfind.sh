@@ -58,4 +58,4 @@ if [ "$SHOWFILENAME" = "TRUE" ]; then
 	GREP_OPTIONS="$GREP_OPTIONS -Hn"
 fi
 
-find $SEARCH_DIR $EXCLUDE -name "$FIND_PATTERN" -exec grep $GREP_OPTIONS "$GREP_PATTERN" {} \;
+find $SEARCH_DIR $EXCLUDE -name "$FIND_PATTERN" -type f -exec grep $GREP_OPTIONS "$GREP_PATTERN" {} \;
