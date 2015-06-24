@@ -4,6 +4,7 @@
 
 GITCMD=
 ARGV1=
+ARGV2=
 SUPPORTED_VERS="9_4 9_3 9_2 9_1 9_0"
 
 usage ()
@@ -15,25 +16,26 @@ Usage:
   $PROGNAME [COMMAND]
 
 Command:
-  apply PATCH       creates new branch and applies PATCH
-  [b]ranch          shows all local branches
-  co [PATTERN]      moves to branch matching PATTERN (master branch by default)
-  committer         shows how many patches each committer committed
-  create BRANCH     creates new branch named BRANCH
-  diff [TARGET]     shows changes between commits, commit and working tree, etc
-  help              shows help message (default)
-  log [PATTERN]     shows commit logs
-  make              compiles and installs current branch into /dav/<branch-name>
-  merge             updates master and merges it into current branch
-  patch [PATCH]     creates patch with name PATCH against master in /dav
-  pull              pulles current branch from github
-  push              pushes current branch to github
-  remove [cascade]  removes current branch (and its installation directory)
-  rename NAME       renames current branch to NAME
-  reset [TARGET]    resets current branch to HEAD (or TARGET)
-  untrack [clean]   shows (or cleans up) all untracked objects
-  u[pdate] [all]    updates master (and all supported versions)
-  wip               commits current change with message "wip"
+  apply PATCH        creates new branch and applies PATCH
+  [b]ranch           shows all local branches
+  co [PATTERN]       moves to branch matching PATTERN (master branch by default)
+  committer          shows how many patches each committer committed
+  create BRANCH      creates new branch named BRANCH
+  diff [TARGET]      shows changes between commits, commit and working tree, etc
+  grep [-i] PATTERN  prints lines matching PATTERN
+  help               shows help message (default)
+  log [PATTERN]      shows commit logs
+  make               compiles and installs current branch into /dav/<branch-name>
+  merge              updates master and merges it into current branch
+  patch [PATCH]      creates patch with name PATCH against master in /dav
+  pull               pulles current branch from github
+  push               pushes current branch to github
+  remove [cascade]   removes current branch (and its installation directory)
+  rename NAME        renames current branch to NAME
+  reset [TARGET]     resets current branch to HEAD (or TARGET)
+  untrack [clean]    shows (or cleans up) all untracked objects
+  u[pdate] [all]     updates master (and all supported versions)
+  wip                commits current change with message "wip"
 
 Move to branch matching COMMAND if it's not supported and there is branch
 matching it.
@@ -45,13 +47,13 @@ while [ $# -gt 0 ]; do
 		"-?"|--help)
 			usage
 			exit 0;;
-		-*)
-			elog "invalid option: $1";;
 		*)
 			if [ -z "$GITCMD" ]; then
 				GITCMD="$1"
 			elif [ -z "$ARGV1" ]; then
 				ARGV1="$1"
+			elif [ -z "$ARGV2" ]; then
+				ARGV2="$1"
 			fi
 			;;
 	esac
@@ -137,6 +139,9 @@ elif [ "$GITCMD" = "create" ]; then
 elif [ "$GITCMD" = "diff" ]; then
 	DIFFTARGET="$ARGV1"
 	git diff $DIFFTARGET
+
+elif [ "$GITCMD" = "grep" ]; then
+	git grep $ARGV1 $ARGV2
 
 elif [ "$GITCMD" = "" -o "$GITCMD" = "help" ]; then
 	usage
