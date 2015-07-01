@@ -5,7 +5,7 @@
 GITCMD=
 ARGV1=
 ARGV2=
-SUPPORTED_VERS="9_4 9_3 9_2 9_1 9_0"
+SUPPORTED_VERS="9_5 9_4 9_3 9_2 9_1 9_0"
 
 usage ()
 {
