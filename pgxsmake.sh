@@ -7,6 +7,7 @@ LOGFILE=/tmp/pgxsmake.log
 PREFIX=
 MAKECMD=
 MAKEFLG=
+MAKEALL="FALSE"
 
 usage ()
 {
@@ -20,6 +21,7 @@ Default:
   runs plain "make" command.
 
 Options:
+  -a, --all          runs "make uninstall, clean and install"
   -c, --clean        runs "make clean"
   -f, --flag=FLAG    uses FLAG, e.g., -f "SENNA_CFG=/opt/senna-cfg"
   -i, --install      runs "make install"
@@ -34,6 +36,8 @@ while [ $# -gt 0 ]; do
 		"-?"|--help)
 			usage
 			exit 0;;
+		-a|--all)
+			MAKEALL="TRUE";;
 		-c|--clean)
 			MAKECMD="clean";;
 		-f|--flag)
@@ -68,6 +72,17 @@ fi
 
 if [ -z "$PREFIX" ]; then
 	elog "PREFIX must be supplied"
+fi
+
+if [ "$MAKEALL" = "TRUE" ]; then
+	if [ ! -z "$MAKEFLG" ]; then
+		MAKEFLG="-f \"$MAKEFLG\""
+	fi
+	pgxsmake.sh "$MAKEFLG" $PREFIX uninstall
+	pgxsmake.sh "$MAKEFLG" $PREFIX clean
+	pgxsmake.sh "$MAKEFLG" $PREFIX
+	pgxsmake.sh "$MAKEFLG" $PREFIX install
+	exit 0;
 fi
 
 export LANG=C
