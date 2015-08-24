@@ -75,13 +75,14 @@ if [ -z "$PREFIX" ]; then
 fi
 
 if [ "$MAKEALL" = "TRUE" ]; then
+	FLGOPT=
 	if [ ! -z "$MAKEFLG" ]; then
-		MAKEFLG="-f \"$MAKEFLG\""
+		FLGOPT="-f"
 	fi
-	pgxsmake.sh "$MAKEFLG" $PREFIX uninstall
-	pgxsmake.sh "$MAKEFLG" $PREFIX clean
-	pgxsmake.sh "$MAKEFLG" $PREFIX
-	pgxsmake.sh "$MAKEFLG" $PREFIX install
+	pgxsmake.sh $FLGOPT "$MAKEFLG" $PREFIX uninstall
+	pgxsmake.sh $FLGOPT "$MAKEFLG" $PREFIX clean
+	pgxsmake.sh $FLGOPT "$MAKEFLG" $PREFIX
+	pgxsmake.sh $FLGOPT "$MAKEFLG" $PREFIX install
 	exit 0;
 fi
 
