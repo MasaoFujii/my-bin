@@ -67,6 +67,7 @@ compile_pgsql ()
 	compile_contrib pg_xlogdump
 	compile_contrib pgstattuple
 	compile_contrib pgcrypto
+	compile_contrib postgres_fdw
 }
 
 while [ $# -gt 0 ]; do
