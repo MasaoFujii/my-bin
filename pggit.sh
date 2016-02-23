@@ -75,7 +75,7 @@ current_must_not_have_uncommitted ()
 update_branch ()
 {
 	git checkout "$1"
-	git pull -u origin "$1"
+	git pull origin "$1"
 }
 
 create_new_branch ()
