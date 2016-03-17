@@ -159,7 +159,7 @@ elif [ "$GITCMD" = "make" ]; then
 elif [ "$GITCMD" = "merge" ]; then
 	current_must_not_have_uncommitted
 	git checkout master
-	git pull -u origin master
+	git pull origin master
 	back_to_current
 	git merge master
 
@@ -171,7 +171,7 @@ elif [ "$GITCMD" = "patch" ]; then
 	git diff master | filterdiff --format=context > /dav/"$PATCHNAME"
 
 elif [ "$GITCMD" = "pull" ]; then
-	git pull -u github $CURBRANCH
+	git pull github $CURBRANCH
 
 elif [ "$GITCMD" = "push" ]; then
 	git push -u github $CURBRANCH
