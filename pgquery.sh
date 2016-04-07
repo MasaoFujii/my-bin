@@ -15,6 +15,11 @@ Usage:
   $PROGNAME [QUERY]
 
 Query:
+  location flush       pg_current_xlog_flush_location()
+  location insert      pg_current_xlog_insert_location()
+  location receive     pg_last_xlog_receive_location()
+  location replay      pg_last_xlog_replay_location()
+  location [write]     pg_current_xlog_location()
   replay [is_paused]   pg_is_xlog_replay_paused()
   replay pause         pg_xlog_replay_pause()
   replay resume        pg_xlog_replay_resume()
@@ -58,7 +63,21 @@ $QUERY
 EOF
 }
 
-if [ "$QCMD" = "replay" ]; then
+if [ "$QCMD" = "location" ]; then
+	LSNFUNC="pg_current_xlog_location()"
+	case "$ARGV1" in
+		flush)
+			LSNFUNC="pg_current_xlog_flush_location()";;
+		insert)
+			LSNFUNC="pg_current_xlog_insert_location()";;
+		receive)
+			LSNFUNC="pg_last_xlog_receive_location()";;
+		replay)
+			LSNFUNC="pg_last_xlog_replay_location()";;
+	esac
+	exec_query "SELECT lsn, pg_xlogfile_name(lsn) walfile FROM ${LSNFUNC} lsn;"
+
+elif [ "$QCMD" = "replay" ]; then
 	REPLAYFUNC="pg_is_xlog_replay_paused()"
 	case "$ARGV1" in
 		pause)
