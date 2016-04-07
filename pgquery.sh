@@ -15,8 +15,12 @@ Usage:
   $PROGNAME [QUERY]
 
 Query:
-  stat XXX     pg_stat_XXX view
-  switch       pg_switch_xlog function
+  replay [is_paused]   pg_is_xlog_replay_paused()
+  replay pause         pg_xlog_replay_pause()
+  replay resume        pg_xlog_replay_resume()
+  replay timestamp     pg_last_xact_replay_timestamp()
+  stat XXX             pg_stat_XXX view
+  switch               pg_switch_xlog()
 EOF
 }
 
@@ -54,7 +58,19 @@ $QUERY
 EOF
 }
 
-if [ "$QCMD" = "stat" ]; then
+if [ "$QCMD" = "replay" ]; then
+	REPLAYFUNC="pg_is_xlog_replay_paused()"
+	case "$ARGV1" in
+		pause)
+			REPLAYFUNC="pg_xlog_replay_pause()";;
+		resume)
+			REPLAYFUNC="pg_xlog_replay_resume()";;
+		timestamp)
+			REPLAYFUNC="pg_last_xact_replay_timestamp()";;
+	esac
+	exec_query "SELECT ${REPLAYFUNC};"
+
+elif [ "$QCMD" = "stat" ]; then
 	PGSTATVIEW="pg_stat_${ARGV1}"
 	if [ -z "$ARGV1" ]; then
 		PGSTATVIEW="pg_stat_activity"
