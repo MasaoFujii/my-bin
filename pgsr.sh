@@ -25,7 +25,7 @@ Options:
   -C          sets up Cascade standby
   --conflict  creates standby query conflict
 
-Note:
+Notes:
   -n option specifies the number of only standbys
   connecting directly to the master.
 EOF

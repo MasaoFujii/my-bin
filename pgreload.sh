@@ -9,7 +9,19 @@ $PROGNAME reloads PostgreSQL configuration file.
 
 Usage:
   $PROGNAME [PGDATA]
+
+Notes:
+  If "all" is specified in PGDATA, configuration file in all database clusters
+  found are reloaded.
 EOF
+}
+
+reload_config ()
+{
+	pgdata_exists
+	pgsql_is_alive
+
+	$PGBIN/pg_ctl -D $PGDATA reload
 }
 
 while [ $# -gt 0 ]; do
@@ -26,7 +38,12 @@ while [ $# -gt 0 ]; do
 done
 
 here_is_installation
-pgdata_exists
-pgsql_is_alive
 
-$PGBIN/pg_ctl -D $PGDATA reload
+if [ "$PGDATA" = "all" ]; then
+	for pgdata in $(find_all_pgdata); do
+		update_pgdata "$pgdata"
+		reload_config
+	done
+else
+	reload_config
+fi
