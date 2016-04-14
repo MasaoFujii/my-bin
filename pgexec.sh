@@ -15,7 +15,7 @@ Usage:
   $PROGNAME [OPTIONS] [QUERY]
 
 Options:
-  -D PGDATA            location of the database storage area
+  pgdata PGDATA        location of the database storage area
 
 Query:
   location flush       pg_current_xlog_flush_location()
@@ -37,7 +37,7 @@ while [ $# -gt 0 ]; do
 		"-?"|--help)
 			usage
 			exit 0;;
-		-D)
+		pgdata)
 			update_pgdata "$2"
 			shift;;
 		*)

@@ -1,5 +1,3 @@
-. pgcommon.sh
-
 CURWORD="${COMP_WORDS[COMP_CWORD]}"
 PREVWORD="${COMP_WORDS[COMP_CWORD-1]}"
 
