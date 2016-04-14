@@ -12,7 +12,10 @@ cat <<EOF
 $PROGNAME executes a query on PostgreSQL server.
 
 Usage:
-  $PROGNAME [QUERY]
+  $PROGNAME [OPTIONS] [QUERY]
+
+Options:
+  -D PGDATA            location of the database storage area
 
 Query:
   location flush       pg_current_xlog_flush_location()
@@ -34,6 +37,9 @@ while [ $# -gt 0 ]; do
 		"-?"|--help)
 			usage
 			exit 0;;
+		-D)
+			update_pgdata "$2"
+			shift;;
 		*)
 			if [ -z "$QCMD" ]; then
 				QCMD="$1"
@@ -75,7 +81,7 @@ if [ "$QCMD" = "location" ]; then
 		replay)
 			LSNFUNC="pg_last_xlog_replay_location()";;
 	esac
-	exec_query "SELECT lsn, pg_xlogfile_name(lsn) walfile FROM ${LSNFUNC} lsn;"
+	exec_query "SELECT lsn, CASE WHEN pg_is_in_recovery() THEN NULL ELSE pg_xlogfile_name(lsn) END walfile FROM ${LSNFUNC} lsn;"
 
 elif [ "$QCMD" = "replay" ]; then
 	REPLAYFUNC="pg_is_xlog_replay_paused()"
