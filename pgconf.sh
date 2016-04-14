@@ -76,7 +76,6 @@ while [ $# -gt 0 ]; do
 done
 
 here_is_installation
-pgdata_exists
 
 report_guc ()
 {
@@ -97,44 +96,58 @@ tune_mem ()
 	report_guc "$GUCNAME"
 }
 
-case "$CONFCMD" in
-	open)
-		case "$KERNEL" in
-			"Linux")
-				emacs $PGDATA/$CONFFILE &;;
-			"Darwin")
-				emacs $PGDATA/$CONFFILE;;
-		esac;;
+exec_pgconf ()
+{
+	pgdata_exists
 
-	tune)
-		case "$KERNEL" in
-			"Linux")
-				MEM_KB=$(grep MemTotal /proc/meminfo | awk '{print $2}');;
-			"Darwin")
-				MEM_BYTES=$(sysctl hw.memsize | awk '{print $2}')
-				MEM_KB=$(echo "$MEM_BYTES / 1024" | bc);;
-		esac
-		MEM_MB=$(echo "$MEM_KB / 1024" | bc)
-		tune_mem shared_buffers       10
-		tune_mem effective_cache_size 50
-		tune_mem work_mem             1000
-		tune_mem maintenance_work_mem 40;;
+	case "$CONFCMD" in
+		open)
+			case "$KERNEL" in
+				"Linux")
+					emacs $PGDATA/$CONFFILE &;;
+				"Darwin")
+					emacs $PGDATA/$CONFFILE;;
+			esac;;
 
-	change)
-		GUCNAME=$(echo "$CONFARG" | cut -d= -f1)
-		GUCVALUE=$(echo "$CONFARG" | cut -d= -f2)
-		set_guc "$GUCNAME" "$GUCVALUE" $PGCONF
-		report_guc "$GUCNAME";;
+		tune)
+			case "$KERNEL" in
+				"Linux")
+					MEM_KB=$(grep MemTotal /proc/meminfo | awk '{print $2}');;
+				"Darwin")
+					MEM_BYTES=$(sysctl hw.memsize | awk '{print $2}')
+					MEM_KB=$(echo "$MEM_BYTES / 1024" | bc);;
+			esac
+			MEM_MB=$(echo "$MEM_KB / 1024" | bc)
+			tune_mem shared_buffers       10
+			tune_mem effective_cache_size 50
+			tune_mem work_mem             1000
+			tune_mem maintenance_work_mem 40;;
 
-	default)
-		remove_line "^$CONFARG" $PGCONF;;
+		change)
+			GUCNAME=$(echo "$CONFARG" | cut -d= -f1)
+			GUCVALUE=$(echo "$CONFARG" | cut -d= -f2)
+			set_guc "$GUCNAME" "$GUCVALUE" $PGCONF
+			report_guc "$GUCNAME";;
 
-	show)
-		report_guc "$CONFARG";;
+		default)
+			remove_line "^$CONFARG" $PGCONF;;
 
-	showchanged)
-		grep -E ^[A-z] $PGCONF | cut -f1;;
+		show)
+			report_guc "$CONFARG";;
 
-	showall)
-		grep -E ^[A-z]\|\#[A-z] $PGCONF | tr -d \# | cut -d= -f1 | sort | uniq;;
-esac
+		showchanged)
+			grep -E ^[A-z] $PGCONF | cut -f1;;
+
+		showall)
+			grep -E ^[A-z]\|\#[A-z] $PGCONF | tr -d \# | cut -d= -f1 | sort | uniq;;
+	esac
+}
+
+if [ "$PGDATA" = "all" ]; then
+	for pgdata in $(find_all_pgdata); do
+		update_pgdata "$pgdata"
+		exec_pgconf
+	done
+else
+	exec_pgconf
+fi
