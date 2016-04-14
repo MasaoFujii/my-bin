@@ -27,6 +27,10 @@ Options:
   -S               show all changed parameters
   --showall        show all possible parameters
   -T               auto tuning
+
+Notes:
+  If "all" is specified in PGDATA, configuration file in all database clusters
+  found are manipulated.
 EOF
 }
 
