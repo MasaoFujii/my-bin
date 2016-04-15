@@ -14,7 +14,12 @@ cat <<EOF
 $PROGNAME downloads PostgreSQL source code tarball.
 
 Usage:
-  $PROGNAME VERSION
+  $PROGNAME [VERSION]
+
+Notes:
+  If VERSION is not specified, the latest minor version will be downloaded.
+  If a major version like 9.5 is specified in VERSION,
+  the latest minor version of the specified major one will be downloaded.
 EOF
 }
 
