@@ -26,6 +26,8 @@ Options:
   -f FLAG       uses FLAG as CPPFLAGS, e.g. -f "-DWAL_DEBUG"
   -j NUM        number of jobs
   -m            compiles without clean and configure
+  --libxml      builds with XML support, i.e., same as -c "--with-libxml"
+  --tap         enables TAP tests, i.e., same as -c "--enable-tap-tests"
   --wal-debug   same as -f "-DWAL_DEBUG"
 EOF
 }
@@ -89,6 +91,10 @@ while [ $# -gt 0 ]; do
 			shift;;
 		-m)
 			ONLYMAKE=TRUE;;
+		--libxml)
+			CONFOPT="--with-libxml $CONFOPT";;
+		--tap)
+			CONFOPT="--enable-tap-tests $CONFOPT";;
 		--wal-debug)
 			export CPPFLAGS="-DWAL_DEBUG $CPPFLAGS";;
 		-*)
