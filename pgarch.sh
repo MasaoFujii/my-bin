@@ -4,14 +4,16 @@
 
 usage ()
 {
-	echo "$PROGNAME enables WAL archiving."
-	echo ""
-	echo "Usage:"
-	echo "  $PROGNAME [PGDATA]"
-	echo ""
-	echo "Description:"
-	echo "  This utility sets up the configuration parameters related to WAL archiving"
-	echo "  and creates the archival directory."
+cat <<EOF
+$PROGNAME enables WAL archiving.
+
+Usage:
+  $PROGNAME [PGDATA]
+
+Description:
+  This utility sets up the configuration parameters related to WAL archiving
+  and creates the archival directory.
+EOF
 }
 
 while [ $# -gt 0 ]; do
