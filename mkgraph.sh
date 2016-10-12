@@ -8,6 +8,7 @@ PLOT=
 PLOTSTR=
 XLABEL=
 YLABEL=
+SEPARATOR=
 
 usage ()
 {
@@ -31,6 +32,7 @@ Description:
 
 Options:
   -o FILE         uses FILE instead of INPUT.png for name of output png file
+  -d DELIM        uses DELIM instead of SPACE for field delimiter
   -t TITLE        shows graph title
   --xlabel LABEL  shows label for x-axis
   --ylabel LABEL  shows label for y-axis
@@ -42,10 +44,13 @@ while [ $# -gt 0 ]; do
 		"-?"|--help)
 			usage
 			exit 0;;
-		-o|--output)
+		-o)
 			OUTPUT="$2"
 			shift;;
-		-t|--title)
+		-d)
+			SEPARATOR="set datafile separator \"$2\""
+			shift;;
+		-t)
 			TITLE="$2"
 			shift;;
 		--xlabel)
@@ -101,6 +106,7 @@ done
 
 gnuplot <<EOF
 set terminal png
+$SEPARATOR
 set output "$OUTPUT"
 set title "$TITLE"
 set border 3
