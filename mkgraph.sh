@@ -9,6 +9,8 @@ PLOTSTR=
 XLABEL=
 YLABEL=
 SEPARATOR=
+XTIMESET=
+XTIMEFMT=
 
 usage ()
 {
@@ -36,6 +38,7 @@ Options:
   -t TITLE        shows graph title
   --xlabel LABEL  shows label for x-axis
   --ylabel LABEL  shows label for y-axis
+  --xtime FMT     reads x-axis data as time/date datatype in FMT format
 EOF
 }
 
@@ -58,6 +61,10 @@ while [ $# -gt 0 ]; do
 			shift;;
 		--ylabel)
 			YLABEL="$2"
+			shift;;
+		--xtime)
+			XTIMESET="set xdata time"
+			XTIMEFMT="set timefmt \"$2\""
 			shift;;
 		*)
 			if [ -z "$INPUT" ]; then
@@ -107,6 +114,8 @@ done
 gnuplot <<EOF
 set terminal png
 $SEPARATOR
+$XTIMESET
+$XTIMEFMT
 set output "$OUTPUT"
 set title "$TITLE"
 set border 3
