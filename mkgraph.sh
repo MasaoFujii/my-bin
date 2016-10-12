@@ -11,28 +11,30 @@ YLABEL=
 
 usage ()
 {
-	echo "$PROGNAME creates graph"
-	echo ""
-	echo "Usage:"
-	echo "  $PROGNAME [OPTIONS] INPUT PLOT"
-	echo ""
-	echo "Description:"
-	echo "  This utility creates the line graph which plots INPUT file"
-	echo "  according to the PLOT format."
-	echo ""
-	echo "  PLOT: field_number_of_x-axis:field_number_of_y-axis[@label_title]"
-	echo ""
-	echo "  For example, the following command plots the run/wait queue of"
-	echo "  vmstat output (the run/wait queue is 1st/2nd field of vmstat output)."
-	echo ""
-	echo "      vmstat 1 > vmstat.log"
-	echo "      $PROGNAME vmstat.log 0:1@\"run queue\",0:2@\"wait queue\""
-	echo ""
-	echo "Options:"
-	echo "  -o, --output FILE   uses FILE instead of INPUT.png for name of output png file"
-	echo "  -t, --title TITLE   shows graph title"
-	echo "  --xlabel LABEL      shows label for x-axis"
-	echo "  --ylabel LABEL      shows label for y-axis"
+cat <<EOF
+$PROGNAME creates graph.
+
+Usage:
+  $PROGNAME [OPTIONS] INPUT PLOT
+
+Description:
+  This utility creates the line graph which plots INPUT file
+  according to the PLOT format.
+
+  PLOT: field_number_of_x-axis:field_number_of_y-axis[@label_title]
+
+  For example, the following command plots the run/wait queue of
+  vmstat output (the run/wait queue is 1st/2nd field of vmstat output).
+
+      vmstat 1 > vmstat.log
+      $PROGNAME vmstat.log 0:1@\"run queue\",0:2@\"wait queue\"
+
+Options:
+  -o FILE         uses FILE instead of INPUT.png for name of output png file
+  -t TITLE        shows graph title
+  --xlabel LABEL  shows label for x-axis
+  --ylabel LABEL  shows label for y-axis
+EOF
 }
 
 while [ $# -gt 0 ]; do
