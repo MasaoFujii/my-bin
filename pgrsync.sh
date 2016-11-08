@@ -26,7 +26,7 @@ Description:
   This utility is a wrapper of rsync, especially customized for PostgreSQL-related files and directories.
 
 Options:
-  -b    backup mode (excludes pg_xlog and postmaster.pid and deletes extraneous files)
+  -b    backup mode (excludes pg_xlog/pg_wal and postmaster.pid and deletes extraneous files)
   -v    increases verbosity
 EOF
 }
@@ -37,7 +37,7 @@ while [ $# -gt 0 ]; do
 			usage
 			exit 0;;
 		-b)
-			OPT="$OPT --delete --exclude=pg_xlog/* --exclude=postmaster.pid"
+			OPT="$OPT --delete --exclude=pg_xlog/* --exclude=pg_wal/* --exclude=postmaster.pid"
 			BACKUP_MODE="TRUE";;
 		-v)
 			OPT="$OPT -v";;
@@ -63,6 +63,11 @@ fi
 rsync $OPT $SRCDIR/ $DSTDIR
 
 if [ "$BACKUP_MODE" = "TRUE" ]; then
-	rm -rf $DSTDIR/pg_xlog/*
-	mkdir $DSTDIR/pg_xlog/archive_status
+	if [ -d $DSTDIR/pg_xlog ]; then
+		rm -rf $DSTDIR/pg_xlog/*
+		mkdir $DSTDIR/pg_xlog/archive_status
+	else
+		rm -rf $DSTDIR/pg_wal/*
+		mkdir $DSTDIR/pg_wal/archive_status
+	fi
 fi

@@ -9,13 +9,13 @@ LISTARCHSTATUS=false
 usage ()
 {
 cat <<EOF
-$PROGNAME lists files in pg_xlog directory
+$PROGNAME lists files in pg_xlog/pg_wal directory
 
 Usage:
   $PROGNAME [OPTIONS] [PGDATA]
 
 Description:
-  By default, WAL files in pg_xlog are listed once
+  By default, WAL files in pg_xlog/pg_wal are listed once
 
 Options:
   -a        lists archive status files

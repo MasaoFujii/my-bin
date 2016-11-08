@@ -32,13 +32,22 @@ HBAFILENAME=pg_hba.conf
 RECFILENAME=recovery.conf
 RECDONENAME=recovery.done
 
+update_pgxlog ()
+{
+	if [ ${PGMAJOR:-0} -lt 100 ]; then
+		PGXLOG=$PGDATA/pg_xlog
+	else
+		PGXLOG=$PGDATA/pg_wal
+	fi
+	PGARCHSTATUS=$PGXLOG/archive_status
+}
+
 update_pgdata ()
 {
 	PGDATA="$1"
 	PGARCH=$PGDATA.arch
-	PGXLOG=$PGDATA/pg_xlog
+	update_pgxlog
 	PGXLOGEXT=$PGDATA.xlog
-	PGARCHSTATUS=$PGXLOG/archive_status
 	PGDATABKP=$PGDATA.bkp
 	PGARCHBKP=$PGARCH.bkp
 	PGCONF=$PGDATA/$GUCFILENAME
@@ -66,6 +75,7 @@ here_is_installation ()
 
 	PGVERSION=$($PGBIN/pg_config --version)
 	PGMAJOR=$(echo ${PGVERSION}.0 | tr -d [A-z' '] | cut -d. -f1-2 | tr -d .)
+	update_pgxlog
 }
 
 pgdata_exists ()
@@ -170,7 +180,7 @@ show_guc ()
 
 find_all_pgdata ()
 {
-	MUSTHAVE="base global pg_clog pg_xlog"
+	MUSTHAVE="base global pg_clog"
 
 	for pgdata in $(ls $CURDIR | grep -v -e "\.bkp"); do
 		if [ ! -d "$pgdata" ]; then
