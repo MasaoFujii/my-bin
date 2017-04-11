@@ -180,7 +180,7 @@ show_guc ()
 
 find_all_pgdata ()
 {
-	MUSTHAVE="base global pg_clog"
+	MUSTHAVE="base global pg_subtrans"
 
 	for pgdata in $(ls $CURDIR | grep -v -e "\.bkp"); do
 		if [ ! -d "$pgdata" ]; then
