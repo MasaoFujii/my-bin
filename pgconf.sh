@@ -123,7 +123,7 @@ exec_pgconf ()
 			esac
 			MEM_MB=$(echo "$MEM_KB / 1024" | bc)
 			tune_mem shared_buffers       10
-			tune_mem effective_cache_size 50
+			tune_mem effective_cache_size 2
 			tune_mem work_mem             1000
 			tune_mem maintenance_work_mem 40;;
 
