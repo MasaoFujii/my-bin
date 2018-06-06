@@ -109,6 +109,14 @@ validate_cascade_replication ()
 	fi
 }
 
+validate_logical_replication ()
+{
+	if [ $PGMAJOR -lt 100 ]; then
+		HINT="You must run \"$PROGNAME\" with PostgreSQL >=10"
+		elog "logical replication is NOT supported in $PGVERSION" "$HINT"
+	fi
+}
+
 validate_datapage_checksums ()
 {
 	CHECKSUM="$1"
