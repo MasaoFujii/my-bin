@@ -25,12 +25,12 @@ EOF
 
 is_minor_version ()
 {
-	echo $SRCVERSION | grep -E "^[0-9]+\.[0-9]+\.[0-9]+$"
+	echo $SRCVERSION | grep -E "(^[6-9]\.[0-9]+\.[0-9]+$)|(^[1-9][0-9]\.[0-9]+$)"
 }
 
 is_major_version ()
 {
-	echo $SRCVERSION | grep -E "^[0-9]+\.[0-9]+$"
+	echo $SRCVERSION | grep -E "(^[6-9]\.[0-9]+$)|(^[1-9][0-9]$)"
 }
 
 validate_minor_version ()
@@ -90,7 +90,7 @@ if [ ! -z "$(is_major_version)" ]; then
 fi
 
 if [ "$SRCVERSION" = "LATEST" ]; then
-	TMPVERSION=$(grep -E "\"v[0-9]+\.[0-9]+\.[0-9]+/\"" $METAFILE | cut -dv -f2 | cut -d/ -f1 | sort -t. -k3 -n | tail -1)
+	TMPVERSION=$(grep -E "v[0-9]+\.[0-9]+" $METAFILE | cut -dv -f2 | cut -d/ -f1 | sort -n | tail -1)
 	if [ -z $TMPVERSION ]; then
 		elog "could not find any source file in PostgreSQL source repository site"
 	fi
