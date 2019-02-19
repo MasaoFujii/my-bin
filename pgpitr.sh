@@ -46,7 +46,12 @@ fi
 
 if [ ! -f $PGDATABKP/$PGPITR_DONE ]; then
 	RESTORECMD="cp ../$(basename $PGARCH)/%f %p"
-	echo "restore_command = '${RESTORECMD}'" > $PGDATABKP/$RECFILENAME
+
+	if [ $PGMAJOR -ge 120 ]; then
+		set_guc restore_command "'${RESTORECMD}'" $PGDATABKP/$GUCFILENAME
+	else
+		echo "restore_command = '${RESTORECMD}'" > $PGDATABKP/$RECFILENAME
+	fi
 
 	rm -rf $PGDATABKP/pg_xlog $PGDATABKP/pg_wal
 	mv $PGXLOG $PGDATABKP

@@ -18,6 +18,8 @@ PGARCH=$ACTDATA.arch
 PGBKP=$ACTDATA.bkp
 TRIGGER=$CURDIR/trigger
 RECOVERYCONF=$SBYDATA/$RECFILENAME
+RECOVERYSIGNAL=$SBYDATA/$RECSIGNALNAME
+STANDBYSIGNAL=$SBYDATA/$SBYSIGNALNAME
 
 COPYMODE=false
 
@@ -88,12 +90,23 @@ if [ $PGMAJOR -ge 90 ]; then
 fi
 
 if [ "$COPYMODE" = "true" ]; then
-	echo "standby_mode = 'on'" >> $RECOVERYCONF
-	echo "restore_command = 'cp $PGARCH/%f %p'" >> $RECOVERYCONF
-	echo "trigger_file = '$TRIGGER'" >> $RECOVERYCONF
+	if [ $PGMAJOR -ge 120 ]; then
+		set_guc restore_command "'cp $PGARCH/%f %p'" $SBYCONF
+		set_guc promote_trigger_file "'$TRIGGER'" $SBYCONF
+		touch $STANDBYSIGNAL
+	else
+		echo "standby_mode = 'on'" >> $RECOVERYCONF
+		echo "restore_command = 'cp $PGARCH/%f %p'" >> $RECOVERYCONF
+		echo "trigger_file = '$TRIGGER'" >> $RECOVERYCONF
+	fi
 else
 	RESTORECMD="$PGSTANDBY -t $TRIGGER -r 1 $PGARCH %f %p"
-	echo "restore_command = '$RESTORECMD'" > $RECOVERYCONF
+	if [ $PGMAJOR -ge 120 ]; then
+		set_guc restore_command "'$RESTORECMD'" $SBYCONF
+		touch $RECOVERYSIGNAL
+	else
+		echo "restore_command = '$RESTORECMD'" > $RECOVERYCONF
+	fi
 fi
 
 pgstart.sh $SBYDATA
