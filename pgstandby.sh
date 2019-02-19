@@ -86,15 +86,26 @@ for ((SBYID=$SBYMIN; SBYID<=$SBYMAX; SBYID++)); do
 	set_guc log_line_prefix "'%t $PGDATA '" $PGCONF
 	set_guc hot_standby on $PGCONF
 
-	cat << EOF > $RECOVERYCONF
+	if [ $PGMAJOR -ge 120 ]; then
+	  set_guc primary_conninfo "'port=$SNDPORT application_name=$PGDATA'" $PGCONF
+	  set_guc promote_trigger_file "'$TRIGGER'" $PGCONF
+	  set_guc recovery_target_timeline "'latest'" $PGCONF
+	  touch $STANDBYSIGNAL
+	else
+	  cat << EOF > $RECOVERYCONF
 standby_mode = 'on'
 primary_conninfo = 'port=$SNDPORT application_name=$PGDATA'
 trigger_file = '$TRIGGER'
 recovery_target_timeline = 'latest'
 EOF
+	fi
 
 	if [ "$ARCHIVE_MODE" = "TRUE" ]; then
-		echo "restore_command = 'cp $ACTARCH/%f %p'" >> $RECOVERYCONF
+	  if [ $PGMAJOR -ge 120 ]; then
+	    set_guc restore_command "'cp $ACTARCH/%f %p'" $PGCONF
+	  else
+	    echo "restore_command = 'cp $ACTARCH/%f %p'" >> $RECOVERYCONF
+	  fi
 	fi
 
 	pgstart.sh -w $PGDATA
