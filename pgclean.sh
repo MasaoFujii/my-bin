@@ -35,7 +35,7 @@ done
 
 here_is_source
 
-make maintainer-clean
+make -s maintainer-clean
 
 if [ "$ONLY_MAINTAINER" = "FALSE" ]; then
 	find . -name "TAGS"   -exec rm -f {} \;

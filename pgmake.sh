@@ -39,7 +39,7 @@ compile_contrib ()
 
 	if [ -d $MYMODULE ]; then
 		cd $MYMODULE
-		make install
+		make -s install
 	fi
 }
 
@@ -58,8 +58,8 @@ compile_pgsql ()
 		fi
 	fi
 
-	make $MAKEOPT
-	make install
+	make -s $MAKEOPT
+	make -s install
 	echo -e "\n"
 
 	compile_contrib pgbench

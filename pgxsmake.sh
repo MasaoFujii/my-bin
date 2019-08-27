@@ -87,7 +87,7 @@ if [ "$MAKEALL" = "TRUE" ]; then
 fi
 
 export LANG=C
-make USE_PGXS=1 PG_CONFIG=$PREFIX/bin/pg_config $MAKEFLG $MAKECMD > $LOGFILE 2>&1
+make -s USE_PGXS=1 PG_CONFIG=$PREFIX/bin/pg_config $MAKEFLG $MAKECMD > $LOGFILE 2>&1
 
 cat $LOGFILE
 echo -e "\n"
