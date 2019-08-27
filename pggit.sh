@@ -154,7 +154,7 @@ elif [ "$GITCMD" = "log" ]; then
 	fi
 
 elif [ "$GITCMD" = "make" ]; then
-	pgmake.sh -j 4 --tap -d /dav/$CURBRANCH
+	pgmake.sh -j 8 --tap -d /dav/$CURBRANCH
 
 elif [ "$GITCMD" = "merge" ]; then
 	current_must_not_have_uncommitted
