@@ -35,4 +35,4 @@ pgclean.sh
 git pull
 pgetags.sh
 rm -rf $PREFIX
-pgmake.sh --tap -d -j 8 $PREFIX
+pgmake.sh -j 8 --tap --libxml --llvm -d $PREFIX
