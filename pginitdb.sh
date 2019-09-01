@@ -58,7 +58,7 @@ else
 	set_guc listen_addresses "'*'" $PGCONF
 fi
 set_guc checkpoint_segments 256 $PGCONF
-set_guc max_wal_size 512 $PGCONF
+set_guc max_wal_size "'4GB'" $PGCONF
 set_guc log_line_prefix "'%t '" $PGCONF
 #set_guc log_checkpoints on $PGCONF
 #set_guc log_error_verbosity verbose $PGCONF
