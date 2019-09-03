@@ -3,7 +3,7 @@
 . pgcommon.sh
 
 MYTBL=t
-MYSEQ=tseq
+MYSEQ=${MYTBL}_seq
 NUMJOBS=1
 NUMROWS=10
 LOADPIDS=()
@@ -17,8 +17,9 @@ Usage:
   $PROGNAME [OPTIONS] [PGDATA]
 
 Options:
-  -j NUM    number of jobs loading rows (default: 1)
-  -n NUM    number of rows that each job loads (default: 10)
+  -j NUM      number of jobs loading rows (default: 1)
+  -n NUM      number of rows that each job loads (default: 10)
+  -t TABLE    name of table to create (default: 't')
 EOF
 }
 
@@ -32,6 +33,10 @@ while [ $# -gt 0 ]; do
 			shift;;
 		-n)
 			NUMROWS=$2
+			shift;;
+		-t)
+			MYTBL=$2
+			MYSEQ=${MYTBL}_seq
 			shift;;
 		-*)
 			elog "invalid option: $1";;
