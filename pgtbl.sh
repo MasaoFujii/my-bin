@@ -7,6 +7,7 @@ MYSEQ=${MYTBL}_seq
 NUMJOBS=1
 NUMROWS=10
 LOADPIDS=()
+APPENDROWS="FALSE"
 
 usage ()
 {
@@ -17,6 +18,7 @@ Usage:
   $PROGNAME [OPTIONS] [PGDATA]
 
 Options:
+  -a          appends rows into existing table
   -j NUM      number of jobs loading rows (default: 1)
   -n NUM      number of rows that each job loads (default: 10)
   -t TABLE    name of table to create (default: 't')
@@ -28,6 +30,8 @@ while [ $# -gt 0 ]; do
 		"-?"|--help)
 			usage
 			exit 0;;
+		-a)
+			APPENDROWS="TRUE";;
 		-j)
 			NUMJOBS=$2
 			shift;;
@@ -52,12 +56,14 @@ pgsql_is_alive
 
 prepare_psql
 
-cat <<EOF | $PSQL
+if [ "$APPENDROWS" = "FALSE" ]; then
+  cat <<EOF | $PSQL
 DROP SEQUENCE ${MYSEQ};
 DROP TABLE ${MYTBL} ;
 CREATE SEQUENCE ${MYSEQ} CACHE ${NUMROWS};
 CREATE TABLE ${MYTBL} (i INT, j INT);
 EOF
+fi
 
 function load_rows ()
 {
