@@ -12,7 +12,7 @@ APPENDROWS="FALSE"
 usage ()
 {
 cat <<EOF
-$PROGNAME creates a simple table.
+$PROGNAME creates a table and loads rows into it.
 
 Usage:
   $PROGNAME [OPTIONS] [PGDATA]
