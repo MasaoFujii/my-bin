@@ -212,9 +212,9 @@ elif [ "$GITCMD" = "reset" ]; then
 
 elif [ "$GITCMD" = "untrack" ]; then
 	if [ "$ARGV1" = "clean" ]; then
-		git clean -d -f -X
+		git clean -d -f
 	else
-		git clean -d -f -X --dry-run
+		git clean -d -f --dry-run
 	fi
 
 elif [ "$GITCMD" = "u" -o "$GITCMD" = "update" ]; then
