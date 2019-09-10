@@ -16,13 +16,13 @@ Usage:
   $PROGNAME [OPTIONS] [PGDATA]
 
 Options:
-  -a         enables WAL archiving if initializing PGDATA
-  -k         uses data page checksums if initializing PGDATA
-  -r         renames recovery.done to .conf before the start
-  -t SECS    seconds to wait when using -w option (default: 3600s)
-  -T         uses auto tuning
-  -w         waits for the start to complete
-  -X         uses external XLOG directory if initializing PGDATA
+  -a          enables WAL archiving if initializing PGDATA
+  -k          uses data page checksums if initializing PGDATA
+  -r          renames recovery.done to .conf before the start
+  -t SECS     seconds to wait when using -w option (default: 3600s)
+  -w          waits for the start to complete
+  -X          uses external XLOG directory if initializing PGDATA
+  --no-tune   does NOT use auto tuning
 EOF
 }
 
@@ -40,12 +40,12 @@ while [ $# -gt 0 ]; do
 		-t)
 			MAXWAIT=$2
 			shift;;
-		-T)
-			INITDB_OPT="-T $INITDB_OPT";;
 		-w)
 			OPT="-w $OPT";;
 		-X)
 			INITDB_OPT="-X $INITDB_OPT";;
+		--no-tune)
+			INITDB_OPT="--no-tune $INITDB_OPT";;
 		-*)
 			elog "invalid option: $1";;
 		*)

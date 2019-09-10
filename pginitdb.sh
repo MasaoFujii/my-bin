@@ -5,7 +5,7 @@
 ARCHIVE_MODE="FALSE"
 CHECKSUM=""
 XLOGDIR=""
-AUTOTUNE="FALSE"
+AUTOTUNE="TRUE"
 
 usage ()
 {
@@ -16,10 +16,10 @@ Usage:
   $PROGNAME [OPTIONS] [PGDATA]
 
 Options:
-  -a    enables WAL archiving
-  -k    uses data page checksums
-  -T    uses auto tuning
-  -X    uses external XLOG directory
+  -a          enables WAL archiving
+  -k          uses data page checksums
+  -X          uses external XLOG directory
+  --no-tune   does NOT use auto tuning
 EOF
 }
 
@@ -32,10 +32,10 @@ while [ $# -gt 0 ]; do
 			ARCHIVE_MODE="TRUE";;
 		-k)
 			CHECKSUM="-k";;
-		-T)
-			AUTOTUNE="TRUE";;
 		-X)
 			XLOGDIR="-X $CURDIR/$PGXLOGEXT";;
+		--no-tune)
+			AUTOTUNE="FALSE";;
 		-*)
 			elog "invalid option: $1";;
 		*)

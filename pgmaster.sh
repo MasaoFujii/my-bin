@@ -14,12 +14,12 @@ Usage:
   $PROGNAME [OPTIONS]
 
 Options:
-  -a    enables WAL archiving
-  -A    sets Async mode (default)
-  -k    uses data page checksums
-  -S    sets Sync mode
-  -T    uses auto tuning
-  -X    uses external XLOG directory
+  -a          enables WAL archiving
+  -A          sets Async mode (default)
+  -k          uses data page checksums
+  -S          sets Sync mode
+  -X          uses external XLOG directory
+  --no-tune   does NOT use auto tuning
 EOF
 }
 
@@ -36,10 +36,10 @@ while [ $# -gt 0 ]; do
 			INITDB_OPT="-k $INITDB_OPT";;
 		-S)
 			SYNC_MODE="TRUE";;
-		-T)
-			INITDB_OPT="-T $INITDB_OPT";;
 		-X)
 			INITDB_OPT="-X $INITDB_OPT";;
+		--no-tune)
+			INITDB_OPT="--no-tune $INITDB_OPT";;
 		*)
 			elog "invalid option: $1";;
 	esac
