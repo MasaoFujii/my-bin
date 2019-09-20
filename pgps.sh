@@ -54,25 +54,11 @@ while [ $# -gt 0 ]; do
 	shift
 done
 
-possible_pm_pids ()
-{
-	pgrep -P 1 -x "postgres|postmaster"
-
-	pgctlpids=$(pgrep -x "pg_ctl")
-	if [ -z "$pgctlpids" ]; then
-		return
-	fi
-
-	for pgctlpid in $pgctlpids; do
-		pgrep -P $pgctlpid -x "postgres|postmaster"
-	done
-}
-
 report_pgsql_processes ()
 {
 	date
 
-	for pmpid in $(possible_pm_pids); do
+	for pmpid in $(pm_pids); do
 		PIDLIST=$(pgrep -d, -P $pmpid)
 		if [ -z "${PIDLIST}" ]; then
 			PIDLIST=${pmpid}

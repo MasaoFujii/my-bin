@@ -214,3 +214,10 @@ find_all_pgdata ()
 		fi
 	done
 }
+
+pm_pids ()
+{
+	for pmppid in 1 $(pgrep -x "pg_ctl"); do
+		pgrep -P $pmppid -x "postgres|postmaster"
+	done
+}

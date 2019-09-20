@@ -52,11 +52,6 @@ while [ $# -gt 0 ]; do
 	shift
 done
 
-pm_pids ()
-{
-	pgps.sh -1 -o ppid,pid | awk '$1 == 1 {print $2}'
-}
-
 if [ "$STOPALL" = "true" ]; then
 	PMPIDS=$(pm_pids)
 	if [ -z "${PMPIDS}" ]; then
