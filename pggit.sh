@@ -7,6 +7,8 @@ ARGV1=
 ARGV2=
 SUPPORTED_VERS="_12 _11 _10 9_6 9_5 9_4 9_3"
 
+GITHUB=github
+
 usage ()
 {
 cat <<EOF
@@ -17,6 +19,7 @@ Usage:
 
 Command:
   apply PATCH        creates new branch and applies PATCH
+  autotest           builds and tests on AppVeyor and Travis CI
   [b]ranch           shows all local branches
   co [PATTERN]       moves to branch matching PATTERN (master branch by default)
   committer          shows how many patches each committer committed
@@ -28,8 +31,8 @@ Command:
   make               compiles and installs current branch into /dav/<branch-name>
   merge              updates master and merges it into current branch
   patch [PATCH]      creates patch with name PATCH against master in /dav
-  pull               pulles current branch from github
-  push               pushes current branch to github
+  pull               pulles current branch from $GITHUB
+  push               pushes current branch to $GITHUB
   remove [cascade]   removes current branch (and its installation directory)
   rename NAME        renames current branch to NAME
   reset [TARGET]     resets current branch to HEAD (or TARGET)
@@ -100,6 +103,48 @@ back_to_current ()
 	git checkout $CURBRANCH
 }
 
+github_is_available ()
+{
+	GITHUB_URL=git@github.com:MasaoFujii/postgresql.git
+
+	git remote get-url $GITHUB | grep -E "^${GITHUB_URL}$" > /dev/null
+	if [ $? -ne 0 ]; then
+		elog "$GITHUB repository is NOT registered or its URL is invalid"
+	fi
+}
+
+do_autotest ()
+{
+	CFBOT=~/pgsql/cfbot
+	APPVEYOR=$CFBOT/appveyor
+	TRAVIS=$CFBOT/travis
+	COMMITMSG="Add files to build and test on AppVeyor and Travis CI."
+	NEWBRANCH="$1"
+
+	cd $CFBOT
+	git pull
+	cd $CURDIR
+
+	for filename in $(ls -a $APPVEYOR); do
+		if [ ! -f ${APPVEYOR}/${filename} ]; then
+			continue
+		fi
+		cp ${APPVEYOR}/${filename} .
+		git add $filename
+	done
+
+	for filename in $(ls -a $TRAVIS); do
+		if [ ! -f ${TRAVIS}/${filename} ]; then
+			continue
+		fi
+		cp ${TRAVIS}/${filename} .
+		git add $filename
+	done
+
+	git commit -a -m "${COMMITMSG}"
+	git push $GITHUB $NEWBRANCH
+}
+
 if [ "$GITCMD" = "apply" ]; then
 	if [ -z "$ARGV1" ]; then
 		elog "PATCH must be specified in \"patch\" command"
@@ -111,6 +156,14 @@ if [ "$GITCMD" = "apply" ]; then
 	git status
 	pgetags.sh
 	git branch
+
+elif [ "$GITCMD" = "autotest" ]; then
+	github_is_available
+	current_must_not_have_uncommitted
+	COMMIT_ID=$(git rev-parse --short HEAD)
+	NEWBRANCH="${GITCMD}_${CURBRANCH}_${CURTIME}_${COMMIT_ID}"
+	git checkout -b "$NEWBRANCH"
+	do_autotest "$NEWBRANCH"
 
 elif [ "$GITCMD" = "b" -o "$GITCMD" = "branch" ]; then
 	git branch
@@ -171,10 +224,10 @@ elif [ "$GITCMD" = "patch" ]; then
 	git diff master | filterdiff --format=context > /dav/"$PATCHNAME"
 
 elif [ "$GITCMD" = "pull" ]; then
-	git pull github $CURBRANCH
+	git pull $GITHUB $CURBRANCH
 
 elif [ "$GITCMD" = "push" ]; then
-	git push -u github $CURBRANCH
+	git push -u $GITHUB $CURBRANCH
 
 elif [ "$GITCMD" = "remove" ]; then
 	if [ "$CURBRANCH" = "master" ]; then
