@@ -160,6 +160,10 @@ if [ "$GITCMD" = "apply" ]; then
 elif [ "$GITCMD" = "autotest" ]; then
 	github_is_available
 	current_must_not_have_uncommitted
+	echo $CURBRANCH | grep -E "^${GITCMD}_" > /dev/null
+	if [ $? -eq 0 ]; then
+		elog "current branch must NOT be one created by previous autotest"
+	fi
 	COMMIT_ID=$(git rev-parse --short HEAD)
 	NEWBRANCH="${GITCMD}_${CURBRANCH}_${CURTIME}_${COMMIT_ID}"
 	git checkout -b "$NEWBRANCH"
