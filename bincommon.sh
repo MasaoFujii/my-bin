@@ -1,7 +1,8 @@
 #!/bin/sh
 
 PROGNAME=$(basename ${0})
-TMPFILE=/tmp/binscript_$(date +%Y%m%d%H%M%S).$$.tmp
+CURTIME=$(date +%Y%m%d%H%M%S)
+TMPFILE=/tmp/binscript_${CURTIME}.$$.tmp
 CURDIR=$(pwd)
 KERNEL=$(uname)
 
