@@ -46,4 +46,4 @@ do_make_check ()
 }
 
 do_make_check > $LOGFILE 2>&1
-tail -1 $LOGFILE
+tail -4 $LOGFILE
