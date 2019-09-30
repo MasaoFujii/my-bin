@@ -49,6 +49,7 @@ if [ ! -f $PGDATABKP/$PGPITR_DONE ]; then
 
 	if [ $PGMAJOR -ge 120 ]; then
 		set_guc restore_command "'${RESTORECMD}'" $PGDATABKP/$GUCFILENAME
+		touch $PGDATABKP/recovery.signal
 	else
 		echo "restore_command = '${RESTORECMD}'" > $PGDATABKP/$RECFILENAME
 	fi
