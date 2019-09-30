@@ -9,7 +9,7 @@ DEBUG_MODE="FALSE"
 ONLYMAKE="FALSE"
 
 CONFOPT=
-MAKEOPT=
+NUMJOBS=4
 
 usage ()
 {
@@ -24,7 +24,7 @@ Options:
   -d            compiles for debug purpose: uses --enable-debug and
                 --enable-cassert, and prevents compiler optimization
   -f FLAG       uses FLAG as CPPFLAGS, e.g. -f "-DWAL_DEBUG"
-  -j NUM        number of jobs
+  -j NUM        number of jobs (default: 4)
   -m            compiles without clean and configure
   --libxml      builds with XML support, i.e., same as -c "--with-libxml"
   --llvm        builds with LLVM based JIT support, i.e., same as -c "--with-llvm"
@@ -48,12 +48,12 @@ compile_pgsql ()
 		fi
 	fi
 
-	make -s $MAKEOPT install
+	make -s -j $NUMJOBS install
 	echo -e "\n"
 
 	CONTRIB=$CURDIR/contrib
 	cd $CONTRIB
-	make -s $MAKEOPT install
+	make -s -j $NUMJOBS install
 	cd $CURDIR
 }
 
@@ -72,7 +72,7 @@ while [ $# -gt 0 ]; do
 			export CPPFLAGS="$2 $CPPFLAGS"
 			shift;;
 		-j)
-			MAKEOPT="-j $2"
+			NUMJOBS=$2
 			shift;;
 		-m)
 			ONLYMAKE=TRUE;;
