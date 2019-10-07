@@ -217,7 +217,7 @@ find_all_pgdata ()
 
 pm_pids ()
 {
-	for pmppid in 1 $(pgrep -x "pg_ctl"); do
+	for pmppid in 1 $(pgrep -x "pg_ctl") $(pgrep -P 1 -f "postmaster exit status is"); do
 		pgrep -P $pmppid -x "postgres|postmaster"
 	done
 }
