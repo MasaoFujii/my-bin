@@ -181,7 +181,13 @@ elif [ "$GITCMD" = "co" ]; then
 	fi
 
 elif [ "$GITCMD" = "committer" ]; then
-	git shortlog -sn
+	if [ -z "$ARGV1" ]; then
+		git shortlog -sn
+	elif [ -z "$ARGV2" ]; then
+		git shortlog -sn --since="$ARGV1"
+	else
+		git shortlog -sn --since="$ARGV1" --until="$ARGV2"
+	fi
 
 elif [ "$GITCMD" = "create" ]; then
 	if [ -z "$ARGV1" ]; then
