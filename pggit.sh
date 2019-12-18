@@ -231,7 +231,7 @@ elif [ "$GITCMD" = "patch" ]; then
 	if [ ! -z "$ARGV1" ]; then
 		PATCHNAME="$ARGV1"
 	fi
-	git diff master | filterdiff --format=context > /dav/"$PATCHNAME"
+	git diff master --patience > /dav/"$PATCHNAME"
 
 elif [ "$GITCMD" = "pull" ]; then
 	git pull $GITHUB $CURBRANCH
