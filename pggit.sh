@@ -196,7 +196,6 @@ elif [ "$GITCMD" = "create" ]; then
 	NEWBRANCH="$ARGV1"
 	current_must_not_have_uncommitted
 	git checkout -b "$NEWBRANCH"
-	pgetags.sh
 	git branch
 
 elif [ "$GITCMD" = "diff" ]; then
