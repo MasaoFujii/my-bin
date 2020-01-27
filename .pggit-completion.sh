@@ -9,7 +9,10 @@ _pggit()
 				return 0
 			fi;;
 		remove)
-			WORDLIST="cascade";;
+			WORDLIST=$(git branch 2> /dev/null | tr -d "* ")
+			if [ $? -ne 0 ]; then
+				return 0
+			fi;;
 		untrack)
 			WORDLIST="clean";;
 		update|u)

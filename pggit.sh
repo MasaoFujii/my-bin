@@ -33,7 +33,7 @@ Command:
   patch [PATCH]      creates patch with name PATCH against master in /dav
   pull               pulles current branch from $GITHUB
   push               pushes current branch to $GITHUB
-  remove [cascade]   removes current branch (and its installation directory)
+  remove [BRANCH]    removes branch and its installation directory
   rename NAME        renames current branch to NAME
   reset [TARGET]     resets current branch to HEAD (or TARGET)
   untrack [clean]    shows (or cleans up) all untracked objects
@@ -101,6 +101,20 @@ move_to_branch ()
 back_to_current ()
 {
 	git checkout $CURBRANCH
+}
+
+branches_must_exist ()
+{
+	THISBRANCH="$1"
+
+	if [ "$THISBRANCH" = "master" ]; then
+		elog "could not remove master branch"
+	fi
+	for PGVERSION in $(echo "$SUPPORTED_VERS"); do
+		if [ "$THISBRANCH" = "REL${PGVERSION}_STABLE" ]; then
+			elog "could not remove branch for supported version"
+		fi
+	done
 }
 
 github_is_available ()
@@ -239,21 +253,18 @@ elif [ "$GITCMD" = "push" ]; then
 	git push -u $GITHUB $CURBRANCH
 
 elif [ "$GITCMD" = "remove" ]; then
-	if [ "$CURBRANCH" = "master" ]; then
-		elog "could not remove master branch"
+	BRANCH_TO_RM="$CURBRANCH"
+	if [ ! -z "$ARGV1" ]; then
+		BRANCH_TO_RM="$ARGV1"
 	fi
-	for PGVERSION in $(echo "$SUPPORTED_VERS"); do
-		if [ "$CURBRANCH" = "REL${PGVERSION}_STABLE" ]; then
-			elog "could not remove branch for supported version"
-		fi
-	done
-	git reset --hard HEAD
-	git co master
-	git branch -D $CURBRANCH
+	echo $BRANCH_TO_RM
+	branches_must_exist "$BRANCH_TO_RM"
+	if [ "$BRANCH_TO_RM" = "$CURBRANCH" ]; then
+		git reset --hard HEAD
+		git co master
+	fi
+	git branch -D $BRANCH_TO_RM
 	git branch
-	if [ "$ARGV1" = "cascade" ]; then
-		rm -rf /dav/$CURBRANCH
-	fi
 
 elif [ "$GITCMD" = "rename" ]; then
 	if [ -z "$ARGV1" ]; then
