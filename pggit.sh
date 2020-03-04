@@ -85,7 +85,7 @@ create_new_branch ()
 {
 	current_must_not_have_uncommitted
 	update_branch master
-	git clean -d -f
+	git clean -d -x -f
 	git checkout -b "$1"
 }
 
@@ -285,9 +285,9 @@ elif [ "$GITCMD" = "reset" ]; then
 
 elif [ "$GITCMD" = "untrack" ]; then
 	if [ "$ARGV1" = "clean" ]; then
-		git clean -d -f
+		git clean -d -x -f
 	else
-		git clean -d -f --dry-run
+		git clean -d -x -f --dry-run
 	fi
 
 elif [ "$GITCMD" = "u" -o "$GITCMD" = "update" ]; then
