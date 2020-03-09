@@ -165,6 +165,10 @@ do_autotest ()
 
 	git commit -a -m "${COMMITMSG}"
 	git push $GITHUB $NEWBRANCH
+
+	git co master
+	git branch -D $NEWBRANCH
+	back_to_current
 }
 
 if [ "$GITCMD" = "apply" ]; then
