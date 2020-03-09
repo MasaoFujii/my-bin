@@ -21,6 +21,7 @@ Command:
   apply PATCH        creates new branch and applies PATCH
   autotest           builds and tests on AppVeyor and Travis CI
   [b]ranch           shows all local branches
+  cherry-pick BRANCH applies the latest change in BRANCH
   co [PATTERN]       moves to branch matching PATTERN (master branch by default)
   committer          shows how many patches each committer committed
   create BRANCH      creates new branch named BRANCH
@@ -92,6 +93,13 @@ create_new_branch ()
 move_to_branch ()
 {
 	MOVETO=$(git branch | cut -c3- | grep "$1" | head -1)
+	for  BACKBRANCH in $(git branch | cut -c3- | grep -E "^REL[_0-9]*STABLE$"); do
+	  echo $BACKBRANCH | tr -d '_' | grep "$1" > /dev/null
+		if [ $? -eq 0 ]; then
+			MOVETO="$BACKBRANCH"
+			break
+		fi
+	done
 	if [ ! -z "$MOVETO" ]; then
 		git checkout $MOVETO
 	fi
@@ -185,6 +193,14 @@ elif [ "$GITCMD" = "autotest" ]; then
 
 elif [ "$GITCMD" = "b" -o "$GITCMD" = "branch" ]; then
 	git branch
+
+elif [ "$GITCMD" = "cherry-pick" ]; then
+	if [ -z "$ARGV1" ]; then
+		elog "BRANCH must be specified in \"cherry-pick\" command"
+	fi
+	LATESTCOMMIT=$(git log --abbrev-commit | head -1 | cut -d' ' -f2)
+	move_to_branch "$ARGV1"
+	git cherry-pick "$LATESTCOMMIT"
 
 elif [ "$GITCMD" = "co" ]; then
 	if [ -z "$ARGV1" ]; then

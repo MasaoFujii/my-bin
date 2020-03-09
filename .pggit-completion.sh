@@ -18,7 +18,8 @@ _pggit()
 		update|u)
 			WORDLIST="all";;
 		pggit.sh)
-			WORDLIST="apply autotest branch co committer create diff grep help log make merge \
+			WORDLIST="apply autotest branch cherry-pick co \
+committer create diff grep help log make merge \
 patch pull push remove rename reset untrack update wip";;
 	esac
 
