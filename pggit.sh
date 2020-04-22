@@ -285,6 +285,9 @@ elif [ "$GITCMD" = "remove" ]; then
 	fi
 	git branch -D $BRANCH_TO_RM
 	git branch
+	if [ "$BRANCH_TO_RM" != "" ]; then
+	  rm -rf /dav/$BRANCH_TO_RM
+	fi
 
 elif [ "$GITCMD" = "rename" ]; then
 	if [ -z "$ARGV1" ]; then
