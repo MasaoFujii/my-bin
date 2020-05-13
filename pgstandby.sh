@@ -83,7 +83,7 @@ for ((SBYID=$SBYMIN; SBYID<=$SBYMAX; SBYID++)); do
 	pgrsync.sh -b $ACTBKP $PGDATA
 
 	set_guc port $SBYPORT $PGCONF
-	set_guc log_line_prefix "'%t $PGDATA '" $PGCONF
+	set_guc log_line_prefix "'$LOGLINEPREFIX $PGDATA '" $PGCONF
 	set_guc hot_standby on $PGCONF
 
 	if [ $PGMAJOR -ge 120 ]; then

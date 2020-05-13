@@ -34,14 +34,14 @@ pginitdb.sh $PUBDATA
 exit_on_error
 
 pgconf.sh -c wal_level logical $PUBDATA
-pgconf.sh -c log_line_prefix "'%t pub [%p] '" $PUBDATA
+pgconf.sh -c log_line_prefix "'$LOGLINEPREFIX pub [%p] '" $PUBDATA
 pgstart.sh -w $PUBDATA
 
 pginitdb.sh $SUBDATA
 exit_on_error
 
 pgconf.sh -c port 5433 $SUBDATA
-pgconf.sh -c log_line_prefix "'%t sub [%p] '" $SUBDATA
+pgconf.sh -c log_line_prefix "'$LOGLINEPREFIX sub [%p] '" $SUBDATA
 pgstart.sh -w $SUBDATA
 
 cat <<EOF | $PGBIN/psql

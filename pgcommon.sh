@@ -36,6 +36,8 @@ RECDONENAME=recovery.done
 RECSIGNALNAME=recovery.signal
 SBYSIGNALNAME=standby.signal
 
+LOGLINEPREFIX="%t"
+
 update_pgxlog ()
 {
 	if [ ${PGMAJOR:-0} -lt 100 ]; then
@@ -63,6 +65,13 @@ update_pgdata ()
 }
 update_pgdata "data"
 
+update_log_line_prefix ()
+{
+	if [ $PGMAJOR -ge 130 ]; then
+		LOGLINEPREFIX="%t [%b]"
+	fi
+}
+
 here_is_source ()
 {
 	if [ ! -f $CURDIR/configure ]; then
@@ -82,6 +91,7 @@ here_is_installation ()
 	PGVERSION=$($PGBIN/pg_config --version)
 	PGMAJOR=$(echo ${PGVERSION}.0 | tr -d [A-z' '] | cut -d. -f1-2 | tr -d .)
 	update_pgxlog
+	update_log_line_prefix
 }
 
 pgdata_exists ()
