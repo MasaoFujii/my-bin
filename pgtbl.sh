@@ -8,6 +8,7 @@ NUMJOBS=1
 NUMROWS=10
 LOADPIDS=()
 APPENDROWS="FALSE"
+NUMCACHE=1
 
 usage ()
 {
@@ -56,14 +57,22 @@ pgsql_is_alive
 
 prepare_psql
 
+[ $NUMROWS -gt 1 ] && NUMCACHE=$NUMROWS
+
 if [ "$APPENDROWS" = "FALSE" ]; then
   cat <<EOF | $PSQL
 DROP SEQUENCE ${MYSEQ};
 DROP TABLE ${MYTBL} ;
-CREATE SEQUENCE ${MYSEQ} CACHE ${NUMROWS};
+CREATE SEQUENCE ${MYSEQ} CACHE ${NUMCACHE};
 CREATE TABLE ${MYTBL} (i INT, j INT);
 EOF
+else
+  cat <<EOF | $PSQL
+ALTER SEQUENCE ${MYSEQ} CACHE ${NUMCACHE};
+EOF
 fi
+
+[ $NUMROWS -lt 1 ] && exit 0
 
 function load_rows ()
 {
