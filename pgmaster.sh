@@ -64,6 +64,12 @@ if [ $PGMAJOR -ge 94 ]; then
 	set_guc max_replication_slots 4 $PGCONF
 fi
 
+if [ $PGMAJOR -ge 93 ]; then
+	set_guc wal_sender_timeout 0 $PGCONF
+else
+	set_guc replication_timeout 0 $PGCONF
+fi
+
 if [ "$SYNC_MODE" = "TRUE" ]; then
 	set_guc synchronous_standby_names "'*'" $PGCONF
 fi

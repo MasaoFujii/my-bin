@@ -86,6 +86,10 @@ for ((SBYID=$SBYMIN; SBYID<=$SBYMAX; SBYID++)); do
 	set_guc log_line_prefix "'$LOGLINEPREFIX $PGDATA '" $PGCONF
 	set_guc hot_standby on $PGCONF
 
+	if [ $PGMAJOR -ge 93 ]; then
+		set_guc wal_receiver_timeout 0 $PGCONF
+	fi
+
 	if [ $PGMAJOR -ge 120 ]; then
 		set_guc primary_conninfo "'port=$SNDPORT application_name=$PGDATA'" $PGCONF
 		set_guc promote_trigger_file "'$TRIGGER'" $PGCONF
