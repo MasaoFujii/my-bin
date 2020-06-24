@@ -8,7 +8,7 @@ NUMJOBS=1
 NUMROWS=10
 LOADPIDS=()
 APPENDROWS="FALSE"
-NUMCACHE=1
+NUMCACHE=1000
 
 usage ()
 {
@@ -57,7 +57,9 @@ pgsql_is_alive
 
 prepare_psql
 
-[ $NUMROWS -gt 1 ] && NUMCACHE=$NUMROWS
+if [ $NUMROWS -ge 1 -a $NUMROWS -lt $NUMCACHE ]; then
+   NUMCACHE=$NUMROWS
+fi
 
 if [ "$APPENDROWS" = "FALSE" ]; then
   cat <<EOF | $PSQL
