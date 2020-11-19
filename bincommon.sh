@@ -6,6 +6,10 @@ TMPFILE=/tmp/binscript_${CURTIME}.$$.tmp
 CURDIR=$(pwd)
 KERNEL=$(uname)
 
+PROGPATH=$(which ${0})
+PROGDIR=$(dirname ${PROGPATH})
+PROGDATA=${PROGDIR}/data
+
 elog ()
 {
 	echo "$PROGNAME:  $1" 1>&2

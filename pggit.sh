@@ -19,7 +19,7 @@ Usage:
 
 Command:
   apply PATCH        creates new branch and applies PATCH
-  autotest           builds and tests on AppVeyor and Travis CI
+  autotest           builds and tests on AppVeyor, Travis CI and Github Actions
   [b]ranch           shows all local branches
   cherry-pick BRANCH applies the latest change in BRANCH
   co [PATTERN]       moves to branch matching PATTERN (master branch by default)
@@ -140,7 +140,9 @@ do_autotest ()
 	CFBOT=~/pgsql/cfbot
 	APPVEYOR=$CFBOT/appveyor
 	TRAVIS=$CFBOT/travis
-	COMMITMSG="Add files to build and test on AppVeyor and Travis CI."
+	BUILDYML=build.yml
+	WORKFLOWS=.github/workflows
+	COMMITMSG="Add files to build and test on AppVeyor, Travis CI and Github Actions."
 	NEWBRANCH="$1"
 
 	cd $CFBOT
@@ -162,6 +164,10 @@ do_autotest ()
 		cp ${TRAVIS}/${filename} .
 		git add $filename
 	done
+
+	mkdir -p $WORKFLOWS
+	cp $PROGDATA/$BUILDYML $WORKFLOWS
+	git add $WORKFLOWS/$BUILDYML
 
 	git commit -a -m "${COMMITMSG}"
 	git push $GITHUB $NEWBRANCH

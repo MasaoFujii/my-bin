@@ -1,0 +1,39 @@
+name: build
+
+on:
+  push:
+    branches:
+      - "*"
+
+jobs:
+  test:
+    name: regression test
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    env:
+      PG_TEST_EXTRA: "ssl"
+    steps:
+    - uses: actions/checkout@v2
+    - name: apt
+      run: |
+        sudo apt-get update
+        sudo apt-get install libicu-dev libipc-run-perl libperl-dev libpython-dev libssl-dev libxml2-utils tcl-dev xsltproc
+    - name: configure
+      run: |
+        ./configure --prefix=$HOME/install --enable-debug --enable-cassert --enable-tap-tests -with-tcl --with-python --with-perl --with-openssl --with-icu
+    - name: make
+      run: |
+        echo "COPT=-Wall -Werror" > src/Makefile.custom
+        make -j 4 all contrib docs
+    - name: make install
+      run: |
+        make install
+    - name: make check-world
+      run: |
+        make -j 4 check-world
+    - name: after failure
+      if: failure()
+      run: |
+        for f in $(find . -name regression.diffs) ; do echo "========= Contents of $f" ; head -1000 $f ; done
+        for f in $(find . -name install.log) ; do echo "========= Contents of $f" ; tail -100 $f ; done
