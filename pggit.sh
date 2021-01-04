@@ -101,7 +101,7 @@ remove_branch ()
 	branches_must_exist "$BRANCH_TO_RM"
 	if [ "$BRANCH_TO_RM" = "$CURBRANCH" ]; then
 		git reset --hard HEAD
-		git co master
+		git checkout master
 	fi
 	git branch -D $BRANCH_TO_RM
 	if [ "$BRANCH_TO_RM" != "" ]; then
@@ -190,7 +190,7 @@ do_autotest ()
 	git commit -a -m "${COMMITMSG}"
 	git push $GITHUB $NEWBRANCH
 
-	git co master
+	git checkout master
 	git branch -D $NEWBRANCH
 	back_to_current
 }
@@ -338,7 +338,7 @@ elif [ "$GITCMD" = "stable" ]; then
 			git checkout -b "$DSTBRANCH"
 		fi
 	done
-	git co master
+	git checkout master
 	git branch
 
 elif [ "$GITCMD" = "untrack" ]; then
