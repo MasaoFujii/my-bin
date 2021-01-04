@@ -79,7 +79,7 @@ here_is_source ()
 	fi
 
 	PGVERSION=$($CURDIR/configure --version | head -1)
-	PGMAJOR=$(echo ${PGVERSION}.0 | tr -d [A-z' '] | cut -d. -f1-2 | tr -d .)
+	pgversion_to_pgmajor
 }
 
 here_is_installation ()
@@ -89,9 +89,21 @@ here_is_installation ()
 	fi
 
 	PGVERSION=$($PGBIN/pg_config --version)
-	PGMAJOR=$(echo ${PGVERSION}.0 | tr -d [A-z' '] | cut -d. -f1-2 | tr -d .)
+	pgversion_to_pgmajor
 	update_pgxlog
 	update_log_line_prefix
+}
+
+pgversion_to_pgmajor ()
+{
+	PGVERSION_NUM=$(echo ${PGVERSION} | tr -d [A-z' '])
+	VER1=$(echo ${PGVERSION_NUM} | cut -d. -f1)
+	VER2=$(echo ${PGVERSION_NUM} | cut -d. -f2)
+	if [ $VER1 -lt 10 ]; then
+		PGMAJOR="${VER1}${VER2}"
+	else
+		PGMAJOR="${VER1}0"
+	fi
 }
 
 pgdata_exists ()
