@@ -37,6 +37,7 @@ Command:
   remove [BRANCH]    removes branch and its installation directory
   rename NAME        renames current branch to NAME
   reset [TARGET]     resets current branch to HEAD (or TARGET)
+  stable [remove]    clones all supported stable branches (or removes all clones)
   untrack [clean]    shows (or cleans up) all untracked objects
   u[pdate] [all]     updates master (and all supported versions)
   wip                commits current change with message "wip"
@@ -90,6 +91,24 @@ create_new_branch ()
 	git checkout -b "$1"
 }
 
+remove_branch ()
+{
+	BRANCH_TO_RM="$1"
+
+	if [ ! "$(git branch --list ${BRANCH_TO_RM})" ]; then
+		elog "branch \"$BRANCH_TO_RM\" not found"
+	fi
+	branches_must_exist "$BRANCH_TO_RM"
+	if [ "$BRANCH_TO_RM" = "$CURBRANCH" ]; then
+		git reset --hard HEAD
+		git co master
+	fi
+	git branch -D $BRANCH_TO_RM
+	if [ "$BRANCH_TO_RM" != "" ]; then
+		rm -rf /dav/$BRANCH_TO_RM
+	fi
+}
+
 move_to_branch ()
 {
 	MOVETO=$(git branch | cut -c3- | grep "$1" | head -1)
@@ -103,7 +122,6 @@ move_to_branch ()
 	if [ ! -z "$MOVETO" ]; then
 		git checkout $MOVETO
 	fi
-	git branch
 }
 
 back_to_current ()
@@ -210,6 +228,7 @@ elif [ "$GITCMD" = "cherry-pick" ]; then
 	fi
 	LATESTCOMMIT=$(git log --abbrev-commit | head -1 | cut -d' ' -f2)
 	move_to_branch "$ARGV1"
+	git branch
 	git cherry-pick "$LATESTCOMMIT"
 
 elif [ "$GITCMD" = "co" ]; then
@@ -218,6 +237,7 @@ elif [ "$GITCMD" = "co" ]; then
 		git branch
 	else
 		move_to_branch "$ARGV1"
+		git branch
 	fi
 
 elif [ "$GITCMD" = "committer" ]; then
@@ -283,17 +303,8 @@ elif [ "$GITCMD" = "remove" ]; then
 	if [ ! -z "$ARGV1" ]; then
 		BRANCH_TO_RM="$ARGV1"
 	fi
-	echo $BRANCH_TO_RM
-	branches_must_exist "$BRANCH_TO_RM"
-	if [ "$BRANCH_TO_RM" = "$CURBRANCH" ]; then
-		git reset --hard HEAD
-		git co master
-	fi
-	git branch -D $BRANCH_TO_RM
+	remove_branch "$BRANCH_TO_RM"
 	git branch
-	if [ "$BRANCH_TO_RM" != "" ]; then
-	  rm -rf /dav/$BRANCH_TO_RM
-	fi
 
 elif [ "$GITCMD" = "rename" ]; then
 	if [ -z "$ARGV1" ]; then
@@ -311,6 +322,24 @@ elif [ "$GITCMD" = "reset" ]; then
 		RESETTARGET="$ARGV1"
 	fi
 	git reset --hard "$RESETTARGET"
+
+elif [ "$GITCMD" = "stable" ]; then
+	current_must_not_have_uncommitted
+	for PGVERSION in $(echo "$SUPPORTED_VERS"); do
+		SRCBRANCH="REL${PGVERSION}_STABLE"
+		DSTBRANCH="pg$(echo ${PGVERSION} | tr -d "\_")"
+		if [ "$ARGV1" = "remove" ]; then
+			remove_branch "$DSTBRANCH"
+		else
+			if [ "$(git branch --list ${DSTBRANCH})" ]; then
+				elog "branch \"$DSTBRANCH\" already exists"
+			fi
+			move_to_branch "$SRCBRANCH"
+			git checkout -b "$DSTBRANCH"
+		fi
+	done
+	git co master
+	git branch
 
 elif [ "$GITCMD" = "untrack" ]; then
 	if [ "$ARGV1" = "clean" ]; then
@@ -334,4 +363,5 @@ elif [ "$GITCMD" = "wip" ]; then
 
 else
 	move_to_branch "$GITCMD"
+	git branch
 fi

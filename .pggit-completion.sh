@@ -13,6 +13,8 @@ _pggit()
 			if [ $? -ne 0 ]; then
 				return 0
 			fi;;
+		stable)
+			WORDLIST="remove";;
 		untrack)
 			WORDLIST="clean";;
 		update|u)
@@ -20,7 +22,7 @@ _pggit()
 		pggit.sh)
 			WORDLIST="apply autotest branch cherry-pick co \
 committer create diff grep help log make merge \
-patch pull push remove rename reset untrack update wip";;
+patch pull push remove rename reset stable untrack update wip";;
 	esac
 
 	mycompgen
