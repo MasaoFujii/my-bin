@@ -1,15 +1,21 @@
-name: linux-base
+name: ci-linux
 on:
   push:
     branches:
       - "*"
 jobs:
-  linux-base:
+  ci-linux:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
+      matrix:
+        pgopt:
+          - base
+          - disable-atomics-spinlocks
+          - cache-release
     env:
       PG_TEST_EXTRA: "ssl kerberos"
+      PGOPT: ${{ matrix.pgopt }}
     steps:
     - uses: actions/checkout@v2
     - name: apt
@@ -18,15 +24,25 @@ jobs:
         sudo apt-get --yes install gcc libreadline-dev flex bison make perl libipc-run-perl clang llvm-dev libperl-dev libpython-dev tcl-dev libldap2-dev libicu-dev docbook-xml docbook-xsl fop libxml2-utils xsltproc krb5-admin-server krb5-kdc krb5-user slapd ldap-utils libssl-dev pkg-config locales-all gdb
     - name: configure
       run: |
-        ./configure --prefix=$HOME/install --enable-debug --enable-cassert --enable-tap-tests -with-tcl --with-python --with-perl --with-ldap --with-openssl --with-icu --with-llvm
+        CONFOPT=
+        if [ ${PGOPT} = "disable-atomics-spinlocks" ]; then
+          export CONFOPT="--disable-atomics --disable-spinlocks $CONFOPT"
+        fi
+        ./configure --prefix=$HOME/install --enable-debug --enable-cassert --enable-tap-tests -with-tcl --with-python --with-perl --with-ldap --with-openssl --with-icu --with-llvm $CONFOPT
     - name: make
       run: |
         echo "COPT=-Wall -Werror" > src/Makefile.custom
         export CPPFLAGS="-DENFORCE_REGRESSION_TEST_NAME_RESTRICTIONS $CPPFLAGS"
+        if [ ${PGOPT} = "cache-release" ]; then
+          export CPPFLAGS="-DRELCACHE_FORCE_RELEASE -DCATCACHE_FORCE_RELEASE $CPPFLAGS"
+        fi
         make -s -j 4 all contrib docs
     - name: make install
       run: |
         make -s install
+    - name: pg_config
+      run: |
+        pg_config
     - name: make check-world
       run: |
         make -s -j 4 check-world

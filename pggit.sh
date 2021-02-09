@@ -158,7 +158,7 @@ do_autotest ()
 	CFBOT=~/pgsql/cfbot
 	APPVEYOR=$CFBOT/appveyor
 	TRAVIS=$CFBOT/travis
-	BUILDYML=linux-base.yml
+	BUILDYML=ci-linux.yml
 	WORKFLOWS=.github/workflows
 	COMMITMSG="Add files to build and test on AppVeyor, Travis CI and Github Actions."
 	NEWBRANCH="$1"
