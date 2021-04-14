@@ -7,6 +7,7 @@ LOGFILE=/tmp/pgmake.log
 PREFIX=
 DEBUG_MODE="FALSE"
 ONLYMAKE="FALSE"
+USE_LZ4="TRUE"
 
 CONFOPT=
 NUMJOBS=4
@@ -29,6 +30,7 @@ Options:
   --libxml      builds with XML support, i.e., same as -c "--with-libxml"
   --llvm        builds with LLVM based JIT support, i.e., same as -c "--with-llvm"
   --tap         enables TAP tests, i.e., same as -c "--enable-tap-tests"
+  --no-lz4      do not use --with-lz4 (by default use --with-lz4 in v14 or later)"
   --wal-debug   same as -f "-DWAL_DEBUG"
 EOF
 }
@@ -82,6 +84,8 @@ while [ $# -gt 0 ]; do
 			CONFOPT="--with-llvm $CONFOPT";;
 		--tap)
 			CONFOPT="--enable-tap-tests $CONFOPT";;
+		--no-lz4)
+			USE_LZ4=FALSE;;
 		--wal-debug)
 			export CPPFLAGS="-DWAL_DEBUG $CPPFLAGS";;
 		-*)
@@ -96,6 +100,10 @@ here_is_source
 
 if [ -z "$PREFIX" -a "$ONLYMAKE" = "FALSE" ]; then
 	elog "PREFIX must be supplied"
+fi
+
+if [ "$USE_LZ4" = "TRUE" -a $PGMAJOR -ge 140 ]; then
+	CONFOPT="--with-lz4 $CONFOPT"
 fi
 
 compile_pgsql > $LOGFILE 2>&1
