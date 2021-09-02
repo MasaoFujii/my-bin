@@ -276,7 +276,7 @@ elif [ "$GITCMD" = "log" ]; then
 	fi
 
 elif [ "$GITCMD" = "make" ]; then
-	pgmake.sh -j 8 --tap --libxml --llvm -d /dav/$CURBRANCH
+	pgmake.sh -j 8 --tap --libxml -d /dav/$CURBRANCH
 
 elif [ "$GITCMD" = "merge" ]; then
 	current_must_not_have_uncommitted
