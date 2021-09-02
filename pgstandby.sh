@@ -13,6 +13,7 @@ SNDDATA=
 SNDPORT=5432
 
 ARCHIVE_MODE="FALSE"
+RESTORE_MODE="FALSE"
 
 usage ()
 {
@@ -26,6 +27,7 @@ Options:
   -a         enables WAL archiving
   -c SENDER  sets up the cascade standby
   -n NUM     number of standbys (default: 1)
+  -r         enables WAL restoring from shared archive
 EOF
 }
 
@@ -35,6 +37,9 @@ while [ $# -gt 0 ]; do
 			usage
 			exit 0;;
 		-a)
+			if [ $PGMAJOR -le 94 ]; then
+				elog "WAL archiving on standby cannot be enabled in 9.4 or before"
+			fi
 			ARCHIVE_MODE="TRUE";;
 		-c)
 			SNDDATA=$2
@@ -45,6 +50,8 @@ while [ $# -gt 0 ]; do
 				elog "number of standbys must be >=$SBYMIN"
 			fi
 			shift;;
+		-r)
+			RESTORE_MODE="TRUE";;
 		*)
 			elog "invalid option: $1";;
 	esac
@@ -105,6 +112,11 @@ EOF
 	fi
 
 	if [ "$ARCHIVE_MODE" = "TRUE" ]; then
+		pgarch.sh $PGDATA
+		set_guc archive_mode always $PGCONF
+	fi
+
+	if [ "$RESTORE_MODE" = "TRUE" ]; then
 		if [ $PGMAJOR -ge 120 ]; then
 			set_guc restore_command "'cp $ACTARCH/%f %p'" $PGCONF
 		else

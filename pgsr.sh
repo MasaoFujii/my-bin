@@ -2,7 +2,8 @@
 
 . pgcommon.sh
 
-ARCHIVE_OPT=
+ACTARCH_OPT=
+SBYARCH_OPT=
 SYNC_OPT=
 SBYNUM=1
 CASCADE=false
@@ -20,6 +21,7 @@ Options:
   -a          enables WAL archiving
   -k          uses data page checksums
   -n NUM      number of standbys (default: 1)
+  -r          enables WAL archiving and restoring on shared archive
   -A          sets Async mode (default)
   -S          sets Sync mode
   -C          sets up Cascade standby
@@ -68,7 +70,8 @@ while [ $# -gt 0 ]; do
 			usage
 			exit 0;;
 		-a)
-			ARCHIVE_OPT="-a";;
+			ACTARCH_OPT="-a"
+			SBYARCH_OPT="-a $SBYARCH_OPT";;
 		-k)
 			CHECKSUM="-k";;
 		-n)
@@ -77,6 +80,9 @@ while [ $# -gt 0 ]; do
 				elog "number of standbys must be >=$SBYMIN"
 			fi
 			shift;;
+		-r)
+			ACTARCH_OPT="-a"
+			SBYARCH_OPT="-r $SBYARCH_OPT";;
 		-A)
 			SYNC_OPT="";;
 		-S)
@@ -94,9 +100,9 @@ done
 
 validate_datapage_checksums "$CHECKSUM"
 
-pgmaster.sh $ARCHIVE_OPT $SYNC_OPT $CHECKSUM
-pgstandby.sh $ARCHIVE_OPT -n $SBYNUM
+pgmaster.sh $ACTARCH_OPT $SYNC_OPT $CHECKSUM
+pgstandby.sh $SBYARCH_OPT -n $SBYNUM
 
 if [ "$CASCADE" = "true" ]; then
-	pgstandby.sh $ARCHIVE_OPT -c sby1
+	pgstandby.sh $SBYARCH_OPT -c sby1
 fi
