@@ -37,9 +37,6 @@ while [ $# -gt 0 ]; do
 			usage
 			exit 0;;
 		-a)
-			if [ $PGMAJOR -le 94 ]; then
-				elog "WAL archiving on standby cannot be enabled in 9.4 or before"
-			fi
 			ARCHIVE_MODE="TRUE";;
 		-c)
 			SNDDATA=$2
@@ -60,6 +57,10 @@ done
 
 here_is_installation
 validate_replication
+
+if [ $PGMAJOR -le 94 ]; then
+	elog "WAL archiving on standby cannot be enabled in 9.4 or before"
+fi
 
 if [ -z "$SNDDATA" ]; then
 	pgbackup.sh $ACTDATA
