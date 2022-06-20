@@ -2,25 +2,22 @@
 
 . pgcommon.sh
 
-MODE="normal"	# normal, start or stop
-
 usage ()
 {
 cat <<EOF
 $PROGNAME creates a base backup.
 
 Usage:
-  $PROGNAME [OPTIONS] [PGDATA]
-
-Options:
-  --start    executes only pg_start_backup
-  --stop     executes only pg_stop_backup
+  $PROGNAME [PGDATA]
 EOF
 }
 
 pg_start_backup ()
 {
-	if [ $PGMAJOR -ge 91 ]; then
+	if [ $PGMAJOR -ge 150 ]; then
+		echo "SET synchronous_commit TO local;"
+		echo "SELECT pg_backup_start('pgbackup.sh', true);"
+	elif [ $PGMAJOR -ge 91 ]; then
 		echo "SET synchronous_commit TO local;"
 		echo "SELECT pg_start_backup('pgbackup.sh', true);"
 	elif [ $PGMAJOR -ge 84 ]; then
@@ -33,7 +30,21 @@ pg_start_backup ()
 
 pg_stop_backup ()
 {
-	if [ $PGMAJOR -ge 91 ]; then
+	if [ $PGMAJOR -ge 150 ]; then
+		cat <<EOF
+SET synchronous_commit TO local;
+SELECT
+  set_config('backup.labelfile', labelfile, false) labelfile,
+  set_config('backup.spcmapfile', spcmapfile, false) spcmapfile
+FROM pg_backup_stop();
+\pset tuples_only on
+\pset format unaligned
+\o ${PGDATABKP}/backup_label
+SELECT * FROM current_setting('backup.labelfile');
+\o ${PGDATABKP}/tablespace_map
+SELECT * FROM current_setting('backup.spcmapfile');
+EOF
+	elif [ $PGMAJOR -ge 91 ]; then
 		echo "SET synchronous_commit TO local;"
 		echo "SELECT pg_stop_backup();"
 	else
@@ -41,23 +52,11 @@ pg_stop_backup ()
 fi
 }
 
-normal_backup ()
+backup_script ()
 {
 	pg_start_backup
 	echo "\\! pgrsync.sh -b $PGDATA $PGDATABKP"
 	pg_stop_backup
-}
-
-backup_script ()
-{
-	case "$MODE" in
-		normal)
-			normal_backup;;
-		start)
-			pg_start_backup;;
-		stop)
-			pg_stop_backup;;
-	esac
 }
 
 while [ $# -gt 0 ]; do
@@ -65,10 +64,6 @@ while [ $# -gt 0 ]; do
 		"-?"|--help)
 			usage
 			exit 0;;
-		--start)
-			MODE="start";;
-		--stop)
-			MODE="stop";;
 		-*)
 			elog "invalid option: $1";;
 		*)
