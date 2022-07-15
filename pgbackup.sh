@@ -33,16 +33,13 @@ pg_stop_backup ()
 	if [ $PGMAJOR -ge 150 ]; then
 		cat <<EOF
 SET synchronous_commit TO local;
-SELECT
-  set_config('backup.labelfile', labelfile, false) labelfile,
-  set_config('backup.spcmapfile', spcmapfile, false) spcmapfile
-FROM pg_backup_stop();
+SELECT * FROM pg_backup_stop() \gset
 \pset tuples_only on
 \pset format unaligned
 \o ${PGDATABKP}/backup_label
-SELECT * FROM current_setting('backup.labelfile');
+SELECT :'labelfile';
 \o ${PGDATABKP}/tablespace_map
-SELECT * FROM current_setting('backup.spcmapfile');
+SELECT :'spcmapfile';
 EOF
 	elif [ $PGMAJOR -ge 91 ]; then
 		echo "SET synchronous_commit TO local;"
