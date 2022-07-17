@@ -58,7 +58,6 @@ set_guc port $PGPORT $PGCONF
 set_guc log_line_prefix "'$LOGLINEPREFIX $PGDATA '" $PGCONF
 set_guc max_wal_senders 4 $PGCONF
 set_guc wal_level hot_standby $PGCONF
-set_guc wal_keep_segments 32 $PGCONF
 
 if [ $PGMAJOR -ge 94 ]; then
 	set_guc max_replication_slots 4 $PGCONF
@@ -68,6 +67,12 @@ if [ $PGMAJOR -ge 93 ]; then
 	set_guc wal_sender_timeout 0 $PGCONF
 else
 	set_guc replication_timeout 0 $PGCONF
+fi
+
+if [ $PGMAJOR -ge 130 ]; then
+	set_guc wal_keep_size "'512MB'" $PGCONF
+else
+	set_guc wal_keep_segments 32 $PGCONF
 fi
 
 if [ "$SYNC_MODE" = "TRUE" ]; then
