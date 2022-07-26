@@ -40,7 +40,7 @@ remove_line ()
 		"Linux")
 			PERM=$(stat --format "%a" $TARGETFILE);;
 		"Darwin")
-			PERM=$(stat -f "%p" $TARGETFILE);;
+			PERM=$(stat -f "%p" $TARGETFILE | rev | cut -c1-3 | rev);;
 	esac
 	sed /"$PATTERN"/D $TARGETFILE > $TMPFILE
 	mv $TMPFILE $TARGETFILE
