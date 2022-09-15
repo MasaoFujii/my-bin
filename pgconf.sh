@@ -27,6 +27,7 @@ Options:
   -S               show all changed parameters
   --showall        show all possible parameters
   -T               auto tuning
+  --pgss           set up pg_stat_statements
 
 Notes:
   If "all" is specified in PGDATA, configuration file in all database clusters
@@ -71,6 +72,8 @@ while [ $# -gt 0 ]; do
 			CONFCMD=showall;;
 		-T)
 			CONFCMD=tune;;
+		--pgss)
+			CONFCMD=pgss;;
 		-*)
 			elog "invalid option: $1";;
 		*)
@@ -144,6 +147,12 @@ exec_pgconf ()
 
 		showall)
 			grep -E ^[A-z]\|\#[A-z] $PGCONF | tr -d \# | cut -d= -f1 | sort | uniq;;
+
+		pgss)
+			set_guc shared_preload_libraries "'pg_stat_statements'" $PGCONF
+			echo "pg_stat_statements.track = all" >> $PGCONF
+			echo "pg_stat_statements.track_utility = on" >> $PGCONF
+			echo "pg_stat_statements.track_planning = on" >> $PGCONF
 	esac
 }
 
