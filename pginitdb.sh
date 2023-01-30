@@ -60,7 +60,7 @@ fi
 set_guc checkpoint_segments 256 $PGCONF
 set_guc max_wal_size "'4GB'" $PGCONF
 set_guc log_line_prefix "'$LOGLINEPREFIX '" $PGCONF
-#set_guc log_checkpoints on $PGCONF
+set_guc log_checkpoints off $PGCONF
 #set_guc log_error_verbosity verbose $PGCONF
 set_guc wal_sync_method fdatasync $PGCONF
 echo "host	all	all	0.0.0.0/0	trust" >> $PGHBA
