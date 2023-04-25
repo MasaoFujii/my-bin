@@ -63,6 +63,7 @@ set_guc log_line_prefix "'$LOGLINEPREFIX '" $PGCONF
 set_guc log_checkpoints off $PGCONF
 #set_guc log_error_verbosity verbose $PGCONF
 set_guc wal_sync_method fdatasync $PGCONF
+set_guc max_prepared_transactions 10 $PGCONF
 echo "host	all	all	0.0.0.0/0	trust" >> $PGHBA
 
 if [ "$ARCHIVE_MODE" = "TRUE" ]; then
