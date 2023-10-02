@@ -8,6 +8,7 @@ PREFIX=
 DEBUG_MODE="FALSE"
 ONLYMAKE="FALSE"
 USE_LZ4="TRUE"
+USE_ICU="FALSE"
 
 CONFOPT=
 NUMJOBS=4
@@ -29,6 +30,7 @@ Options:
   -m            compiles without clean and configure
   --libxml      builds with XML support, i.e., same as -c "--with-libxml"
   --llvm        builds with LLVM based JIT support, i.e., same as -c "--with-llvm"
+  --icu         builds with support for ICU library (by default ICU collation is disabled)"
   --tap         enables TAP tests, i.e., same as -c "--enable-tap-tests"
   --no-lz4      do not use --with-lz4 (by default use --with-lz4 in v14 or later)"
   --wal-debug   same as -f "-DWAL_DEBUG"
@@ -82,6 +84,8 @@ while [ $# -gt 0 ]; do
 			CONFOPT="--with-libxml $CONFOPT";;
 		--llvm)
 			CONFOPT="--with-llvm $CONFOPT";;
+		--icu)
+			USE_ICU=TRUE;;
 		--tap)
 			CONFOPT="--enable-tap-tests $CONFOPT";;
 		--no-lz4)
@@ -104,6 +108,12 @@ fi
 
 if [ "$USE_LZ4" = "TRUE" -a $PGMAJOR -ge 140 ]; then
 	CONFOPT="--with-lz4 $CONFOPT"
+fi
+
+if [ "$USE_ICU" = "TRUE" -a $PGMAJOR -le 150 ]; then
+	CONFOPT="--with-icu $CONFOPT"
+elif [ "$USE_ICU" = "FALSE" -a $PGMAJOR -ge 160 ]; then
+	CONFOPT="--without-icu $CONFOPT"
 fi
 
 compile_pgsql > $LOGFILE 2>&1
