@@ -35,4 +35,4 @@ pgclean.sh
 git pull
 pgetags.sh
 rm -rf $PREFIX
-pgmake.sh -j 8 --tap --libxml -c "--without-icu" -d $PREFIX
+pgmake.sh -j 8 --tap --libxml -d $PREFIX
