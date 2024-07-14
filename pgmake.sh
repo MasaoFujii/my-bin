@@ -59,6 +59,13 @@ compile_pgsql ()
 	cd $CONTRIB
 	make -s -j $NUMJOBS install
 	cd $CURDIR
+
+	if [ $PGMAJOR -ge 160 ]; then
+		PGBSDINDENT=$CURDIR/src/tools/pg_bsd_indent
+		cd $PGBSDINDENT
+		make -s -j $NUMJOBS
+		cd $CURDIR
+	fi
 }
 
 while [ $# -gt 0 ]; do
