@@ -32,6 +32,7 @@ Command:
   make               compiles and installs current branch into /dav/<branch-name>
   merge              updates master and merges it into current branch
   patch [PATCH]      creates patch with name PATCH against master in /dav
+  pgindent [COMMIT]  runs pgindent on files modified since COMMIT (HEAD by default)
   pull               pulles current branch from $GITHUB
   push               pushes current branch to $GITHUB
   remove [BRANCH]    removes branch and its installation directory
@@ -291,6 +292,17 @@ elif [ "$GITCMD" = "patch" ]; then
 		PATCHNAME="$ARGV1"
 	fi
 	git diff master --patience > /dav/"$PATCHNAME"
+
+elif [ "$GITCMD" = "pgindent" ]; then
+	COMMIT_ID=HEAD
+	if [ ! -z "$ARGV1" ]; then
+		COMMIT_ID="$ARGV1"
+	fi
+	TOOLSDIR=$CURDIR/src/tools
+	PGINDENT=$TOOLSDIR/pgindent/pgindent
+	PGBSDINDENT=$TOOLSDIR/pg_bsd_indent/pg_bsd_indent
+	MODIFIED=$(git diff --diff-filter=ACMR --name-only "$COMMIT_ID")
+	$PGINDENT --indent $PGBSDINDENT $MODIFIED
 
 elif [ "$GITCMD" = "pull" ]; then
 	git pull $GITHUB $CURBRANCH

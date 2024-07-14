@@ -22,7 +22,7 @@ _pggit()
 		pggit.sh)
 			WORDLIST="apply autotest branch cherry-pick co \
 committer create diff grep help log make merge \
-patch pull push remove rename reset stable untrack update wip";;
+patch pgindent pull push remove rename reset stable untrack update wip";;
 	esac
 
 	mycompgen
