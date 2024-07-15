@@ -18,6 +18,7 @@ PGARCH=
 PGXLOG=
 PGXLOGEXT=
 PGARCHSTATUS=
+PGSUMMARIES=
 PGDATABKP=
 PGARCHBKP=
 PGCONF=
@@ -46,6 +47,7 @@ update_pgxlog ()
 		PGXLOG=$PGDATA/pg_wal
 	fi
 	PGARCHSTATUS=$PGXLOG/archive_status
+	PGSUMMARIES=$PGXLOG/summaries
 }
 
 update_pgdata ()
