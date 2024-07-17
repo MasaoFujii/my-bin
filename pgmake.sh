@@ -45,11 +45,6 @@ compile_pgsql ()
 		pgclean.sh -m
 
 		./configure --prefix=$PREFIX $CONFOPT
-		if [ "$DEBUG_MODE" = "TRUE" ]; then
-			MAKEFILE=$CURDIR/src/Makefile.global
-			sed s/"\-O2"/"\-O0"/g $MAKEFILE > $TMPFILE
-			mv $TMPFILE $MAKEFILE
-		fi
 	fi
 
 	make -s -j $NUMJOBS install
@@ -77,7 +72,7 @@ while [ $# -gt 0 ]; do
 			CONFOPT="$2 $CONFOPT"
 			shift;;
 		-d)
-			CONFOPT="--enable-debug --enable-cassert $CONFOPT"
+			CONFOPT="--enable-debug --enable-cassert CFLAGS=-O0 $CONFOPT"
 			DEBUG_MODE="TRUE";;
 		-f|--flag)
 			export CPPFLAGS="$2 $CPPFLAGS"
