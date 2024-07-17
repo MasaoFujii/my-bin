@@ -5,13 +5,13 @@
 LOGFILE=/tmp/pgmake.log
 
 PREFIX=
-DEBUG_MODE="FALSE"
 ONLYMAKE="FALSE"
 USE_LZ4="TRUE"
 USE_ICU="FALSE"
 
 CONFOPT=
 NUMJOBS=4
+CFLAGS="-pipe"
 
 usage ()
 {
@@ -43,8 +43,7 @@ compile_pgsql ()
 
 	if [ "$ONLYMAKE" = "FALSE" ]; then
 		pgclean.sh -m
-
-		./configure --prefix=$PREFIX $CONFOPT
+		./configure --prefix=$PREFIX $CONFOPT CFLAGS="$CFLAGS"
 	fi
 
 	make -s -j $NUMJOBS install
@@ -72,8 +71,8 @@ while [ $# -gt 0 ]; do
 			CONFOPT="$2 $CONFOPT"
 			shift;;
 		-d)
-			CONFOPT="--enable-debug --enable-cassert CFLAGS=-O0 $CONFOPT"
-			DEBUG_MODE="TRUE";;
+			CONFOPT="--enable-debug --enable-cassert $CONFOPT"
+			CFLAGS="-O0 $CFLAGS";;
 		-f|--flag)
 			export CPPFLAGS="$2 $CPPFLAGS"
 			shift;;
