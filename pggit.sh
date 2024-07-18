@@ -156,33 +156,10 @@ github_is_available ()
 
 do_autotest ()
 {
-	CFBOT=~/pgsql/cfbot
-	APPVEYOR=$CFBOT/appveyor
-	TRAVIS=$CFBOT/travis
 	BUILDYML=ci-linux.yml
 	WORKFLOWS=.github/workflows
-	COMMITMSG="Add files to build and test on AppVeyor, Travis CI and Github Actions."
+	COMMITMSG="Add files to build and test on Github Actions."
 	NEWBRANCH="$1"
-
-	cd $CFBOT
-	git pull
-	cd $CURDIR
-
-	for filename in $(ls -a $APPVEYOR); do
-		if [ ! -f ${APPVEYOR}/${filename} ]; then
-			continue
-		fi
-		cp ${APPVEYOR}/${filename} .
-		git add $filename
-	done
-
-	for filename in $(ls -a $TRAVIS); do
-		if [ ! -f ${TRAVIS}/${filename} ]; then
-			continue
-		fi
-		cp ${TRAVIS}/${filename} .
-		git add $filename
-	done
 
 	mkdir -p $WORKFLOWS
 	cp $PROGDATA/$BUILDYML $WORKFLOWS
