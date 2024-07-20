@@ -186,9 +186,9 @@ pgsql_is_dead ()
 prepare_psql ()
 {
 	PGPORT=$(show_guc "port" $PGCONF)
-	PSQLOPT=""
+	PSQLOPT="-X"
 	if [ ! -z "$PGPORT" ]; then
-		PSQLOPT="-p $PGPORT"
+		PSQLOPT="$PSQLOPT -p $PGPORT"
 	fi
 	PSQL="$PGBIN/psql $PSQLOPT"
 }

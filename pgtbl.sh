@@ -121,7 +121,6 @@ pgdata_exists
 pgsql_is_alive
 
 prepare_psql
-PSQL="$PSQL -X"
 
 if [ $NUMROWS -ge 1 -a $NUMROWS -lt $NUMCACHE ]; then
    NUMCACHE=$NUMROWS
