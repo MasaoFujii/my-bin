@@ -79,9 +79,8 @@ fi
 function load_rows ()
 {
 	cat <<EOF | $PSQL
-INSERT INTO ${MYTBL} SELECT x, x % ${NUMROWS} FROM
-	(SELECT nextval('${MYSEQ}') AS x FROM
-	generate_series(1, ${NUMROWS})) hoge;
+INSERT INTO ${MYTBL}
+  SELECT nextval('${MYSEQ}'), n FROM generate_series(1, ${NUMROWS}) n;
 EOF
 }
 
