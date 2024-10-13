@@ -5,6 +5,7 @@
 LOGFILE=/tmp/pgmake.log
 
 PREFIX=
+DEBUG_MODE="FALSE"
 ONLYMAKE="FALSE"
 USE_LZ4="TRUE"
 USE_ICU="FALSE"
@@ -24,7 +25,8 @@ Usage:
 Options:
   -c OPTIONS    uses OPTIONS as extra configure options
   -d            compiles for debug purpose: uses --enable-debug and
-                --enable-cassert, and prevents compiler optimization
+                --enable-cassert, --enable-injection-points (>= v17),
+                and prevents compiler optimization
   -f FLAG       uses FLAG as CPPFLAGS, e.g. -f "-DWAL_DEBUG"
   -j NUM        number of jobs (default: 4)
   -m            compiles without clean and configure
@@ -71,8 +73,7 @@ while [ $# -gt 0 ]; do
 			CONFOPT="$2 $CONFOPT"
 			shift;;
 		-d)
-			CONFOPT="--enable-debug --enable-cassert $CONFOPT"
-			CFLAGS="-O0 $CFLAGS";;
+			DEBUG_MODE=TRUE;;
 		-f|--flag)
 			export CPPFLAGS="$2 $CPPFLAGS"
 			shift;;
@@ -102,6 +103,15 @@ while [ $# -gt 0 ]; do
 done
 
 here_is_source
+
+if [ "$DEBUG_MODE" = "TRUE" ]; then
+	CONFOPT="--enable-debug --enable-cassert $CONFOPT"
+	if [ $PGMAJOR -ge 170 ]; then
+		CONFOPT="--enable-injection-points $CONFOPT"
+	fi
+
+	CFLAGS="-O0 $CFLAGS"
+fi
 
 if [ -z "$PREFIX" -a "$ONLYMAKE" = "FALSE" ]; then
 	elog "PREFIX must be supplied"
