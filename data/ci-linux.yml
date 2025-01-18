@@ -21,7 +21,7 @@ jobs:
     - name: apt
       run: |
         sudo apt-get --yes update
-        sudo apt-get --yes install gcc libreadline-dev flex bison make perl libipc-run-perl clang llvm-dev libperl-dev libpython2-dev tcl-dev libldap2-dev libicu-dev docbook docbook-xml docbook-xsl fop libxml2-utils xsltproc opensp krb5-admin-server krb5-kdc krb5-user slapd ldap-utils libssl-dev pkg-config locales-all gdb
+        sudo apt-get --yes install gcc libreadline-dev flex bison make perl libipc-run-perl clang llvm-dev libperl-dev libpython3-dev tcl-dev libldap2-dev libicu-dev docbook docbook-xml docbook-xsl fop libxml2-utils xsltproc opensp krb5-admin-server krb5-kdc krb5-user slapd ldap-utils libssl-dev pkg-config locales-all gdb
     - name: configure
       run: |
         export CPPFLAGS="-DENFORCE_REGRESSION_TEST_NAME_RESTRICTIONS $CPPFLAGS"
