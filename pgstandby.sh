@@ -58,7 +58,7 @@ done
 here_is_installation
 validate_replication
 
-if [ $PGMAJOR -le 94 ]; then
+if [ "$ARCHIVE_MODE" = "TRUE" -a $PGMAJOR -le 94 ]; then
 	elog "WAL archiving on standby cannot be enabled in 9.4 or before"
 fi
 
