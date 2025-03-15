@@ -201,7 +201,7 @@ set_guc ()
 
 	PREVALUE="$(show_guc $GUCNAME $CONFPATH)"
 	if [ ! -z "$PREVALUE" ]; then
-		remove_line "^$GUCNAME" $CONFPATH
+		remove_line "^$GUCNAME " $CONFPATH
 		echo "$GUCNAME = $GUCVALUE" >> $CONFPATH
 	fi
 }
