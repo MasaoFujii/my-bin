@@ -6,7 +6,7 @@ LOGFILE=/tmp/pgmake.log
 
 PREFIX=
 DEBUG_MODE="FALSE"
-ONLYMAKE="FALSE"
+PGMAKE_MODE="NORMAL"
 USE_LZ4="TRUE"
 USE_ICU="FALSE"
 
@@ -30,6 +30,7 @@ Options:
   -f FLAG       uses FLAG as CPPFLAGS, e.g. -f "-DWAL_DEBUG"
   -j NUM        number of jobs (default: 4)
   -m            compiles without clean and configure
+  --configure   runs only clean and configure
   --libxml      builds with XML support, i.e., same as -c "--with-libxml"
   --llvm        builds with LLVM based JIT support, i.e., same as -c "--with-llvm"
   --icu         builds with support for ICU library (by default ICU collation is disabled)"
@@ -43,9 +44,13 @@ compile_pgsql ()
 {
 	export LANG=C
 
-	if [ "$ONLYMAKE" = "FALSE" ]; then
+	if [ "$PGMAKE_MODE" != "ONLYMAKE" ]; then
 		pgclean.sh -m
 		./configure --prefix=$PREFIX $CONFOPT CFLAGS="$CFLAGS"
+	fi
+
+	if [ "$PGMAKE_MODE" = "ONLYCONFIGURE" ]; then
+		return;
 	fi
 
 	make -s -j $NUMJOBS install
@@ -81,7 +86,9 @@ while [ $# -gt 0 ]; do
 			NUMJOBS=$2
 			shift;;
 		-m)
-			ONLYMAKE=TRUE;;
+			PGMAKE_MODE="ONLYMAKE";;
+		--configure)
+			PGMAKE_MODE="ONLYCONFIGURE";;
 		--libxml)
 			CONFOPT="--with-libxml $CONFOPT";;
 		--llvm)
@@ -113,7 +120,7 @@ if [ "$DEBUG_MODE" = "TRUE" ]; then
 	CFLAGS="-O0 $CFLAGS"
 fi
 
-if [ -z "$PREFIX" -a "$ONLYMAKE" = "FALSE" ]; then
+if [ -z "$PREFIX" -a "$PGMAKE_MODE" != "ONLYMAKE" ]; then
 	elog "PREFIX must be supplied"
 fi
 
