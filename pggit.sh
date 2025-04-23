@@ -26,6 +26,7 @@ Command:
   committer          shows how many patches each committer committed
   create BRANCH      creates new branch named BRANCH
   diff [TARGET]      shows changes between commits, commit and working tree, etc
+  docs               compiles only documentations
   grep [-i] PATTERN  prints lines matching PATTERN
   help               shows help message (default)
   log [PATTERN]      shows commit logs
@@ -239,6 +240,10 @@ elif [ "$GITCMD" = "create" ]; then
 elif [ "$GITCMD" = "diff" ]; then
 	DIFFTARGET="$ARGV1"
 	git diff $DIFFTARGET
+
+elif [ "$GITCMD" = "docs" ]; then
+	pgmake.sh -j 8 --tap --libxml -d --configure /dav/$CURBRANCH
+	make html
 
 elif [ "$GITCMD" = "grep" ]; then
 	git grep $ARGV1 $ARGV2
