@@ -10,6 +10,8 @@ NUMPARTS=0
 LOADPIDS=()
 APPENDROWS="FALSE"
 NUMCACHE=1000
+MYTBLSPC=
+TBLSPCOPT=
 
 usage ()
 {
@@ -24,6 +26,7 @@ Options:
   -j NUM      number of jobs loading rows (default: 1)
   -n NUM      number of rows that each job loads (default: 10)
   -t TABLE    name of table to create (default: 't')
+  -T TBLSPC   creates tablespace if not exists, and places tables there
   -p NUM      partition table into NUM parts (default: 0)
 EOF
 }
@@ -45,6 +48,9 @@ while [ $# -gt 0 ]; do
 			MYTBL=$2
 			MYSEQ=${MYTBL}_seq
 			shift;;
+		-T)
+			MYTBLSPC=$2
+			shift;;
 		-p)
 			NUMPARTS=$2
 			shift;;
@@ -55,6 +61,20 @@ while [ $# -gt 0 ]; do
 	esac
 	shift
 done
+
+function create_tablespace ()
+{
+	if [ "${MYTBLSPC}" = "" ]; then
+		return
+	fi
+
+	TBLSPCOPT="TABLESPACE ${MYTBLSPC}"
+	cat <<EOF | $PSQL
+DROP TABLESPACE IF EXISTS ${MYTBLSPC};
+\! test -d ${CURDIR}/${MYTBLSPC} || mkdir ${CURDIR}/${MYTBLSPC}
+CREATE TABLESPACE ${MYTBLSPC} LOCATION '${CURDIR}/${MYTBLSPC}';
+EOF
+}
 
 function prepare_table ()
 {
@@ -68,7 +88,7 @@ EOF
 function create_table ()
 {
 	cat <<EOF | $PSQL
-CREATE TABLE ${MYTBL} (i INT, j INT);
+CREATE TABLE ${MYTBL} (i INT, j INT) ${TBLSPCOPT};
 EOF
 }
 
@@ -83,21 +103,21 @@ function create_partition ()
 	LOWERVAL=1
 	UPPERVAL=1
 	cat <<EOF | $PSQL
-CREATE TABLE ${MYTBL} (i INT, j INT) PARTITION BY range (i);
+CREATE TABLE ${MYTBL} (i INT, j INT) PARTITION BY range (i) ${TBLSPCOPT};
 EOF
 	while [ $PARTID -lt $NUMPARTS ]; do
 		UPPERVAL=$(echo "$LOWERVAL + $DELTA" | bc)
 		cat <<EOF | $PSQL
 CREATE TABLE ${MYTBL}_${PARTID} PARTITION OF ${MYTBL}
-  FOR VALUES FROM (${LOWERVAL}) TO (${UPPERVAL});
+  FOR VALUES FROM (${LOWERVAL}) TO (${UPPERVAL}) ${TBLSPCOPT};
 EOF
 		LOWERVAL=$UPPERVAL
 		PARTID=$(expr $PARTID + 1)
 	done
 	cat <<EOF | $PSQL
 CREATE TABLE ${MYTBL}_max PARTITION OF ${MYTBL}
-  FOR VALUES FROM (${LOWERVAL}) TO (MAXVALUE);
-CREATE TABLE ${MYTBL}_default PARTITION OF ${MYTBL} DEFAULT;
+  FOR VALUES FROM (${LOWERVAL}) TO (MAXVALUE) ${TBLSPCOPT};
+CREATE TABLE ${MYTBL}_default PARTITION OF ${MYTBL} DEFAULT ${TBLSPCOPT};
 EOF
 }
 
@@ -128,6 +148,7 @@ fi
 
 if [ "$APPENDROWS" = "FALSE" ]; then
 	prepare_table
+	create_tablespace
 	if [ $NUMPARTS -eq 0 ]; then
 		create_table
 	else
