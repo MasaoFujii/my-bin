@@ -66,6 +66,12 @@ set_guc wal_sync_method fdatasync $PGCONF
 set_guc max_prepared_transactions 10 $PGCONF
 echo "host	all	all	0.0.0.0/0	trust" >> $PGHBA
 
+if [ $PGMAJOR -ge 94 ]; then
+	set_guc wal_level logical $PGCONF
+elif [ $PGMAJOR -ge 90 ]; then
+	set_guc wal_level hot_standby $PGCONF
+fi
+
 if [ "$ARCHIVE_MODE" = "TRUE" ]; then
 	pgarch.sh $PGDATA
 fi

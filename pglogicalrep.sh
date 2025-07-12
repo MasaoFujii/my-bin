@@ -33,7 +33,6 @@ validate_logical_replication
 pginitdb.sh $PUBDATA
 exit_on_error
 
-pgconf.sh -c wal_level logical $PUBDATA
 pgconf.sh -c log_line_prefix "'$LOGLINEPREFIX $PUBDATA [%p] '" $PUBDATA
 pgstart.sh -w $PUBDATA
 

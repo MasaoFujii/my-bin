@@ -41,10 +41,6 @@ pgsql_is_dead
 rm -rf $PGARCH
 mkdir $PGARCH
 
-if [ $PGMAJOR -ge 90 ]; then
-	set_guc wal_level hot_standby $PGCONF
-fi
-
 if [ $PGMAJOR -ge 83 ]; then
 	set_guc archive_mode on $PGCONF
 fi
