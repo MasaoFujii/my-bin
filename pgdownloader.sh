@@ -81,7 +81,11 @@ if [ ! -z "$(is_minor_version)" ]; then
 fi
 
 if [ ! -z "$(is_major_version)" ]; then
-	TMPVERSION=$(grep -E "\"v${SRCVERSION}.[0-9]+/\"" $METAFILE | cut -dv -f2 | cut -d/ -f1 | sort -t. -k3 -n | tail -1)
+	SORTPOS=3
+	if [ ${SRCVERSION} -ge 10 ]; then
+		SORTPOS=2
+	fi
+	TMPVERSION=$(grep -E "\"v${SRCVERSION}.[0-9]+/\"" $METAFILE | cut -dv -f2 | cut -d/ -f1 | sort -t. -k${SORTPOS} -n | tail -1)
 	if [ -z $TMPVERSION ]; then
 		elog "could not find any source file of major version ${SRCVERSION} in PostgreSQL source repository site"
 	fi
