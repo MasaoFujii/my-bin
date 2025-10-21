@@ -127,7 +127,12 @@ move_to_branch ()
 		fi
 	done
 	if [ ! -z "$MOVETO" ]; then
-		git checkout $MOVETO
+		git branch | grep -E ^"\+ $MOVETO"$ > /dev/null
+		if [ $? -eq 0 ]; then
+			cd ${WTDIR}/$MOVETO
+		else
+			git checkout $MOVETO
+		fi
 	fi
 }
 

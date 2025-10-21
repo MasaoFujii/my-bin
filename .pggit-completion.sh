@@ -3,13 +3,18 @@ _pggit()
 	. .completion-common.sh
 
 	case "$PREVWORD" in
-		add|co|remove)
-			WORDLIST=$(git branch 2> /dev/null | tr -d "* ")
+		add|remove)
+			WORDLIST=$(git branch 2> /dev/null | tr -d "+* ")" stable"
 			if [ $? -ne 0 ]; then
 				return 0
 			fi;;
 		autotest)
 			WORDLIST="remove";;
+		co)
+			WORDLIST=$(git branch 2> /dev/null | tr -d "+* ")
+			if [ $? -ne 0 ]; then
+				return 0
+			fi;;
 		stable)
 			WORDLIST="remove";;
 		untrack)
