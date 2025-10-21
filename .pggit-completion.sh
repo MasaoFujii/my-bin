@@ -22,7 +22,7 @@ _pggit()
 		update|u)
 			WORDLIST="all";;
 		pggit.sh)
-			WORDLIST="apply autotest branch cherry-pick co \
+			WORDLIST="amend apply autotest branch cherry-pick co \
 committer create diff docs grep help log make merge \
 patch pgindent pull push remove rename reset stable untrack update wip";;
 	esac

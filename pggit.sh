@@ -19,6 +19,7 @@ Usage:
   $PROGNAME [COMMAND]
 
 Command:
+  amend              commits current changes to latest commit with message "amend"
   apply PATCH        creates new branch and applies PATCH
   autotest [remove]  tests on GitHub Actions (or removes test branches on GitHub)
   [b]ranch           shows all local branches
@@ -184,7 +185,10 @@ do_autotest_remove ()
 	git fetch $GITHUB --prune
 }
 
-if [ "$GITCMD" = "apply" ]; then
+if [ "$GITCMD" = "amend" ]; then
+	git commit --amend -a -m "amend"
+
+elif [ "$GITCMD" = "apply" ]; then
 	if [ -z "$ARGV1" ]; then
 		elog "PATCH must be specified in \"patch\" command"
 	fi
