@@ -8,6 +8,7 @@ ARGV2=
 SUPPORTED_VERS="_18 _17 _16 _15 _14 _13"
 
 GITHUB=github
+AUTOTEST=autotest
 
 usage ()
 {
@@ -19,7 +20,7 @@ Usage:
 
 Command:
   apply PATCH        creates new branch and applies PATCH
-  autotest           builds and tests on AppVeyor, Travis CI and Github Actions
+  autotest [remove]  tests on GitHub Actions (or removes test branches on GitHub)
   [b]ranch           shows all local branches
   cherry-pick BRANCH applies the latest change in BRANCH
   co [PATTERN]       moves to branch matching PATTERN (master branch by default)
@@ -159,7 +160,7 @@ do_autotest ()
 {
 	BUILDYML=ci-linux.yml
 	WORKFLOWS=.github/workflows
-	COMMITMSG="Add files to build and test on Github Actions."
+	COMMITMSG="Add files to build and test on GitHub Actions."
 	NEWBRANCH="$1"
 
 	mkdir -p $WORKFLOWS
@@ -172,6 +173,15 @@ do_autotest ()
 	git checkout master
 	git branch -D $NEWBRANCH
 	back_to_current
+}
+
+do_autotest_remove ()
+{
+	git fetch $GITHUB --prune
+	for BRANCH_TO_RM in $(git branch -r | grep "${GITHUB}/${AUTOTEST}_" | cut -d/ -f2- | grep -E ^"${AUTOTEST}_"); do
+		git push --delete ${GITHUB} ${BRANCH_TO_RM}
+	done
+	git fetch $GITHUB --prune
 }
 
 if [ "$GITCMD" = "apply" ]; then
@@ -187,16 +197,20 @@ if [ "$GITCMD" = "apply" ]; then
 	git branch
 
 elif [ "$GITCMD" = "autotest" ]; then
-	github_is_available
-	current_must_not_have_uncommitted
-	echo $CURBRANCH | grep -E "^${GITCMD}_" > /dev/null
-	if [ $? -eq 0 ]; then
-		elog "current branch must NOT be one created by previous autotest"
+ 	github_is_available
+	if [ "$ARGV1" = "remove" ]; then
+		do_autotest_remove
+	else
+		current_must_not_have_uncommitted
+		echo $CURBRANCH | grep -E "^${AUTOTEST}_" > /dev/null
+		if [ $? -eq 0 ]; then
+			elog "current branch must NOT be one created by previous autotest"
+		fi
+		COMMIT_ID=$(git rev-parse --short HEAD)
+		NEWBRANCH="${AUTOTEST}_${CURBRANCH}_${CURTIME}_${COMMIT_ID}"
+		git checkout -b "$NEWBRANCH"
+		do_autotest "$NEWBRANCH"
 	fi
-	COMMIT_ID=$(git rev-parse --short HEAD)
-	NEWBRANCH="${GITCMD}_${CURBRANCH}_${CURTIME}_${COMMIT_ID}"
-	git checkout -b "$NEWBRANCH"
-	do_autotest "$NEWBRANCH"
 
 elif [ "$GITCMD" = "b" -o "$GITCMD" = "branch" ]; then
 	git branch

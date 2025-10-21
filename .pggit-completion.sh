@@ -3,6 +3,8 @@ _pggit()
 	. .completion-common.sh
 
 	case "$PREVWORD" in
+		autotest)
+			WORDLIST="remove";;
 		co)
 			WORDLIST=$(git branch 2> /dev/null | tr -d "* ")
 			if [ $? -ne 0 ]; then
