@@ -3,28 +3,26 @@ _pggit()
 	. .completion-common.sh
 
 	case "$PREVWORD" in
+		add|co|remove)
+			WORDLIST=$(git branch 2> /dev/null | tr -d "* ")
+			if [ $? -ne 0 ]; then
+				return 0
+			fi;;
 		autotest)
 			WORDLIST="remove";;
-		co)
-			WORDLIST=$(git branch 2> /dev/null | tr -d "* ")
-			if [ $? -ne 0 ]; then
-				return 0
-			fi;;
-		remove)
-			WORDLIST=$(git branch 2> /dev/null | tr -d "* ")
-			if [ $? -ne 0 ]; then
-				return 0
-			fi;;
 		stable)
 			WORDLIST="remove";;
 		untrack)
 			WORDLIST="clean";;
 		update|u)
 			WORDLIST="all";;
+		wt)
+			WORDLIST="add remove";;
 		pggit.sh)
 			WORDLIST="amend apply autotest branch cherry-pick co \
 committer create diff docs grep help log make merge \
-patch pgindent pull push remove rename reset stable untrack update wip";;
+patch pgindent pull push remove rename reset stable untrack update wip \
+wt";;
 	esac
 
 	mycompgen

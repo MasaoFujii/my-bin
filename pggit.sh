@@ -9,6 +9,7 @@ SUPPORTED_VERS="_18 _17 _16 _15 _14 _13"
 
 GITHUB=github
 AUTOTEST=autotest
+WTDIR=/dav/worktree
 
 usage ()
 {
@@ -19,32 +20,34 @@ Usage:
   $PROGNAME [COMMAND]
 
 Command:
-  amend              commits current changes to latest commit with message "amend"
-  apply PATCH        creates new branch and applies PATCH
-  autotest [remove]  tests on GitHub Actions (or removes test branches on GitHub)
-  [b]ranch           shows all local branches
-  cherry-pick BRANCH applies the latest change in BRANCH
-  co [PATTERN]       moves to branch matching PATTERN (master branch by default)
-  committer          shows how many patches each committer committed
-  create BRANCH      creates new branch named BRANCH
-  diff [TARGET]      shows changes between commits, commit and working tree, etc
-  docs               compiles only documentations
-  grep [-i] PATTERN  prints lines matching PATTERN
-  help               shows help message (default)
-  log [PATTERN]      shows commit logs
-  make               compiles and installs current branch into /dav/<branch-name>
-  merge              updates master and merges it into current branch
-  patch [PATCH]      creates patch with name PATCH against master in /dav
-  pgindent [COMMIT]  runs pgindent on files modified since COMMIT (HEAD by default)
-  pull               pulles current branch from $GITHUB
-  push               pushes current branch to $GITHUB
-  remove [BRANCH]    removes branch and its installation directory
-  rename NAME        renames current branch to NAME
-  reset [TARGET]     resets current branch to HEAD (or TARGET)
-  stable [remove]    clones all supported stable branches (or removes all clones)
-  untrack [clean]    shows (or cleans up) all untracked objects
-  u[pdate] [all]     updates master (and all supported versions)
-  wip                commits current change with message "wip"
+  amend                commits current changes to latest commit with message "amend"
+  apply PATCH          creates new branch and applies PATCH
+  autotest [remove]    tests on GitHub Actions (or removes test branches on GitHub)
+  [b]ranch             shows all local branches
+  cherry-pick BRANCH   applies the latest change in BRANCH
+  co [PATTERN]         moves to branch matching PATTERN (master branch by default)
+  committer            shows how many patches each committer committed
+  create BRANCH        creates new branch named BRANCH
+  diff [TARGET]        shows changes between commits, commit and working tree, etc
+  docs                 compiles only documentations
+  grep [-i] PATTERN    prints lines matching PATTERN
+  help                 shows help message (default)
+  log [PATTERN]        shows commit logs
+  make                 compiles and installs current branch into /dav/<branch-name>
+  merge                updates master and merges it into current branch
+  patch [PATCH]        creates patch with name PATCH against master in /dav
+  pgindent [COMMIT]    runs pgindent on files modified since COMMIT (HEAD by default)
+  pull                 pulles current branch from $GITHUB
+  push                 pushes current branch to $GITHUB
+  remove [BRANCH]      removes branch and its installation directory
+  rename NAME          renames current branch to NAME
+  reset [TARGET]       resets current branch to HEAD (or TARGET)
+  stable [remove]      clones all supported stable branches (or removes all clones)
+  untrack [clean]      shows (or cleans up) all untracked objects
+  u[pdate] [all]       updates master (and all supported versions)
+  wip                  commits current change with message "wip"
+  wt add|remove BRANCH creates or removes worktree for BRANCH
+                       (BRANCH=stable means all supported stable branches)
 
 Move to branch matching COMMAND if it's not supported and there is branch
 matching it.
@@ -372,6 +375,25 @@ elif [ "$GITCMD" = "u" -o "$GITCMD" = "update" ]; then
 
 elif [ "$GITCMD" = "wip" ]; then
 	git commit -a -m "wip"
+
+elif [ "$GITCMD" = "wt" ]; then
+	if [ "$ARGV2" = "stable" ]; then
+		for PGVERSION in $(echo "$SUPPORTED_VERS"); do
+			TARGET="pg$(echo ${PGVERSION} | tr -d "\_")"
+			if [ "$ARGV1" = "add" ]; then
+				git worktree add ${WTDIR}/${TARGET} ${TARGET}
+			elif [ "$ARGV1" = "remove" ]; then
+				git worktree remove ${TARGET}
+			fi
+		done
+	else
+		if [ "$ARGV1" = "add" -a ! -z "$ARGV2" ]; then
+			git worktree add ${WTDIR}/${ARGV2}
+		elif [ "$ARGV1" = "remove" -a ! -z "$ARGV2" ]; then
+			git worktree remove ${ARGV2}
+		fi
+	fi
+	git worktree list
 
 else
 	move_to_branch "$GITCMD"
