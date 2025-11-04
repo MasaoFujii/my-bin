@@ -205,7 +205,7 @@ elif [ "$GITCMD" = "apply" ]; then
 	create_new_branch $NEWBRANCH
 	patch -p1 -d. < $PATCHPATH
 	git status
-	pgetags.sh
+#	pgetags.sh
 	git branch
 
 elif [ "$GITCMD" = "autotest" ]; then
