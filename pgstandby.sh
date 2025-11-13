@@ -8,6 +8,7 @@ ACTBKP=$CURDIR/data.bkp
 SBYID=0
 SBYNUM=1
 STARTED=0
+USESLOT="FALSE"
 
 SNDDATA=
 SNDPORT=5432
@@ -28,6 +29,7 @@ Options:
   -c SENDER  sets up the cascade standby
   -n NUM     number of standbys (default: 1)
   -r         enables WAL restoring from shared archive
+  --slot     uses replication slot
 EOF
 }
 
@@ -49,6 +51,8 @@ while [ $# -gt 0 ]; do
 			shift;;
 		-r)
 			RESTORE_MODE="TRUE";;
+		--slot)
+			USESLOT="TRUE";;
 		*)
 			elog "invalid option: $1";;
 	esac
@@ -102,6 +106,9 @@ for ((SBYID=$SBYMIN; SBYID<=$SBYMAX; SBYID++)); do
 		set_guc primary_conninfo "'port=$SNDPORT application_name=$PGDATA'" $PGCONF
 		set_guc promote_trigger_file "'$TRIGGER'" $PGCONF
 		set_guc recovery_target_timeline "'latest'" $PGCONF
+		if [ "$USESLOT" = "TRUE" ]; then
+			set_guc primary_slot_name "'$PGDATA'" $PGCONF
+		fi
 		touch $STANDBYSIGNAL
 	else
 		cat << EOF > $RECOVERYCONF
@@ -110,6 +117,13 @@ primary_conninfo = 'port=$SNDPORT application_name=$PGDATA'
 trigger_file = '$TRIGGER'
 recovery_target_timeline = 'latest'
 EOF
+		if [ "$USESLOT" = "TRUE" ]; then
+			echo "primary_slot_name = '$PGDATA'" >> $RECOVERYCONF
+		fi
+	fi
+
+	if [ "$USESLOT" = "TRUE" ]; then
+		$PGBIN/psql -c "SELECT pg_create_physical_replication_slot('$PGDATA')"
 	fi
 
 	if [ "$ARCHIVE_MODE" = "TRUE" ]; then
