@@ -33,14 +33,14 @@ validate_logical_replication
 pginitdb.sh $PUBDATA
 exit_on_error
 
-pgconf.sh -c log_line_prefix "'$LOGLINEPREFIX $PUBDATA [%p] '" $PUBDATA
+pgconf.sh -c log_line_prefix "'$LOGLINEPREFIX $PUBDATA '" $PUBDATA
 pgstart.sh -w $PUBDATA
 
 pginitdb.sh $SUBDATA
 exit_on_error
 
 pgconf.sh -c port 5433 $SUBDATA
-pgconf.sh -c log_line_prefix "'$LOGLINEPREFIX $SUBDATA [%p] '" $SUBDATA
+pgconf.sh -c log_line_prefix "'$LOGLINEPREFIX $SUBDATA '" $SUBDATA
 pgstart.sh -w $SUBDATA
 
 pgtbl.sh -n 0 $PUBDATA

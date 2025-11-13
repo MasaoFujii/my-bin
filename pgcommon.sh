@@ -37,7 +37,7 @@ RECDONENAME=recovery.done
 RECSIGNALNAME=recovery.signal
 SBYSIGNALNAME=standby.signal
 
-LOGLINEPREFIX="%t"
+LOGLINEPREFIX="%t %p"
 
 update_pgxlog ()
 {
@@ -70,7 +70,7 @@ update_pgdata "data"
 update_log_line_prefix ()
 {
 	if [ $PGMAJOR -ge 130 ]; then
-		LOGLINEPREFIX="%t [%b]"
+		LOGLINEPREFIX="%t %p [%b]"
 	fi
 }
 
