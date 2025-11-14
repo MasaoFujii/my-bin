@@ -2,8 +2,8 @@
 
 . pgcommon.sh
 
-ACTARCH_OPT=
-SBYARCH_OPT=
+ACT_OPT=
+SBY_OPT=
 SYNC_OPT=
 SBYNUM=1
 CASCADE=false
@@ -26,6 +26,7 @@ Options:
   -S          sets Sync mode
   -C          sets up Cascade standby
   --conflict  creates standby query conflict
+  --slot      uses replication slot
 
 Notes:
   -n option specifies the number of only standbys
@@ -70,8 +71,8 @@ while [ $# -gt 0 ]; do
 			usage
 			exit 0;;
 		-a)
-			ACTARCH_OPT="-a"
-			SBYARCH_OPT="-a $SBYARCH_OPT";;
+			ACT_OPT="-a"
+			SBY_OPT="-a $SBY_OPT";;
 		-k)
 			CHECKSUM="-k";;
 		-n)
@@ -81,8 +82,8 @@ while [ $# -gt 0 ]; do
 			fi
 			shift;;
 		-r)
-			ACTARCH_OPT="-a"
-			SBYARCH_OPT="-r $SBYARCH_OPT";;
+			ACT_OPT="-a"
+			SBY_OPT="-r $SBY_OPT";;
 		-A)
 			SYNC_OPT="";;
 		-S)
@@ -92,6 +93,8 @@ while [ $# -gt 0 ]; do
 			validate_cascade_replication;;
 		--conflict)
 			make_conflict;;
+		--slot)
+			SBY_OPT="--slot $SBY_OPT";;
 		*)
 			elog "invalid option: $1";;
 	esac
@@ -100,9 +103,9 @@ done
 
 validate_datapage_checksums "$CHECKSUM"
 
-pgmaster.sh $ACTARCH_OPT $SYNC_OPT $CHECKSUM
-pgstandby.sh $SBYARCH_OPT -n $SBYNUM
+pgmaster.sh $ACT_OPT $SYNC_OPT $CHECKSUM
+pgstandby.sh $SBY_OPT -n $SBYNUM
 
 if [ "$CASCADE" = "true" ]; then
-	pgstandby.sh $SBYARCH_OPT -c sby1
+	pgstandby.sh $SBY_OPT -c sby1
 fi
