@@ -123,7 +123,7 @@ EOF
 	fi
 
 	if [ "$USESLOT" = "TRUE" ]; then
-		$PGBIN/psql -c "SELECT pg_create_physical_replication_slot('$PGDATA')"
+		$PGBIN/psql -p $SNDPORT -c "SELECT pg_create_physical_replication_slot('$PGDATA')"
 	fi
 
 	if [ "$ARCHIVE_MODE" = "TRUE" ]; then
