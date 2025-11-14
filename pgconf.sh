@@ -132,7 +132,7 @@ exec_pgconf ()
 
 		change)
 			GUCNAME=$(echo "$CONFARG" | cut -d= -f1)
-			GUCVALUE=$(echo "$CONFARG" | cut -d= -f2)
+			GUCVALUE=$(echo "$CONFARG" | cut -d= -f2-)
 			set_guc "$GUCNAME" "$GUCVALUE" $PGCONF
 			report_guc "$GUCNAME";;
 
