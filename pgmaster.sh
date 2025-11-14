@@ -55,7 +55,6 @@ pginitdb.sh $INITDB_OPT $PGDATA
 exit_on_error
 
 set_guc port $PGPORT $PGCONF
-set_guc log_line_prefix "'$LOGLINEPREFIX $PGDATA '" $PGCONF
 set_guc max_wal_senders 4 $PGCONF
 
 if [ $PGMAJOR -ge 94 ]; then
