@@ -53,7 +53,7 @@ else
 	pgsr.sh --slot
 	pgconf.sh -c sync_replication_slots on $SBYDATA
 	pgconf.sh -c hot_standby_feedback on $SBYDATA
-	PREVCONNINFO=$(pgconf.sh -s primary_conninfo $SBYDATA)
+	PREVCONNINFO=$($PGBIN/psql -p $SBYPORT -X -Atc "SHOW primary_conninfo")
 	pgconf.sh -c primary_conninfo "'$PREVCONNINFO dbname=postgres'" $SBYDATA
 	pgconf.sh -c synchronized_standby_slots "'$SBYDATA'" $ACTDATA
 	pgreload.sh $SBYDATA
