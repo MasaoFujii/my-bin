@@ -55,7 +55,10 @@ pginitdb.sh $INITDB_OPT $PGDATA
 exit_on_error
 
 set_guc port $PGPORT $PGCONF
-set_guc max_wal_senders 4 $PGCONF
+
+if [ $PGMAJOR -le 96 ]; then
+	set_guc max_wal_senders 10 $PGCONF
+fi
 
 if [ $PGMAJOR -ge 94 ]; then
 	set_guc max_replication_slots 4 $PGCONF
