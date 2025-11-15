@@ -50,6 +50,10 @@ if [ "$SLOTSYNC" = "false" ]; then
 	exit_on_error
 	pgstart.sh -w $PUBDATA
 else
+	if [ $PGMAJOR -lt 170 ]; then
+		HINT="You must run \"$PROGNAME\" with PostgreSQL >=17"
+		elog "replication slot synchronization is NOT supported in $PGVERSION" "$HINT"
+	fi
 	pgsr.sh --slot
 	pgconf.sh -c sync_replication_slots on $SBYDATA
 	pgconf.sh -c hot_standby_feedback on $SBYDATA
