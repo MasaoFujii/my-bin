@@ -31,8 +31,9 @@ if [ ! -d $CURDIR/.git ]; then
 	elog "here \"$CURDIR\" is not git directory"
 fi
 
-pgclean.sh
-git pull
+pggit.sh untrack clean
+pggit.sh update
 pgetags.sh
 rm -rf $PREFIX
 pgmake.sh -j 8 --tap --libxml -d $PREFIX
+make html
