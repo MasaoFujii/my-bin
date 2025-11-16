@@ -35,5 +35,5 @@ pggit.sh untrack clean
 pggit.sh update
 pgetags.sh
 rm -rf $PREFIX
-pgmake.sh -j 8 --tap --libxml -d $PREFIX
+pgmake.sh -j 8 --libxml -d $PREFIX
 make html

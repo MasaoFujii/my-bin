@@ -24,8 +24,9 @@ Usage:
 
 Options:
   -c OPTIONS    uses OPTIONS as extra configure options
-  -d            compiles for debug purpose: uses --enable-debug and
+  -d            compiles for debug purpose: uses --enable-debug,
                 --enable-cassert, --enable-injection-points (>= v17),
+                --enable-tap-tests (>= v9.4),
                 and prevents compiler optimization
   -f FLAG       uses FLAG as CPPFLAGS, e.g. -f "-DWAL_DEBUG"
   -j NUM        number of jobs (default: 4)
@@ -34,7 +35,6 @@ Options:
   --libxml      builds with XML support, i.e., same as -c "--with-libxml"
   --llvm        builds with LLVM based JIT support, i.e., same as -c "--with-llvm"
   --icu         builds with support for ICU library (by default ICU collation is disabled)"
-  --tap         enables TAP tests, i.e., same as -c "--enable-tap-tests"
   --no-lz4      do not use --with-lz4 (by default use --with-lz4 in v14 or later)"
   --wal-debug   same as -f "-DWAL_DEBUG"
 EOF
@@ -95,8 +95,6 @@ while [ $# -gt 0 ]; do
 			CONFOPT="--with-llvm $CONFOPT";;
 		--icu)
 			USE_ICU=TRUE;;
-		--tap)
-			CONFOPT="--enable-tap-tests $CONFOPT";;
 		--no-lz4)
 			USE_LZ4=FALSE;;
 		--wal-debug)
@@ -116,7 +114,9 @@ if [ "$DEBUG_MODE" = "TRUE" ]; then
 	if [ $PGMAJOR -ge 170 ]; then
 		CONFOPT="--enable-injection-points $CONFOPT"
 	fi
-
+	if [ $PGMAJOR -ge 94 ]; then
+		CONFOPT="--enable-tap-tests $CONFOPT"
+	fi
 	CFLAGS="-O0 $CFLAGS"
 fi
 

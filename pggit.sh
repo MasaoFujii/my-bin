@@ -268,7 +268,7 @@ elif [ "$GITCMD" = "diff" ]; then
 	git diff $DIFFTARGET
 
 elif [ "$GITCMD" = "docs" ]; then
-	pgmake.sh -j 8 --tap --libxml -d --configure /dav/$CURBRANCH
+	pgmake.sh -j 8 --libxml -d --configure /dav/$CURBRANCH
 	make html
 
 elif [ "$GITCMD" = "grep" ]; then
@@ -285,7 +285,7 @@ elif [ "$GITCMD" = "log" ]; then
 	fi
 
 elif [ "$GITCMD" = "make" ]; then
-	pgmake.sh -j 8 --tap --libxml -d /dav/$CURBRANCH
+	pgmake.sh -j 8 --libxml -d /dav/$CURBRANCH
 
 elif [ "$GITCMD" = "merge" ]; then
 	current_must_not_have_uncommitted
