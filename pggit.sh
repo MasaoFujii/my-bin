@@ -193,6 +193,17 @@ do_autotest_remove ()
 	git fetch $GITHUB --prune
 }
 
+skip_cirrus_test ()
+{
+	COMMITMSG="Skip tests on Cirrus."
+
+	git rm .cirrus.star
+	git rm .cirrus.tasks.yml
+	git rm .cirrus.yml
+
+	git commit -a -m "${COMMITMSG}"
+}
+
 if [ "$GITCMD" = "amend" ]; then
 	git commit --amend -a -m "amend"
 
@@ -221,6 +232,10 @@ elif [ "$GITCMD" = "autotest" ]; then
 		COMMIT_ID=$(git rev-parse --short HEAD)
 		NEWBRANCH="${AUTOTEST}_${CURBRANCH}_${CURTIME}_${COMMIT_ID}"
 		git checkout -b "$NEWBRANCH"
+
+		if [ "$ARGV1" != "cirrus" ]; then
+			skip_cirrus_test
+		fi
 		do_autotest "$NEWBRANCH"
 	fi
 

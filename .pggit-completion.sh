@@ -9,7 +9,7 @@ _pggit()
 				return 0
 			fi;;
 		autotest)
-			WORDLIST="remove";;
+			WORDLIST="cirrus remove";;
 		co)
 			WORDLIST=$(git branch 2> /dev/null | tr -d "+* ")
 			if [ $? -ne 0 ]; then

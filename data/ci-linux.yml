@@ -32,7 +32,7 @@ jobs:
         if [ "${PGOPT}" = "disable-atomics-spinlocks" ]; then
           export CONFOPT="--disable-atomics --disable-spinlocks $CONFOPT"
         fi
-        ./configure --prefix=$HOME/install --enable-debug --enable-cassert --enable-tap-tests -with-tcl --with-python --with-perl --with-ldap --with-openssl --with-icu --with-llvm $CONFOPT
+        ./configure --prefix=$HOME/install --enable-debug --enable-cassert --enable-tap-tests -with-tcl --with-python --with-perl --with-ldap --with-openssl --with-icu --with-llvm --enable-injection-points $CONFOPT
     - name: make
       run: |
         echo "COPT=-Wall -Werror" > src/Makefile.custom
