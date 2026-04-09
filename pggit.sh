@@ -37,6 +37,7 @@ Command:
   merge                updates master and merges it into current branch
   patch [PATCH]        creates patch with name PATCH against master in /dav
   pgindent [COMMIT]    runs pgindent on files modified since COMMIT (HEAD by default)
+  pgperltidy PATH      runs pgperltidy on Perl file in PATH
   pull                 pulles current branch from $GITHUB
   push                 pushes current branch to $GITHUB
   remove [BRANCH]      removes branch and its installation directory
@@ -330,6 +331,21 @@ elif [ "$GITCMD" = "pgindent" ]; then
 	fi
 	MODIFIED=$(git diff --diff-filter=ACMR --name-only "$COMMIT_ID")
 	$PGINDENT --indent $PGBSDINDENT $MODIFIED
+
+elif [ "$GITCMD" = "pgperltidy" ]; then
+	if [ -z "$ARGV1" ]; then
+		elog "PATH must be specified in \"pgperltidy\" command"
+	fi
+	PERLFILE="$ARGV1"
+	TOOLSDIR=$CURDIR/src/tools
+	PGPERLTIDY=$TOOLSDIR/pgindent/pgperltidy
+	SEDOPT=
+	if [ "$KERNEL" = "Darwin" ]; then
+		SEDOPT="'.bak'"
+	fi
+	sed -i $SEDOPT 's/exit/#exit/g' $PGPERLTIDY
+	$PGPERLTIDY $PERLFILE
+	sed -i $SEDOPT 's/#exit/exit/g' $PGPERLTIDY
 
 elif [ "$GITCMD" = "pull" ]; then
 	git pull $GITHUB $CURBRANCH
