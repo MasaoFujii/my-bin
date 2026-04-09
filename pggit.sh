@@ -324,6 +324,10 @@ elif [ "$GITCMD" = "pgindent" ]; then
 	TOOLSDIR=$CURDIR/src/tools
 	PGINDENT=$TOOLSDIR/pgindent/pgindent
 	PGBSDINDENT=$TOOLSDIR/pg_bsd_indent/pg_bsd_indent
+	if [ ! -f $PGBSDINDENT ]; then
+		HEADSRC=~/pgsql/head
+		PGBSDINDENT=$HEADSRC/src/tools/pg_bsd_indent/pg_bsd_indent
+	fi
 	MODIFIED=$(git diff --diff-filter=ACMR --name-only "$COMMIT_ID")
 	$PGINDENT --indent $PGBSDINDENT $MODIFIED
 
