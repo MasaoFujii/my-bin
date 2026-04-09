@@ -4,6 +4,7 @@
 
 BATCH=false
 DELAY=1
+LISTPIDS=false
 ONETIME=false
 FORMAT="u"
 
@@ -22,6 +23,7 @@ Options:
   -b          batch mode; reports running processes in a row
   -d SECS     specifies the delay between screen updates or
               reports in batch mode
+  -l          lists pids of running processes only once
   -o FORMAT   uses user-defined format, e.g., -o pid
   u           uses user-oriented format (default format)
   -1          1-time mode; reports running processes only once
@@ -38,6 +40,8 @@ while [ $# -gt 0 ]; do
 		-d)
 			DELAY="$2"
 			shift;;
+		-l)
+			LISTPIDS=true;;
 		"-?"|--help)
 			usage
 			exit 0;;
@@ -74,6 +78,19 @@ report_pgsql_processes ()
 		echo ""
 	done
 }
+
+list_pgsql_pids ()
+{
+	for pmpid in $(pm_pids); do
+		echo $pmpid
+		pgrep -P $pmpid
+	done
+}
+
+if [ "$LISTPIDS" = "true" ]; then
+	list_pgsql_pids | sort -n
+	exit 0
+fi
 
 if [ "$ONETIME" = "true" ]; then
 	report_pgsql_processes
