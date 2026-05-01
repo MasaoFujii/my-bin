@@ -14,6 +14,7 @@ SUBCONN="port=$PUBPORT"
 SUBOPT=
 
 SLOTSYNC=false
+CREATETBL=true
 
 usage ()
 {
@@ -24,6 +25,7 @@ Usage:
   $PROGNAME [OPTIONS]
 
 Options:
+  --no-table  does not create table to replicate
   --slotsync  uses replication slot sync
 EOF
 }
@@ -33,6 +35,8 @@ while [ $# -gt 0 ]; do
 		"-?"|--help)
 			usage
 			exit 0;;
+		--no-table)
+			CREATETBL=false;;
 		--slotsync)
 			SLOTSYNC=true;;
 		*)
@@ -72,6 +76,10 @@ pginitdb.sh $SUBDATA
 exit_on_error
 pgconf.sh -c port $SUBPORT $SUBDATA
 pgstart.sh -w $SUBDATA
+
+if [ "$CREATETBL" = "false" ]; then
+	exit 0
+fi
 
 pgtbl.sh -n 0 $PUBDATA
 cat <<EOF | $PGBIN/psql -p $PUBPORT
