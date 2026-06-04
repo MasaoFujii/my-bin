@@ -198,6 +198,10 @@ skip_cirrus_test ()
 {
 	COMMITMSG="Skip tests on Cirrus."
 
+	if [ ! -f .cirrus.star ]; then
+		return;
+	fi
+
 	git rm .cirrus.star
 	git rm .cirrus.tasks.yml
 	git rm .cirrus.yml
