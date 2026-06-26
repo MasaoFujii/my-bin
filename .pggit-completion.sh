@@ -24,7 +24,7 @@ _pggit()
 		wt)
 			WORDLIST="add remove";;
 		pggit.sh)
-			WORDLIST="amend apply autotest branch cherry-pick co \
+			WORDLIST="am amend apply autotest branch cherry-pick co \
 committer create diff docs grep help log make merge \
 patch pgindent pgperltidy pull push remove rename reset stable untrack \
 update wip wt";;

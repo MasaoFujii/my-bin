@@ -20,6 +20,7 @@ Usage:
   $PROGNAME [COMMAND]
 
 Command:
+  am                   creates new branch and runs git am PATCH
   amend                commits current changes to latest commit with message "amend"
   apply PATCH          creates new branch and applies PATCH
   autotest [remove]    tests on GitHub Actions (or removes test branches on GitHub)
@@ -209,12 +210,22 @@ skip_cirrus_test ()
 	git commit -a -m "${COMMITMSG}"
 }
 
-if [ "$GITCMD" = "amend" ]; then
+if [ "$GITCMD" = "am" ]; then
+	if [ -z "$ARGV1" ]; then
+		elog "PATCH must be specified in \"am\" command"
+	fi
+	PATCHPATH="$ARGV1"
+	NEWBRANCH=$(basename $PATCHPATH .patch)
+	create_new_branch $NEWBRANCH
+	git am $PATCHPATH
+	git branch
+
+elif [ "$GITCMD" = "amend" ]; then
 	git commit --amend -a -m "amend"
 
 elif [ "$GITCMD" = "apply" ]; then
 	if [ -z "$ARGV1" ]; then
-		elog "PATCH must be specified in \"patch\" command"
+		elog "PATCH must be specified in \"apply\" command"
 	fi
 	PATCHPATH="$ARGV1"
 	NEWBRANCH=$(basename $PATCHPATH .patch)
