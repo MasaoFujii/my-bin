@@ -212,7 +212,7 @@ show_guc ()
 	CONFPATH="$2"
 
 	grep -E ^$GUCNAME\ \|\#$GUCNAME\  $CONFPATH | \
-		cut -f1 |\
+		awk '{print $1 " " $2 " " $3}' |\
 		awk -F" = " 'NR==1 {v=$2} NR!=1 && $1!~"#" {v=$2} END { if (v!="") print v}'
 }
 
