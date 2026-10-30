@@ -2,7 +2,7 @@ name: ci-linux
 on:
   push:
     branches:
-      - "*"
+      - "**"
 jobs:
   ci-linux:
     runs-on: ubuntu-latest
