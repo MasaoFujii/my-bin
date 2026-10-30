@@ -11,7 +11,7 @@ jobs:
       matrix:
         pgopt:
           - base
-          - disable-atomics-spinlocks
+          - verbose-logging
           - cache-release
     env:
       PG_TEST_EXTRA: "ssl kerberos"
@@ -29,7 +29,9 @@ jobs:
           export CPPFLAGS="-DRELCACHE_FORCE_RELEASE -DCATCACHE_FORCE_RELEASE $CPPFLAGS"
         fi
         CONFOPT=
-        if [ "${PGOPT}" = "disable-atomics-spinlocks" ]; then
+        # Also test without atomics and spinlocks on PostgreSQL 17 and earlier.
+        # PostgreSQL 18 and later ignore these options with a warning.
+        if [ "${PGOPT}" = "verbose-logging" ]; then
           export CONFOPT="--disable-atomics --disable-spinlocks $CONFOPT"
         fi
         ./configure --prefix=$HOME/install --enable-debug --enable-cassert --enable-tap-tests -with-tcl --with-python --with-perl --with-ldap --with-openssl --with-icu --with-llvm --enable-injection-points $CONFOPT
@@ -45,7 +47,7 @@ jobs:
         $HOME/install/bin/pg_config
     - name: make check-world
       run: |
-        if [ "${PGOPT}" = "disable-atomics-spinlocks" ]; then
+        if [ "${PGOPT}" = "verbose-logging" ]; then
           export TEMP_CONFIG="$RUNNER_TEMP/pg-test.conf"
           echo "log_error_verbosity = verbose" > "$TEMP_CONFIG"
         fi
