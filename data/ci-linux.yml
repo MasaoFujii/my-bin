@@ -17,7 +17,7 @@ jobs:
       PG_TEST_EXTRA: "ssl kerberos"
       PGOPT: ${{ matrix.pgopt }}
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v5
     - name: apt
       run: |
         sudo apt-get --yes update
