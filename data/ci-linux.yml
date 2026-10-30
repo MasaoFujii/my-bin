@@ -45,6 +45,10 @@ jobs:
         $HOME/install/bin/pg_config
     - name: make check-world
       run: |
+        if [ "${PGOPT}" = "disable-atomics-spinlocks" ]; then
+          export TEMP_CONFIG="$RUNNER_TEMP/pg-test.conf"
+          echo "log_error_verbosity = verbose" > "$TEMP_CONFIG"
+        fi
         make -s -j 4 check-world
     - name: after failure
       if: failure()
