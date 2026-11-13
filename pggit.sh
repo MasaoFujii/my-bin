@@ -216,11 +216,16 @@ do_autotest ()
 
 do_autotest_remove ()
 {
-	git fetch $GITHUB --prune
-	for BRANCH_TO_RM in $(git branch -r | grep "${GITHUB}/${AUTOTEST}_" | cut -d/ -f2- | grep -E ^"${AUTOTEST}_"); do
-		git push --delete ${GITHUB} ${BRANCH_TO_RM}
+	git fetch "$GITHUB" --prune || return 1
+	BRANCHES_TO_RM=$(git branch -r --list "$GITHUB/${AUTOTEST}_*" --format='%(refname:lstrip=3)') || return 1
+	set --
+	for BRANCH_TO_RM in $BRANCHES_TO_RM; do
+		set -- "$@" "$BRANCH_TO_RM"
 	done
-	git fetch $GITHUB --prune
+	if [ $# -gt 0 ]; then
+		git push --delete "$GITHUB" "$@" || return 1
+	fi
+	git fetch "$GITHUB" --prune
 }
 
 skip_cirrus_test ()
