@@ -49,10 +49,10 @@ Commands:
   reset [COMMIT]              hard-resets the current branch, index and working tree to COMMIT
                               (default: HEAD)
   restore FILE COMMIT         restores FILE in the working tree and index to COMMIT
-  stable                      creates local pg<version> branches from supported stable branches
+  stable [all]                creates pg<version> branches (all includes pg<max+1> from master)
   stable cherry-pick          applies the original branch's HEAD to pg<version> branches
                               (in SUPPORTED_VERS order; stops and aborts on cherry-pick failure)
-  stable remove               deletes local pg<version> branches and their installations
+  stable remove               deletes pg<version> branches and installations, including pg<max+1>
   untrack [clean]             lists untracked files and directories, including ignored ones
                               (clean deletes them)
   update, u [all]             updates master from origin (all also updates supported stable branches)
@@ -449,7 +449,11 @@ elif [ "$GITCMD" = "stable" -a "$ARGV1" = "cherry-pick" ]; then
 
 elif [ "$GITCMD" = "stable" ]; then
 	current_must_not_have_uncommitted
+	MAXVERSION=0
 	for PGVERSION in $SUPPORTED_VERS; do
+		if [ "$PGVERSION" -gt "$MAXVERSION" ]; then
+			MAXVERSION="$PGVERSION"
+		fi
 		SRCBRANCH="REL_${PGVERSION}_STABLE"
 		DSTBRANCH="pg${PGVERSION}"
 		if [ "$ARGV1" = "remove" ]; then
@@ -458,9 +462,17 @@ elif [ "$GITCMD" = "stable" ]; then
 			if [ "$(git branch --list ${DSTBRANCH})" ]; then
 				elog "branch \"$DSTBRANCH\" already exists"
 			fi
-			git branch "$DSTBRANCH" "$SRCBRANCH"
+			git branch "$DSTBRANCH" "$SRCBRANCH" || exit 1
 		fi
 	done
+	if [ "$ARGV1" = "all" ]; then
+		git branch "pg$((MAXVERSION + 1))" master || exit 1
+	elif [ "$ARGV1" = "remove" ]; then
+		DEVBRANCH="pg$((MAXVERSION + 1))"
+		if git show-ref --verify --quiet "refs/heads/$DEVBRANCH"; then
+			remove_branch "$DEVBRANCH"
+		fi
+	fi
 	git checkout master
 	git branch
 

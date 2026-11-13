@@ -15,7 +15,7 @@ u untrack update wip wt"
 			autotest:2)
 				WORDLIST="cirrus remove";;
 			stable:2)
-				WORDLIST="cherry-pick remove";;
+				WORDLIST="all cherry-pick remove";;
 			untrack:2)
 				WORDLIST="clean";;
 			update:2|u:2)
