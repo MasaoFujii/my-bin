@@ -26,7 +26,8 @@ Commands:
   autotest [cirrus|remove]    pushes a test branch to $GITHUB for GitHub Actions
                               (cirrus also enables Cirrus CI; remove deletes remote test branches)
   branch, b                   lists local branches
-  cherry-pick PATTERN         switches to a matching branch and applies the original branch's HEAD
+  cherry-pick PATTERN...      applies the original branch's HEAD to matching branches in order
+                              (stops on failure and aborts a failed cherry-pick)
   co [PATTERN]                switches to a matching branch (default: master)
   committer [SINCE [UNTIL]]   counts commits by author, optionally within a date range
   create BRANCH               creates and switches to BRANCH from HEAD
@@ -63,22 +64,21 @@ matching branch if one exists.
 EOF
 }
 
-while [ $# -gt 0 ]; do
-	case "$1" in
+for ARG in "$@"; do
+	case "$ARG" in
 		"-?"|--help)
 			usage
 			exit 0;;
 		*)
 			if [ -z "$GITCMD" ]; then
-				GITCMD="$1"
+				GITCMD="$ARG"
 			elif [ -z "$ARGV1" ]; then
-				ARGV1="$1"
+				ARGV1="$ARG"
 			elif [ -z "$ARGV2" ]; then
-				ARGV2="$1"
+				ARGV2="$ARG"
 			fi
 			;;
 	esac
-	shift
 done
 
 here_is_source
@@ -142,6 +142,8 @@ move_to_branch ()
 		else
 			git checkout $MOVETO
 		fi
+	else
+		return 1
 	fi
 }
 
@@ -266,13 +268,23 @@ elif [ "$GITCMD" = "b" -o "$GITCMD" = "branch" ]; then
 	git branch
 
 elif [ "$GITCMD" = "cherry-pick" ]; then
-	if [ -z "$ARGV1" ]; then
-		elog "BRANCH must be specified in \"cherry-pick\" command"
+	shift
+	if [ $# -eq 0 ]; then
+		elog "PATTERN must be specified in \"cherry-pick\" command"
 	fi
-	LATESTCOMMIT=$(git log --abbrev-commit | head -1 | cut -d' ' -f2)
-	move_to_branch "$ARGV1"
-	git branch
-	git cherry-pick "$LATESTCOMMIT"
+	LATESTCOMMIT=$(git rev-parse --verify HEAD) || exit 1
+	for PATTERN in "$@"; do
+		if [ -z "$PATTERN" ] || ! move_to_branch "$PATTERN"; then
+			elog "could not switch to branch matching \"$PATTERN\""
+		fi
+		git branch
+		git cherry-pick "$LATESTCOMMIT"
+		CHERRY_PICK_STATUS=$?
+		if [ "$CHERRY_PICK_STATUS" -ne 0 ]; then
+			git cherry-pick --abort
+			exit "$CHERRY_PICK_STATUS"
+		fi
+	done
 
 elif [ "$GITCMD" = "co" ]; then
 	if [ -z "$ARGV1" ]; then
