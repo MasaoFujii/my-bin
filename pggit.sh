@@ -129,20 +129,20 @@ remove_branch ()
 
 move_to_branch ()
 {
-	MOVETO=$(git branch | cut -c3- | grep "$1" | head -1)
-	for  BACKBRANCH in $(git branch | cut -c3- | grep -E "^REL[_0-9]*STABLE$"); do
-	  echo $BACKBRANCH | tr -d '_' | grep "$1" > /dev/null
-		if [ $? -eq 0 ]; then
+	BRANCH_LIST=$(git branch --no-color) || return 1
+	BRANCH_NAMES=$(printf '%s\n' "$BRANCH_LIST" | cut -c3-)
+	MOVETO=$(printf '%s\n' "$BRANCH_NAMES" | grep -m 1 -- "$1")
+	for BACKBRANCH in $(printf '%s\n' "$BRANCH_NAMES" | grep -E '^REL[_0-9]*STABLE$'); do
+		if printf '%s\n' "$BACKBRANCH" | tr -d '_' | grep -q -- "$1"; then
 			MOVETO="$BACKBRANCH"
 			break
 		fi
 	done
 	if [ ! -z "$MOVETO" ]; then
-		git branch | grep -E ^"\+ $MOVETO"$ > /dev/null
-		if [ $? -eq 0 ]; then
-			cd ${WTDIR}/$MOVETO
+		if printf '%s\n' "$BRANCH_LIST" | grep -F -x -q -- "+ $MOVETO"; then
+			cd "${WTDIR}/$MOVETO"
 		else
-			git checkout $MOVETO
+			git checkout "$MOVETO"
 		fi
 	else
 		return 1
