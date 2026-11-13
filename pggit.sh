@@ -50,6 +50,7 @@ Commands:
                               (default: HEAD)
   restore FILE COMMIT         restores FILE in the working tree and index to COMMIT
   stable [all]                creates pg<version> branches (all includes pg<max+1> from master)
+  stable autotest             tests changed pg<max+1>, then supported pg<version> branches in order
   stable cherry-pick          applies the original branch's HEAD to pg<version> branches
                               (in SUPPORTED_VERS order; stops and aborts on cherry-pick failure)
   stable remove               deletes pg<version> branches and installations, including pg<max+1>
@@ -170,6 +171,17 @@ do_cherry_pick ()
 	done
 }
 
+get_development_version ()
+{
+	MAXVERSION=0
+	for PGVERSION in $SUPPORTED_VERS; do
+		if [ "$PGVERSION" -gt "$MAXVERSION" ]; then
+			MAXVERSION="$PGVERSION"
+		fi
+	done
+	printf '%s\n' "$((MAXVERSION + 1))"
+}
+
 back_to_current ()
 {
 	git checkout $CURBRANCH
@@ -206,15 +218,15 @@ do_autotest ()
 	COMMITMSG="Add files to build and test on GitHub Actions."
 	NEWBRANCH="$1"
 
-	mkdir -p $WORKFLOWS
-	cp $PROGDATA/$BUILDYML $WORKFLOWS
-	git add $WORKFLOWS/$BUILDYML
+	mkdir -p "$WORKFLOWS" || return 1
+	cp "$PROGDATA/$BUILDYML" "$WORKFLOWS" || return 1
+	git add "$WORKFLOWS/$BUILDYML" || return 1
 
-	git commit -a -m "${COMMITMSG}"
-	git push $GITHUB $NEWBRANCH
+	git commit -a -m "${COMMITMSG}" || return 1
+	git push "$GITHUB" "$NEWBRANCH" || return 1
 
-	git checkout master
-	git branch -D $NEWBRANCH
+	git checkout master || return 1
+	git branch -D "$NEWBRANCH" || return 1
 	back_to_current
 }
 
@@ -240,9 +252,9 @@ skip_cirrus_test ()
 		return;
 	fi
 
-	git rm .cirrus.star
-	git rm .cirrus.tasks.yml
-	git rm .cirrus.yml
+	git rm .cirrus.star || return 1
+	git rm .cirrus.tasks.yml || return 1
+	git rm .cirrus.yml || return 1
 
 	git commit -a -m "${COMMITMSG}"
 }
@@ -284,10 +296,10 @@ elif [ "$GITCMD" = "autotest" ]; then
 		fi
 		COMMIT_ID=$(git rev-parse --short HEAD)
 		NEWBRANCH="${AUTOTEST}_${CURBRANCH}_${CURTIME}_${COMMIT_ID}"
-		git checkout -b "$NEWBRANCH"
+		git checkout -b "$NEWBRANCH" || exit 1
 
 		if [ "$ARGV1" != "cirrus" ]; then
-			skip_cirrus_test
+			skip_cirrus_test || exit 1
 		fi
 		do_autotest "$NEWBRANCH"
 	fi
@@ -440,6 +452,32 @@ elif [ "$GITCMD" = "restore" ]; then
 	fi
 	git restore --source="$ARGV2" --staged --worktree -- "$ARGV1"
 
+elif [ "$GITCMD" = "stable" -a "$ARGV1" = "autotest" ]; then
+	current_must_not_have_uncommitted
+	if ! git diff --cached --quiet; then
+		elog "current branch has staged changes or could not be checked"
+	fi
+	DEVVERSION=$(get_development_version)
+	for PGVERSION in "$DEVVERSION" $SUPPORTED_VERS; do
+		TESTBRANCH="pg${PGVERSION}"
+		if ! git show-ref --verify --quiet "refs/heads/$TESTBRANCH"; then
+			continue
+		fi
+		if [ "$PGVERSION" -eq "$DEVVERSION" ]; then
+			TESTBASE=master
+		else
+			TESTBASE="REL_${PGVERSION}_STABLE"
+		fi
+		if git diff --quiet "refs/heads/$TESTBASE" "refs/heads/$TESTBRANCH" --; then
+			continue
+		elif [ $? -ne 1 ]; then
+			exit 1
+		fi
+		git checkout "$TESTBRANCH" || exit 1
+		"$PROGPATH" autotest || exit 1
+	done
+	back_to_current
+
 elif [ "$GITCMD" = "stable" -a "$ARGV1" = "cherry-pick" ]; then
 	set --
 	for PGVERSION in $SUPPORTED_VERS; do
@@ -449,11 +487,8 @@ elif [ "$GITCMD" = "stable" -a "$ARGV1" = "cherry-pick" ]; then
 
 elif [ "$GITCMD" = "stable" ]; then
 	current_must_not_have_uncommitted
-	MAXVERSION=0
+	DEVVERSION=$(get_development_version)
 	for PGVERSION in $SUPPORTED_VERS; do
-		if [ "$PGVERSION" -gt "$MAXVERSION" ]; then
-			MAXVERSION="$PGVERSION"
-		fi
 		SRCBRANCH="REL_${PGVERSION}_STABLE"
 		DSTBRANCH="pg${PGVERSION}"
 		if [ "$ARGV1" = "remove" ]; then
@@ -466,9 +501,9 @@ elif [ "$GITCMD" = "stable" ]; then
 		fi
 	done
 	if [ "$ARGV1" = "all" ]; then
-		git branch "pg$((MAXVERSION + 1))" master || exit 1
+		git branch "pg${DEVVERSION}" master || exit 1
 	elif [ "$ARGV1" = "remove" ]; then
-		DEVBRANCH="pg$((MAXVERSION + 1))"
+		DEVBRANCH="pg${DEVVERSION}"
 		if git show-ref --verify --quiet "refs/heads/$DEVBRANCH"; then
 			remove_branch "$DEVBRANCH"
 		fi
