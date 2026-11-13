@@ -52,6 +52,8 @@ Commands:
   restore FILE COMMIT         restores FILE in the working tree and index to COMMIT
   stable [remove]             creates local pg<version> branches from supported stable branches
                               (remove deletes those local branches and their installations)
+  stable cherry-pick          applies the original branch's HEAD to pg<version> branches
+                              (in SUPPORTED_VERS order; stops and aborts on cherry-pick failure)
   untrack [clean]             lists untracked files and directories, including ignored ones
                               (clean deletes them)
   update, u [all]             updates master from origin (all also updates supported stable branches)
@@ -145,6 +147,23 @@ move_to_branch ()
 	else
 		return 1
 	fi
+}
+
+do_cherry_pick ()
+{
+	LATESTCOMMIT=$(git rev-parse --verify HEAD) || exit 1
+	for PATTERN in "$@"; do
+		if [ -z "$PATTERN" ] || ! move_to_branch "$PATTERN"; then
+			elog "could not switch to branch matching \"$PATTERN\""
+		fi
+		git branch
+		git cherry-pick "$LATESTCOMMIT"
+		CHERRY_PICK_STATUS=$?
+		if [ "$CHERRY_PICK_STATUS" -ne 0 ]; then
+			git cherry-pick --abort
+			exit "$CHERRY_PICK_STATUS"
+		fi
+	done
 }
 
 back_to_current ()
@@ -272,19 +291,7 @@ elif [ "$GITCMD" = "cherry-pick" ]; then
 	if [ $# -eq 0 ]; then
 		elog "PATTERN must be specified in \"cherry-pick\" command"
 	fi
-	LATESTCOMMIT=$(git rev-parse --verify HEAD) || exit 1
-	for PATTERN in "$@"; do
-		if [ -z "$PATTERN" ] || ! move_to_branch "$PATTERN"; then
-			elog "could not switch to branch matching \"$PATTERN\""
-		fi
-		git branch
-		git cherry-pick "$LATESTCOMMIT"
-		CHERRY_PICK_STATUS=$?
-		if [ "$CHERRY_PICK_STATUS" -ne 0 ]; then
-			git cherry-pick --abort
-			exit "$CHERRY_PICK_STATUS"
-		fi
-	done
+	do_cherry_pick "$@"
 
 elif [ "$GITCMD" = "co" ]; then
 	if [ -z "$ARGV1" ]; then
@@ -420,6 +427,13 @@ elif [ "$GITCMD" = "restore" ]; then
 		elog "COMMIT must be specified in \"restore\" command"
 	fi
 	git restore --source="$ARGV2" --staged --worktree -- "$ARGV1"
+
+elif [ "$GITCMD" = "stable" -a "$ARGV1" = "cherry-pick" ]; then
+	set --
+	for PGVERSION in $SUPPORTED_VERS; do
+		set -- "$@" "^pg${PGVERSION#_}$"
+	done
+	do_cherry_pick "$@"
 
 elif [ "$GITCMD" = "stable" ]; then
 	current_must_not_have_uncommitted
