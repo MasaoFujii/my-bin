@@ -5,7 +5,7 @@
 GITCMD=
 ARGV1=
 ARGV2=
-SUPPORTED_VERS="_19 _18 _17 _16 _15"
+SUPPORTED_VERS="19 18 17 16 15"
 
 GITHUB=github
 AUTOTEST=autotest
@@ -184,7 +184,7 @@ branches_must_exist ()
 		elog "could not remove master branch"
 	fi
 	for PGVERSION in $SUPPORTED_VERS; do
-		if [ "$THISBRANCH" = "REL${PGVERSION}_STABLE" ]; then
+		if [ "$THISBRANCH" = "REL_${PGVERSION}_STABLE" ]; then
 			elog "could not remove branch for supported version"
 		fi
 	done
@@ -440,15 +440,15 @@ elif [ "$GITCMD" = "restore" ]; then
 elif [ "$GITCMD" = "stable" -a "$ARGV1" = "cherry-pick" ]; then
 	set --
 	for PGVERSION in $SUPPORTED_VERS; do
-		set -- "$@" "^pg${PGVERSION#_}$"
+		set -- "$@" "^pg${PGVERSION}$"
 	done
 	do_cherry_pick "$@"
 
 elif [ "$GITCMD" = "stable" ]; then
 	current_must_not_have_uncommitted
 	for PGVERSION in $SUPPORTED_VERS; do
-		SRCBRANCH="REL${PGVERSION}_STABLE"
-		DSTBRANCH="pg${PGVERSION#_}"
+		SRCBRANCH="REL_${PGVERSION}_STABLE"
+		DSTBRANCH="pg${PGVERSION}"
 		if [ "$ARGV1" = "remove" ]; then
 			remove_branch "$DSTBRANCH"
 		else
@@ -474,7 +474,7 @@ elif [ "$GITCMD" = "u" -o "$GITCMD" = "update" ]; then
 		git fetch origin || exit 1
 		set -- master
 		for PGVERSION in $SUPPORTED_VERS; do
-			set -- "$@" "REL${PGVERSION}_STABLE"
+			set -- "$@" "REL_${PGVERSION}_STABLE"
 		done
 		for BRANCH in "$@"; do
 			if ! git merge-base --is-ancestor "$BRANCH" "refs/remotes/origin/$BRANCH"; then
@@ -497,7 +497,7 @@ elif [ "$GITCMD" = "wip" ]; then
 elif [ "$GITCMD" = "wt" ]; then
 	if [ "$ARGV2" = "stable" ]; then
 		for PGVERSION in $SUPPORTED_VERS; do
-			TARGET="pg${PGVERSION#_}"
+			TARGET="pg${PGVERSION}"
 			if [ "$ARGV1" = "add" ]; then
 				git worktree add ${WTDIR}/${TARGET} ${TARGET}
 			elif [ "$ARGV1" = "remove" ]; then
