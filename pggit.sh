@@ -461,13 +461,26 @@ elif [ "$GITCMD" = "untrack" ]; then
 
 elif [ "$GITCMD" = "u" -o "$GITCMD" = "update" ]; then
 	current_must_not_have_uncommitted
-	update_branch master
 	if [ "$ARGV1" = "all" ]; then
-		for PGVERSION in $(echo "$SUPPORTED_VERS"); do
-			update_branch "REL${PGVERSION}_STABLE"
+		git fetch origin || exit 1
+		set -- master
+		for PGVERSION in $SUPPORTED_VERS; do
+			set -- "$@" "REL${PGVERSION}_STABLE"
 		done
+		for BRANCH in "$@"; do
+			if ! git merge-base --is-ancestor "$BRANCH" "refs/remotes/origin/$BRANCH"; then
+				elog "local branch \"$BRANCH\" is not an ancestor of origin/$BRANCH"
+			fi
+			if [ "$BRANCH" = "$CURBRANCH" ]; then
+				git merge --ff-only "refs/remotes/origin/$BRANCH" || exit 1
+			else
+				git branch -f "$BRANCH" "refs/remotes/origin/$BRANCH" || exit 1
+			fi
+		done
+	else
+		update_branch master
+		back_to_current
 	fi
-	back_to_current
 
 elif [ "$GITCMD" = "wip" ]; then
 	git commit -a -m "wip"
