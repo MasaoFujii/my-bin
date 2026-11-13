@@ -50,10 +50,10 @@ Commands:
   reset [COMMIT]              hard-resets the current branch, index and working tree to COMMIT
                               (default: HEAD)
   restore FILE COMMIT         restores FILE in the working tree and index to COMMIT
-  stable [remove]             creates local pg<version> branches from supported stable branches
-                              (remove deletes those local branches and their installations)
+  stable                      creates local pg<version> branches from supported stable branches
   stable cherry-pick          applies the original branch's HEAD to pg<version> branches
                               (in SUPPORTED_VERS order; stops and aborts on cherry-pick failure)
+  stable remove               deletes local pg<version> branches and their installations
   untrack [clean]             lists untracked files and directories, including ignored ones
                               (clean deletes them)
   update, u [all]             updates master from origin (all also updates supported stable branches)
