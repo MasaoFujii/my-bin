@@ -5,8 +5,8 @@ _pggit()
 
 	if [ "$COMP_CWORD" -eq 1 ]; then
 		WORDLIST="am amend apply autotest b branch cherry-pick co \
-committer create diff docs grep help log make merge \
-patch pgindent pgperltidy pull push remove rename reset restore stable \
+committer create diff docs format-patch grep help log make merge \
+pgindent pgperltidy pull push remove rename reset restore stable \
 u untrack update wip wt"
 	else
 		case "${COMP_WORDS[1]}:$COMP_CWORD" in

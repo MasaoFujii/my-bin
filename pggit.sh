@@ -34,13 +34,12 @@ Commands:
   diff [TARGET]               runs git diff with an optional target
                               (default: unstaged changes)
   docs                        builds HTML documentation
+  format-patch [VERSION]      writes patches here with -v VERSION (default: 1)
   grep [-i] PATTERN           searches tracked files for PATTERN (-i ignores case)
   help                        shows this help (default command)
   log [PATTERN]               shows commit logs, optionally filtering commit messages by PATTERN
   make                        builds and installs the current branch into /dav/<branch-name>
   merge                       updates master from origin and merges it into the current branch
-  patch [FILE]                writes a diff against master to /dav/FILE
-                              (default: <branch-name>.patch)
   pgindent [COMMIT]           runs pgindent on files changed relative to COMMIT (default: HEAD)
   pgperltidy FILE             runs pgperltidy on FILE
   pull                        pulls the current branch from $GITHUB
@@ -338,6 +337,17 @@ elif [ "$GITCMD" = "docs" ]; then
 	pgmake.sh -j 8 --libxml -d --configure /dav/$CURBRANCH
 	make html
 
+elif [ "$GITCMD" = "format-patch" ]; then
+	PATCHVERSION="${ARGV1:-1}"
+	PATCHBASE=master
+	for PGVERSION in $SUPPORTED_VERS; do
+		if [ "$CURBRANCH" = "pg${PGVERSION}" ]; then
+			PATCHBASE="REL_${PGVERSION}_STABLE"
+			break
+		fi
+	done
+	git format-patch -v "$PATCHVERSION" "$PATCHBASE"
+
 elif [ "$GITCMD" = "grep" ]; then
 	git grep $ARGV1 $ARGV2
 
@@ -360,13 +370,6 @@ elif [ "$GITCMD" = "merge" ]; then
 	git pull origin master
 	back_to_current
 	git merge master
-
-elif [ "$GITCMD" = "patch" ]; then
-	PATCHNAME="$CURBRANCH".patch
-	if [ ! -z "$ARGV1" ]; then
-		PATCHNAME="$ARGV1"
-	fi
-	git diff master --patience > /dav/"$PATCHNAME"
 
 elif [ "$GITCMD" = "pgindent" ]; then
 	COMMIT_ID=HEAD
