@@ -85,7 +85,10 @@ done
 
 here_is_source
 
-CURBRANCH=$(git branch | grep '^\*' | cut -b3-)
+CURBRANCH=$(git branch --show-current) || elog "could not determine current branch"
+if [ -z "$CURBRANCH" ]; then
+	elog "current HEAD is detached; check out a branch first"
+fi
 
 current_must_not_have_uncommitted ()
 {
