@@ -183,7 +183,7 @@ branches_must_exist ()
 	if [ "$THISBRANCH" = "master" ]; then
 		elog "could not remove master branch"
 	fi
-	for PGVERSION in $(echo "$SUPPORTED_VERS"); do
+	for PGVERSION in $SUPPORTED_VERS; do
 		if [ "$THISBRANCH" = "REL${PGVERSION}_STABLE" ]; then
 			elog "could not remove branch for supported version"
 		fi
@@ -446,9 +446,9 @@ elif [ "$GITCMD" = "stable" -a "$ARGV1" = "cherry-pick" ]; then
 
 elif [ "$GITCMD" = "stable" ]; then
 	current_must_not_have_uncommitted
-	for PGVERSION in $(echo "$SUPPORTED_VERS"); do
+	for PGVERSION in $SUPPORTED_VERS; do
 		SRCBRANCH="REL${PGVERSION}_STABLE"
-		DSTBRANCH="pg$(echo ${PGVERSION} | tr -d "\_")"
+		DSTBRANCH="pg${PGVERSION#_}"
 		if [ "$ARGV1" = "remove" ]; then
 			remove_branch "$DSTBRANCH"
 		else
@@ -496,8 +496,8 @@ elif [ "$GITCMD" = "wip" ]; then
 
 elif [ "$GITCMD" = "wt" ]; then
 	if [ "$ARGV2" = "stable" ]; then
-		for PGVERSION in $(echo "$SUPPORTED_VERS"); do
-			TARGET="pg$(echo ${PGVERSION} | tr -d "\_")"
+		for PGVERSION in $SUPPORTED_VERS; do
+			TARGET="pg${PGVERSION#_}"
 			if [ "$ARGV1" = "add" ]; then
 				git worktree add ${WTDIR}/${TARGET} ${TARGET}
 			elif [ "$ARGV1" = "remove" ]; then
