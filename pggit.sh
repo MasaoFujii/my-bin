@@ -89,10 +89,12 @@ CURBRANCH=$(git branch | grep '^\*' | cut -b3-)
 
 current_must_not_have_uncommitted ()
 {
-	DIFFLINE=$(git diff | wc -l)
-	if [ $DIFFLINE -ne 0 ]; then
-		elog "current branch has uncommitted changes"
-	fi
+	git diff --quiet
+	case $? in
+		0) ;;
+		1) elog "current branch has uncommitted changes" ;;
+		*) elog "could not check current branch for uncommitted changes" ;;
+	esac
 }
 
 update_branch ()
