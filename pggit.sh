@@ -44,6 +44,7 @@ Command:
   remove [BRANCH]      removes branch and its installation directory
   rename NAME          renames current branch to NAME
   reset [TARGET]       resets current branch to HEAD (or TARGET)
+  restore FILE COMMIT  restores FILE in working tree and index to COMMIT
   stable [remove]      clones all supported stable branches (or removes all clones)
   untrack [clean]      shows (or cleans up) all untracked objects
   u[pdate] [all]       updates master (and all supported versions)
@@ -392,6 +393,15 @@ elif [ "$GITCMD" = "reset" ]; then
 		RESETTARGET="$ARGV1"
 	fi
 	git reset --hard "$RESETTARGET"
+
+elif [ "$GITCMD" = "restore" ]; then
+	if [ -z "$ARGV1" ]; then
+		elog "FILE must be specified in \"restore\" command"
+	fi
+	if [ -z "$ARGV2" ]; then
+		elog "COMMIT must be specified in \"restore\" command"
+	fi
+	git restore --source="$ARGV2" --staged --worktree -- "$ARGV1"
 
 elif [ "$GITCMD" = "stable" ]; then
 	current_must_not_have_uncommitted
