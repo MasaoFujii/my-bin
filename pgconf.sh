@@ -113,7 +113,7 @@ exec_pgconf ()
 				"Linux")
 					emacs $PGDATA/$CONFFILE &;;
 				"Darwin")
-					emacs $PGDATA/$CONFFILE;;
+					open -a /Applications/Emacs.app "$PGDATA/$CONFFILE";;
 			esac;;
 
 		tune)
