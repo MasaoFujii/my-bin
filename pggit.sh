@@ -14,46 +14,52 @@ WTDIR=/dav/worktree
 usage ()
 {
 cat <<EOF
-$PROGNAME does git operations in PostgreSQL local git repository.
+$PROGNAME performs Git operations in a local PostgreSQL repository.
 
 Usage:
-  $PROGNAME [COMMAND]
+  $PROGNAME [COMMAND [ARGUMENTS...]]
 
-Command:
-  am                   creates new branch and runs git am PATCH
-  amend                commits current changes to latest commit with message "amend"
-  apply PATCH          creates new branch and applies PATCH
-  autotest [remove]    tests on GitHub Actions (or removes test branches on GitHub)
-  [b]ranch             shows all local branches
-  cherry-pick BRANCH   applies the latest change in BRANCH
-  co [PATTERN]         moves to branch matching PATTERN (master branch by default)
-  committer            shows how many patches each committer committed
-  create BRANCH        creates new branch named BRANCH
-  diff [TARGET]        shows changes between commits, commit and working tree, etc
-  docs                 compiles only documentations
-  grep [-i] PATTERN    prints lines matching PATTERN
-  help                 shows help message (default)
-  log [PATTERN]        shows commit logs
-  make                 compiles and installs current branch into /dav/<branch-name>
-  merge                updates master and merges it into current branch
-  patch [PATCH]        creates patch with name PATCH against master in /dav
-  pgindent [COMMIT]    runs pgindent on files modified since COMMIT (HEAD by default)
-  pgperltidy PATH      runs pgperltidy on Perl file in PATH
-  pull                 pulles current branch from $GITHUB
-  push                 pushes current branch to $GITHUB
-  remove [BRANCH]      removes branch and its installation directory
-  rename NAME          renames current branch to NAME
-  reset [TARGET]       resets current branch to HEAD (or TARGET)
-  restore FILE COMMIT  restores FILE in working tree and index to COMMIT
-  stable [remove]      clones all supported stable branches (or removes all clones)
-  untrack [clean]      shows (or cleans up) all untracked objects
-  u[pdate] [all]       updates master (and all supported versions)
-  wip                  commits current change with message "wip"
-  wt add|remove BRANCH creates or removes worktree for BRANCH
-                       (BRANCH=stable means all supported stable branches)
+Commands:
+  am PATCH                    creates a branch from updated master and runs git am PATCH
+  amend                       amends the latest commit with tracked changes and message "amend"
+  apply PATCH                 creates a branch from updated master and applies PATCH
+  autotest [cirrus|remove]    pushes a test branch to $GITHUB for GitHub Actions
+                              (cirrus also enables Cirrus CI; remove deletes remote test branches)
+  branch, b                   lists local branches
+  cherry-pick PATTERN         switches to a matching branch and applies the original branch's HEAD
+  co [PATTERN]                switches to a matching branch (default: master)
+  committer [SINCE [UNTIL]]   counts commits by author, optionally within a date range
+  create BRANCH               creates and switches to BRANCH from HEAD
+  diff [TARGET]               runs git diff with an optional target
+                              (default: unstaged changes)
+  docs                        builds HTML documentation
+  grep [-i] PATTERN           searches tracked files for PATTERN (-i ignores case)
+  help                        shows this help (default command)
+  log [PATTERN]               shows commit logs, optionally filtering commit messages by PATTERN
+  make                        builds and installs the current branch into /dav/<branch-name>
+  merge                       updates master from origin and merges it into the current branch
+  patch [FILE]                writes a diff against master to /dav/FILE
+                              (default: <branch-name>.patch)
+  pgindent [COMMIT]           runs pgindent on files changed relative to COMMIT (default: HEAD)
+  pgperltidy FILE             runs pgperltidy on FILE
+  pull                        pulls the current branch from $GITHUB
+  push                        pushes the current branch to $GITHUB and sets its upstream
+  remove [BRANCH]             deletes BRANCH and /dav/BRANCH (default: current branch)
+  rename NAME                 renames the current branch to NAME
+  reset [COMMIT]              hard-resets the current branch, index and working tree to COMMIT
+                              (default: HEAD)
+  restore FILE COMMIT         restores FILE in the working tree and index to COMMIT
+  stable [remove]             creates local pg<version> branches from supported stable branches
+                              (remove deletes those local branches and their installations)
+  untrack [clean]             lists untracked files and directories, including ignored ones
+                              (clean deletes them)
+  update, u [all]             updates master from origin (all also updates supported stable branches)
+  wip                         commits tracked changes with message "wip"
+  wt add|remove BRANCH        adds or removes a worktree for BRANCH under $WTDIR
+                              (BRANCH=stable selects all supported pg<version> branches)
 
-Move to branch matching COMMAND if it's not supported and there is branch
-matching it.
+An unrecognized COMMAND is treated as a branch pattern and switches to a
+matching branch if one exists.
 EOF
 }
 
