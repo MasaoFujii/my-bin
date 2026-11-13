@@ -418,8 +418,7 @@ elif [ "$GITCMD" = "rename" ]; then
 	fi
 	NEWNAME="$ARGV1"
 	current_must_not_have_uncommitted
-	git checkout -b "$NEWNAME"
-	git branch -D $CURBRANCH
+	git branch -m "$NEWNAME" || exit 1
 	git branch
 
 elif [ "$GITCMD" = "reset" ]; then
