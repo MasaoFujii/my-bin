@@ -446,8 +446,7 @@ elif [ "$GITCMD" = "stable" ]; then
 			if [ "$(git branch --list ${DSTBRANCH})" ]; then
 				elog "branch \"$DSTBRANCH\" already exists"
 			fi
-			move_to_branch "$SRCBRANCH"
-			git checkout -b "$DSTBRANCH"
+			git branch "$DSTBRANCH" "$SRCBRANCH"
 		fi
 	done
 	git checkout master
