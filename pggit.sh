@@ -33,7 +33,7 @@ Commands:
   diff [TARGET]               runs git diff with an optional target
                               (default: unstaged changes)
   docs                        builds HTML documentation
-  format-patch [VERSION]      writes patches here with -v VERSION (default: 1)
+  format-patch [VERSION]      writes patches here with VERSION (default: 1)
   grep [-i] PATTERN           searches tracked files for PATTERN (-i ignores case)
   help                        shows this help (default command)
   log [PATTERN]               shows commit logs, optionally filtering commit messages by PATTERN
