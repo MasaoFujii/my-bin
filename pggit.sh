@@ -27,7 +27,6 @@ Commands:
                               (cirrus also enables Cirrus CI; remove deletes remote test branches)
   branch, b                   lists local branches
   cherry-pick PATTERN...      applies the original branch's HEAD to matching branches in order
-                              (stops on failure and aborts a failed cherry-pick)
   co [PATTERN]                switches to a matching branch (default: master)
   committer [SINCE [UNTIL]]   counts commits by author, optionally within a date range
   create BRANCH               creates and switches to BRANCH from HEAD
@@ -165,7 +164,9 @@ do_cherry_pick ()
 		git cherry-pick "$LATESTCOMMIT"
 		CHERRY_PICK_STATUS=$?
 		if [ "$CHERRY_PICK_STATUS" -ne 0 ]; then
-			git cherry-pick --abort
+			if [ "$GITCMD" = "stable" ]; then
+				git cherry-pick --abort
+			fi
 			exit "$CHERRY_PICK_STATUS"
 		fi
 	done
